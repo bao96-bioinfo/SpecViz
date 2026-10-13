@@ -7,25 +7,27 @@ Antigravity surfaces. The rest of the command is the same.
 | --- | --- |
 | No arguments, or `overview` | Entire project's specification map |
 | `overview <folder>` | Local map, with directly related context labeled |
-| `show <file> [more files...]` | Selected file diagrams, with a relationship map |
+| `show <file> [more files...]` | Selected file diagrams; multiple files include a relationship map |
 | `changes [folder-or-file...]` | Current requests compared with implementation evidence |
 | `--detailed` | Comprehensive annotations on the same diagram structure |
 | `changes ... --check-code` | Explicit inspection of relevant code and existing test evidence |
 
-For example:
+Examples (the folder commands use the OpenSpec fixture; the file command uses
+the Kiro fixture):
 
 ```text
 $specviz overview
-$specviz overview openspec/changes/data-export
+$specviz overview openspec/changes/password-export
 $specviz show requirements.md design.md --detailed
-$specviz changes openspec/changes/data-export --check-code --detailed
+$specviz changes openspec/changes/password-export --check-code --detailed
 ```
 
 Quote paths containing spaces. Short names work when unambiguous; duplicate
 names need their paths. After overview, reply with displayed numbers or names
 to select files. Selections stay bound to that conversation's displayed
 file map; moved or changed sources require a refresh. When another map is shown,
-its displayed numbers become current. A folder belongs to
+its delivered file keys become current. Continue to reveal keys hidden on later
+pages before selecting their numbers. A folder belongs to
 overview; `show` takes files.
 
 The report-based reference persists across displays and sessions. Missing

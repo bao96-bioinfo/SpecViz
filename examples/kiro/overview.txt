@@ -1,31 +1,53 @@
-Specification overview
-Project: Reporting service
-Purpose: Export reports with owner access controls and clear download limits.
-Source snapshot:
-442f36d5defee79017155aa339f8d3befb695595ad4fa05175d0444f676fbe23
+Reporting service - Export reports with owner access controls and clear download
+limits.
 
 Specification map (3 files)
-|
-+-- Data export (3 files)
-|   Feature requirements, design, and tasks
-|   |
-|   +-- [1] .kiro/specs/data-export/design.md
-|       How report ownership and protection work.
-|   +-- [2] .kiro/specs/data-export/requirements.md
-|       Rules for owner downloads and export limits.
-|   +-- [3] .kiro/specs/data-export/tasks.md
-|       Implementation steps for protected downloads.
-|
 
-Relationships (arrows mean the stated relationship):
-- .kiro/specs/data-export/requirements.md -> .kiro/specs/data-export/design.md:
-  requirements guide the design
-- .kiro/specs/data-export/requirements.md -> .kiro/specs/data-export/tasks.md:
-  Informs implementation tasks (inferred)
-- .kiro/specs/data-export/design.md -> .kiro/specs/data-export/tasks.md: Informs
-  implementation tasks (inferred)
-- .kiro/specs/data-export/design.md -> .kiro/specs/data-export/requirements.md:
-  Document reference
+                     +------------------------------------+
+                     | Check report ownership             |
+                     |                                    |
+                     | Reject requests from anyone except |
+                     | the report owner.                  |
+                     | Files: [1] [3]                     |
+                     +------------------------------------+
+                                        |
+                                        |
+                                 owner accepted
+                                        |
+                                        v
+                     +------------------------------------+
+                     | Collect report rows                |
+                     |                                    |
+                     | Export at most 100 rows.           |
+                     | Files: [1] [2]                     |
+                     +------------------------------------+
+                                        |
+                   +--------------------+--------------------+
+          password supplied                            no password
+                   |                                         |
+                   v                                         v
++------------------------------------+    +------------------------------------+
+| Protect the download               |    | Continue without protection        |
+|                                    |    |                                    |
+| Encrypt the file when its owner    |    | Password protection is optional.   |
+| supplies a password. Never log the |    | Files: [1]                         |
+| password.                          |    |                                    |
+| Files: [2]                         |    |                                    |
++------------------------------------+    +------------------------------------+
+                   |                                         |
+                   |                                         |
+            encrypted file                           unprotected file
+                   +--------------------+--------------------+
+                                        v
+                     +------------------------------------+
+                     | Download the report                |
+                     |                                    |
+                     | Files: [2]                         |
+                     +------------------------------------+
 
-Choose files by number or full path. Use show <file...> to explore them; add
---detailed for complete selected-file content.
+Files (3 files) under .kiro/specs/data-export/:
+[1] design.md
+[2] requirements.md
+[3] tasks.md
+
+Use show <file number or path> to explore a file; add --detailed to expand it.

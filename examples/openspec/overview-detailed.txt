@@ -1,74 +1,139 @@
-Specification overview
-Project: Reporting service
-Purpose: Export reports with owner access controls and clear download limits.
+Reporting service - Export reports with owner access controls and clear download
+limits.
+
+Specification map (6 files)
+
++------------------------------------+    +------------------------------------+
+| Download your own reports          |    | Earlier proposal [history]         |
+|                                    |    |                                    |
+| The existing rules allow owners to |    | An earlier proposal introduced     |
+| download up to 100 rows as a       |    | report downloads.                  |
+| comma-separated file.              |    | Files: [1]                         |
+| Files: [6]                         |    |                                    |
++------------------------------------+    +------------------------------------+
+                   |
+                   |
+       adds optional protection
+                   |
+                   v
++------------------------------------+
+| Request password protection        |
+|                                    |
+| The proposed change encrypts the   |
+| file before delivery when an owner |
+| requests protection. Keep the      |
+| access check and never log         |
+| passwords.                         |
+| Files: [2] [3] [4] [5]             |
++------------------------------------+
+
+Files (1 file; history) - Add export under
+openspec/changes/archive/2026-09-01-add-export/:
+[1] proposal.md
+
+Files (1 file) - Data export under openspec/specs/data-export/:
+[6] spec.md
+
+Files (4 files) - Password export under openspec/changes/password-export/:
+[2] design.md
+[3] proposal.md
+[4] specs/data-export/spec.md
+[5] tasks.md
+
++------------------------------------------------------------------------------+
+| File [1]: openspec/changes/archive/2026-09-01-add-export/proposal.md         |
+|                                                                              |
+| Purpose: Earlier proposal for report downloads.                              |
+| Initial report exports                                                       |
+| Historical proposal for adding report downloads.                             |
+| Source: lines 1-3 - Initial report exports                                   |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [2]: openspec/changes/password-export/design.md                         |
+|                                                                              |
+| Purpose: How report ownership and protection work.                           |
+| Export design                                                                |
+| Encrypt an export when its owner provides a password.                        |
+| Source: lines 1-3 - Export design                                            |
+| Decisions for access checks and protection                                   |
+| - Keep the existing access check.                                            |
+| - Encrypt the file before sending it to the owner.                           |
+| - Do not log passwords.                                                      |
+| Source: lines 5-9 - Export design / Design decisions                         |
+| Specification source                                                         |
+| [Export rules](specs/data-export/spec.md)                                    |
+| Source: lines 11-13 - Export design / Sources                                |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [3]: openspec/changes/password-export/proposal.md                       |
+|                                                                              |
+| Purpose: Purpose and scope of the export change.                             |
+| Protect report exports                                                       |
+| Add optional password protection to report downloads.                        |
+| Source: lines 1-3 - Protect report exports                                   |
+| Preserve limits and add optional protection                                  |
+| - Preserve the 100-row limit.                                                |
+| - Allow report owners to request a password.                                 |
+| Source: lines 5-8 - Protect report exports / Scope                           |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [4]: openspec/changes/password-export/specs/data-export/spec.md         |
+|                                                                              |
+| Purpose: Requested optional protection for report exports.                   |
+| Export changes                                                               |
+| Requested password protection for report exports.                            |
+| Source: lines 1-3 - Export changes                                           |
+| Requested changes to export rules                                            |
+| ## MODIFIED Requirements                                                     |
+| Source: lines 5 - Export changes / MODIFIED Requirements                     |
+| Owner downloads at most 100 rows                                             |
+| The system SHALL allow report owners to export up to 100 rows as a           |
+| comma-separated file and request optional password protection.               |
+| Source: lines 7-8 - Export changes / MODIFIED Requirements / Requirement:    |
+| Export report                                                                |
+| Requested password protects the download                                     |
+| - **WHEN** the owner requests password protection                            |
+| - **THEN** the exported file is encrypted and contains at most 100 rows      |
+| Source: lines 10-12 - Export changes / MODIFIED Requirements / Requirement:  |
+| Export report / Scenario: Download a protected report                        |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [5]: openspec/changes/password-export/tasks.md                          |
+|                                                                              |
+| Purpose: Implementation steps for protected downloads.                       |
+| Implementation steps                                                         |
+| Steps to add password protection to exports.                                 |
+| - [ ] Add the optional password input.                                       |
+| - [ ] Encrypt exports and verify the row limit.                              |
+| Source: lines 1-6 - Implementation steps                                     |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [6]: openspec/specs/data-export/spec.md                                 |
+|                                                                              |
+| Purpose: Rules for owner-only downloads of up to 100 rows.                   |
+| Data export                                                                  |
+| Rules for downloading a report.                                              |
+| Source: lines 1-3 - Data export                                              |
+| Export rules                                                                 |
+| ## Requirements                                                              |
+| Source: lines 5 - Data export / Requirements                                 |
+| Owner downloads at most 100 rows                                             |
+| The system SHALL allow report owners to export up to 100 rows as a           |
+| comma-separated file.                                                        |
+| Source: lines 7-8 - Data export / Requirements / Requirement: Export report  |
+| Owner receives the bounded report file                                       |
+| - **WHEN** the owner requests a report export                                |
+| - **THEN** the system provides a file containing at most 100 rows            |
+| Source: lines 10-12 - Data export / Requirements / Requirement: Export       |
+| report / Scenario: Download a report                                         |
++------------------------------------------------------------------------------+
+
 Source snapshot:
 3e6aa1a95a96f9b7af1ea226d4a8ac6d2d8c78978c49cfc7a9f8d7dfe64cb4e5
 
-Specification map (6 files)
-|
-+-- Add export [history] (1 file)
-|   Completed change history; implementation evidence separate
-|   |
-|   +-- [1] openspec/changes/archive/2026-09-01-add-export/proposal.md
-|       Earlier proposal for report downloads.
-|
-+-- Data export (1 file)
-|   Existing documented behavior
-|   |
-|   +-- [6] openspec/specs/data-export/spec.md
-|       Rules for owner-only downloads of up to 100 rows.
-|
-+-- Password export (4 files)
-|   Proposed behavior changes
-|   |
-|   +-- [2] openspec/changes/password-export/design.md
-|       How report ownership and protection work.
-|   +-- [3] openspec/changes/password-export/proposal.md
-|       Purpose and scope of the export change.
-|   +-- [4] openspec/changes/password-export/specs/data-export/spec.md
-|       Requested optional protection for report exports.
-|   +-- [5] openspec/changes/password-export/tasks.md
-|       Implementation steps for protected downloads.
-|
-
-Relationships (arrows mean the stated relationship):
-- openspec/changes/password-export/specs/data-export/spec.md ->
-  openspec/specs/data-export/spec.md: Change to current capability (inferred)
-- openspec/changes/password-export/proposal.md ->
-  openspec/changes/password-export/design.md: Planning dependency (inferred)
-- openspec/changes/password-export/design.md ->
-  openspec/changes/password-export/tasks.md: Informs implementation tasks
-  (inferred)
-- openspec/changes/password-export/proposal.md ->
-  openspec/changes/password-export/specs/data-export/spec.md: Planning
-  dependency (inferred)
-- openspec/changes/password-export/specs/data-export/spec.md ->
-  openspec/changes/password-export/tasks.md: Informs implementation tasks
-  (inferred)
-- openspec/changes/password-export/design.md ->
-  openspec/changes/password-export/specs/data-export/spec.md: Document reference
-
-Document roles and sources:
-+-- [1] openspec/changes/archive/2026-09-01-add-export/proposal.md
-|   Framework: openspec; role: proposal; state: archived
-|   Sections: Initial report exports
-+-- [2] openspec/changes/password-export/design.md
-|   Framework: openspec; role: design; state: proposed
-|   Sections: Export design; Design decisions; Sources
-+-- [3] openspec/changes/password-export/proposal.md
-|   Framework: openspec; role: proposal; state: proposed
-|   Sections: Protect report exports; Scope
-+-- [4] openspec/changes/password-export/specs/data-export/spec.md
-|   Framework: openspec; role: delta specification; state: proposed
-|   Sections: Export changes; MODIFIED Requirements; Requirement: Export report;
-|   Scenario: Download a protected report
-+-- [5] openspec/changes/password-export/tasks.md
-|   Framework: openspec; role: tasks; state: proposed
-|   Sections: Implementation steps
-+-- [6] openspec/specs/data-export/spec.md
-|   Framework: openspec; role: specification; state: current
-|   Sections: Data export; Requirements; Requirement: Export report; Scenario:
-|   Download a report
-
-Choose files by number or full path. Use show <file...> to explore them; add
---detailed for complete selected-file content.
+Use show <file number or path> to explore a file; add --detailed to expand it.

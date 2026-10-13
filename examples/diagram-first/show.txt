@@ -1,0 +1,71 @@
+Training workspace - Train a model from several datasets and compare its
+predictions with answers kept out of training.
+
+Files (1 file) under openspec/changes/reproducible-model-training/:
+[1] design.md
+
+File [1]: design.md - Behavior flow
+
+                     +------------------------------------+
+                     | (1) Prepare the samples            |
+                     |                                    |
+                     | Use consistent fields and units,   |
+                     | then save which samples belong to  |
+                     | training and evaluation.           |
+                     | Source: lines 1                    |
+                     | Source: lines 3-5                  |
+                     +------------------------------------+
+                                        |
+                   +--------------------+--------------------+
+           training samples                         evaluation answers
+                   |                                         |
+                   v                                         v
++------------------------------------+    +------------------------------------+
+| (2) Train the model                |    | (3) Keep evaluation answers        |
+|                                    |    | separate                           |
+| Run a small trial first. Train     |    |                                    |
+| fully only if its checks pass;     |    | Keep the known evaluation answers  |
+| otherwise stop and report the      |    | hidden from training and           |
+| failures.                          |    | prediction.                        |
+| Source: lines 7-9                  |    | Source: lines 11-13                |
++------------------------------------+    +------------------------------------+
+                   |                                         |
+                   |                                         |
+            trained model                             known answers
+                   |                                         |
+                   v                                         |
++------------------------------------+                       |
+| (4) Make predictions               |                       |
+|                                    |                       |
+| Use the trained model to predict   |                       |
+| answers for the evaluation         |                       |
+| samples.                           |                       |
+| Source: lines 15-17                |                       |
++------------------------------------+                       |
+                   |                                         |
+                   |                                         |
+          saved predictions                                  |
+                   +--------------------+--------------------+
+                                        v
+                     +------------------------------------+
+                     | (5) Compare predictions with       |
+                     | answers                            |
+                     |                                    |
+                     | Measure prediction error. The      |
+                     | acceptable error threshold is      |
+                     | still undecided.                   |
+                     | Source: lines 19-21                |
+                     +------------------------------------+
+                                        |
+                                        |
+                                 measured error
+                                        |
+                                        v
+                     +------------------------------------+
+                     | (6) Save the run records           |
+                     |                                    |
+                     | Save settings, sample assignments, |
+                     | predictions, and measured error so |
+                     | the run can be repeated.           |
+                     | Source: lines 23-25                |
+                     +------------------------------------+

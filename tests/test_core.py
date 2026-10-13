@@ -1,3 +1,4 @@
+import copy
 import json
 import sys
 import tempfile
@@ -12,6 +13,67 @@ from specviz.core import (ValidationError, default_items, digest, parse_blocks,
 
 
 class SourceTests(unittest.TestCase):
+    def project_model(self):
+        documents = [{"id": name, "blocks": parse_blocks("# Rules\n\nMust work.\n", name)}
+                     for name in ("input.md", "output.md")]
+        inventory = {"snapshot": "version", "documents": documents, "scope": [d["id"] for d in documents]}
+        refs = [{"document": d["id"], "blocks": [d["blocks"][1]["id"]]} for d in documents]
+        model = {"schema_version": 1, "snapshot": "version", "documents": [
+            {"id": d["id"], "purpose": "Explain the result", "items": default_items(d)} for d in documents],
+            "project_view": {"nodes": [
+                {"id": "input", "label": "Receive the request", "sources": [refs[0]]},
+                {"id": "output", "label": "Return the result", "summary": "Respond after processing.", "sources": [refs[1]]}],
+                "relationships": [{"from": "input", "to": "output", "type": "workflow",
+                                   "label": "request", "inferred": True, "sources": refs}],
+                "unresolved_documents": []}}
+        return inventory, model
+
+    def test_project_view_and_legacy_model_preserve_source_identities(self):
+        inventory, model = self.project_model()
+        original = copy.deepcopy(inventory)
+        self.assertIs(validate_model(model, inventory), model)
+        del model["project_view"]
+        model["documents"][0]["items"][0]["summary"] = "Explain what happens."
+        validate_model(model, inventory)
+        self.assertEqual(inventory, original)
+
+    def test_project_groups_and_unresolved_documents_account_for_scope(self):
+        inventory, model = self.project_model()
+        model["project_view"] = {"nodes": [{"id": "group", "kind": "group", "label": "Input rules",
+                                            "members": ["input.md"]}], "unresolved_documents": ["output.md"]}
+        validate_model(model, inventory)
+        model["project_view"]["unresolved_documents"] = []
+        with self.assertRaisesRegex(ValidationError, "omits selected"):
+            validate_model(model, inventory)
+
+    def test_project_view_rejects_untraceable_graphs(self):
+        edits = [
+            (lambda v: v["nodes"][0]["sources"][0].update(blocks=["invented"]), "invented"),
+            (lambda v: v["nodes"][0].update(sources=[]), "source references"),
+            (lambda v: v["nodes"][0].update(id="output"), "unique"),
+            (lambda v: v["nodes"][0].update(summary=["opaque"]), "summary"),
+            (lambda v: v["nodes"][0].update(kind="group", members=["invented.md"]), "membership"),
+            (lambda v: v["nodes"][0].update(members=["input.md"]), "explicit group"),
+            (lambda v: v["relationships"][0].update(to="missing"), "endpoint"),
+            (lambda v: v["relationships"][0].update(sources=[]), "source references"),
+            (lambda v: v["relationships"][0].pop("inferred"), "inferred"),
+            (lambda v: v["relationships"][0].update(type="guess"), "relationship type"),
+        ]
+        for edit, message in edits:
+            with self.subTest(message=message):
+                inventory, model = self.project_model()
+                edit(model["project_view"])
+                with self.assertRaisesRegex(ValidationError, message):
+                    validate_model(model, inventory)
+
+    def test_project_view_cannot_expand_local_scope_to_unrelated_documents(self):
+        inventory, model = self.project_model()
+        inventory["scope"] = ["input.md"]
+        with self.assertRaisesRegex(ValidationError, "invented"):
+            validate_model(model, inventory)
+        inventory["context"] = ["output.md"]
+        validate_model(model, inventory)
+
     def test_blocks_preserve_lists_tables_code_and_duplicate_headings(self):
         text = "# Export\n\n## Rules\n\n- Must finish within 30 seconds.\n  - Except encrypted exports.\n\n| Condition | Result |\n| --- | --- |\n| Invalid | Reject |\n\n```md\n# Not a heading\n```\n\n## Rules\n\nOptional download.\n\n<div>Unknown syntax</div>\n"
         blocks = parse_blocks(text, "spec.md")

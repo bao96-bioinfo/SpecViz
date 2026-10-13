@@ -18,7 +18,8 @@
           ],
           "notes": [
             "Historical proposal for adding report downloads."
-          ]
+          ],
+          "summary": "Historical proposal for adding report downloads."
         }
       ],
       "relationships": []
@@ -38,7 +39,8 @@
           ],
           "notes": [
             "Encrypt an export when its owner provides a password."
-          ]
+          ],
+          "summary": "Encrypt an export when its owner provides a password."
         },
         {
           "id": "openspec/changes/password-export/design.md#export-design-design-decisions:1",
@@ -52,7 +54,8 @@
           ],
           "notes": [
             "- Keep the existing access check.\n- Encrypt the file before sending it to the owner.\n- Do not log passwords."
-          ]
+          ],
+          "summary": "- Keep the existing access check.\n- Encrypt the file before sending it to the owner.\n- Do not log passwords."
         },
         {
           "id": "openspec/changes/password-export/design.md#export-design-sources:1",
@@ -99,7 +102,8 @@
           ],
           "notes": [
             "Add optional password protection to report downloads."
-          ]
+          ],
+          "summary": "Add optional password protection to report downloads."
         },
         {
           "id": "openspec/changes/password-export/proposal.md#protect-report-exports-scope:1",
@@ -112,7 +116,8 @@
           ],
           "notes": [
             "- Preserve the 100-row limit.\n- Allow report owners to request a password."
-          ]
+          ],
+          "summary": "- Preserve the 100-row limit.\n- Allow report owners to request a password."
         }
       ],
       "relationships": [
@@ -140,7 +145,8 @@
           ],
           "notes": [
             "Requested password protection for report exports."
-          ]
+          ],
+          "summary": "Requested password protection for report exports."
         },
         {
           "id": "openspec/changes/password-export/specs/data-export/spec.md#export-changes-modified-requirements:1",
@@ -161,7 +167,8 @@
           ],
           "notes": [
             "The system SHALL allow report owners to export up to 100 rows as a comma-separated file and request optional password protection."
-          ]
+          ],
+          "summary": "The system SHALL allow report owners to export up to 100 rows as a comma-separated file and request optional password protection."
         },
         {
           "id": "openspec/changes/password-export/specs/data-export/spec.md#export-changes-modified-requirements-requirement-export-report-scenario-download-a-protected-report:1",
@@ -174,7 +181,8 @@
           ],
           "notes": [
             "- **WHEN** the owner requests password protection\n- **THEN** the exported file is encrypted and contains at most 100 rows"
-          ]
+          ],
+          "summary": "- **WHEN** the owner requests password protection\n- **THEN** the exported file is encrypted and contains at most 100 rows"
         }
       ],
       "relationships": [
@@ -260,7 +268,8 @@
           ],
           "notes": [
             "The system SHALL allow report owners to export up to 100 rows as a comma-separated file."
-          ]
+          ],
+          "summary": "The system SHALL allow report owners to export up to 100 rows as a comma-separated file."
         },
         {
           "id": "openspec/specs/data-export/spec.md#data-export-requirements-requirement-export-report-scenario-download-a-report:1",
@@ -273,7 +282,8 @@
           ],
           "notes": [
             "- **WHEN** the owner requests a report export\n- **THEN** the system provides a file containing at most 100 rows"
-          ]
+          ],
+          "summary": "- **WHEN** the owner requests a report export\n- **THEN** the system provides a file containing at most 100 rows"
         }
       ],
       "relationships": [
@@ -300,5 +310,152 @@
         }
       ]
     }
-  ]
+  ],
+  "project_view": {
+    "nodes": [
+      {
+        "id": "downloads",
+        "label": "Download your own reports",
+        "summary": "The existing rules allow owners to download up to 100 rows as a comma-separated file.",
+        "sources": [
+          {
+            "document": "openspec/specs/data-export/spec.md",
+            "blocks": [
+              "openspec/specs/data-export/spec.md:L1-1",
+              "openspec/specs/data-export/spec.md:L3-3",
+              "openspec/specs/data-export/spec.md:L5-5",
+              "openspec/specs/data-export/spec.md:L7-7",
+              "openspec/specs/data-export/spec.md:L8-8",
+              "openspec/specs/data-export/spec.md:L10-10",
+              "openspec/specs/data-export/spec.md:L11-11",
+              "openspec/specs/data-export/spec.md:L12-12"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "protect",
+        "label": "Request password protection",
+        "summary": "The proposed change encrypts the file before delivery when an owner requests protection. Keep the access check and never log passwords.",
+        "sources": [
+          {
+            "document": "openspec/changes/password-export/design.md",
+            "blocks": [
+              "openspec/changes/password-export/design.md:L1-1",
+              "openspec/changes/password-export/design.md:L3-3",
+              "openspec/changes/password-export/design.md:L5-5",
+              "openspec/changes/password-export/design.md:L7-7",
+              "openspec/changes/password-export/design.md:L8-8",
+              "openspec/changes/password-export/design.md:L9-9",
+              "openspec/changes/password-export/design.md:L11-11",
+              "openspec/changes/password-export/design.md:L13-13"
+            ]
+          },
+          {
+            "document": "openspec/changes/password-export/proposal.md",
+            "blocks": [
+              "openspec/changes/password-export/proposal.md:L1-1",
+              "openspec/changes/password-export/proposal.md:L3-3",
+              "openspec/changes/password-export/proposal.md:L5-5",
+              "openspec/changes/password-export/proposal.md:L7-7",
+              "openspec/changes/password-export/proposal.md:L8-8"
+            ]
+          },
+          {
+            "document": "openspec/changes/password-export/specs/data-export/spec.md",
+            "blocks": [
+              "openspec/changes/password-export/specs/data-export/spec.md:L1-1",
+              "openspec/changes/password-export/specs/data-export/spec.md:L3-3",
+              "openspec/changes/password-export/specs/data-export/spec.md:L5-5",
+              "openspec/changes/password-export/specs/data-export/spec.md:L7-7",
+              "openspec/changes/password-export/specs/data-export/spec.md:L8-8",
+              "openspec/changes/password-export/specs/data-export/spec.md:L10-10",
+              "openspec/changes/password-export/specs/data-export/spec.md:L11-11",
+              "openspec/changes/password-export/specs/data-export/spec.md:L12-12"
+            ]
+          },
+          {
+            "document": "openspec/changes/password-export/tasks.md",
+            "blocks": [
+              "openspec/changes/password-export/tasks.md:L1-1",
+              "openspec/changes/password-export/tasks.md:L3-3",
+              "openspec/changes/password-export/tasks.md:L5-5",
+              "openspec/changes/password-export/tasks.md:L6-6"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "history",
+        "label": "Earlier proposal [history]",
+        "summary": "An earlier proposal introduced report downloads.",
+        "sources": [
+          {
+            "document": "openspec/changes/archive/2026-09-01-add-export/proposal.md",
+            "blocks": [
+              "openspec/changes/archive/2026-09-01-add-export/proposal.md:L1-1",
+              "openspec/changes/archive/2026-09-01-add-export/proposal.md:L3-3"
+            ]
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "from": "downloads",
+        "to": "protect",
+        "label": "adds optional protection",
+        "type": "reference",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/changes/password-export/design.md",
+            "blocks": [
+              "openspec/changes/password-export/design.md:L1-1",
+              "openspec/changes/password-export/design.md:L3-3",
+              "openspec/changes/password-export/design.md:L5-5",
+              "openspec/changes/password-export/design.md:L7-7",
+              "openspec/changes/password-export/design.md:L8-8",
+              "openspec/changes/password-export/design.md:L9-9",
+              "openspec/changes/password-export/design.md:L11-11",
+              "openspec/changes/password-export/design.md:L13-13"
+            ]
+          },
+          {
+            "document": "openspec/changes/password-export/proposal.md",
+            "blocks": [
+              "openspec/changes/password-export/proposal.md:L1-1",
+              "openspec/changes/password-export/proposal.md:L3-3",
+              "openspec/changes/password-export/proposal.md:L5-5",
+              "openspec/changes/password-export/proposal.md:L7-7",
+              "openspec/changes/password-export/proposal.md:L8-8"
+            ]
+          },
+          {
+            "document": "openspec/changes/password-export/specs/data-export/spec.md",
+            "blocks": [
+              "openspec/changes/password-export/specs/data-export/spec.md:L1-1",
+              "openspec/changes/password-export/specs/data-export/spec.md:L3-3",
+              "openspec/changes/password-export/specs/data-export/spec.md:L5-5",
+              "openspec/changes/password-export/specs/data-export/spec.md:L7-7",
+              "openspec/changes/password-export/specs/data-export/spec.md:L8-8",
+              "openspec/changes/password-export/specs/data-export/spec.md:L10-10",
+              "openspec/changes/password-export/specs/data-export/spec.md:L11-11",
+              "openspec/changes/password-export/specs/data-export/spec.md:L12-12"
+            ]
+          },
+          {
+            "document": "openspec/changes/password-export/tasks.md",
+            "blocks": [
+              "openspec/changes/password-export/tasks.md:L1-1",
+              "openspec/changes/password-export/tasks.md:L3-3",
+              "openspec/changes/password-export/tasks.md:L5-5",
+              "openspec/changes/password-export/tasks.md:L6-6"
+            ]
+          }
+        ]
+      }
+    ],
+    "unresolved_documents": []
+  }
 }

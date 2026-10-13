@@ -1,6 +1,6 @@
 # Text examples
 
-These small projects all describe a reporting service with a data export feature. The examples demonstrate text returned in the conversation; their files make the expected output reviewable during development.
+The five framework projects describe a reporting service with a data export feature. The examples demonstrate text returned in the conversation; their files make the expected output reviewable during development.
 
 | Framework | Overview and selected-file examples | Source fixtures |
 | --- | --- | --- |
@@ -13,6 +13,13 @@ These small projects all describe a reporting service with a data export feature
 Start with `overview`, then use `show <file>`. Add `--detailed` to either command to expand annotations without changing the file identities or diagram order. Each example has a source-backed interpretation model and expected output for both levels. The full model remains a development artifact; users normally ask their coding agent to interpret the specifications.
 
 The examples demonstrate helper behavior against pinned source layouts. They do not establish successful invocation in every coding application; see the [compatibility matrix](../docs/compatibility.md) for tested surfaces and limitations.
+
+## A larger connected diagram
+
+The [eight-file training example](diagram-first/README.md) includes two branches,
+a join, five files named `spec.md`, and source-defined specialist terms rewritten
+as clear sentences. [Compare reports and code findings](comparison/README.md)
+for both evidence modes.
 
 ## Reproduce the examples
 

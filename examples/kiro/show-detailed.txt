@@ -1,46 +1,35 @@
-Selected specification files
-Project: Reporting service
-Purpose: Export reports with owner access controls and clear download limits.
+Reporting service - Export reports with owner access controls and clear download
+limits.
+
+Files (1 file) under .kiro/specs/data-export/:
+[2] requirements.md
+
+File [2]: requirements.md - Independent rules
+
+                     +------------------------------------+
+                     | (1) Data export requirements       |
+                     |                                    |
+                     | Requirements for report downloads  |
+                     | with optional protection.          |
+                     | Source: lines 1-3 - Data export    |
+                     | requirements                       |
+                     +------------------------------------+
+                                        |
+                   +--------------------+--------------------+
+        groups related content                    groups related content
+                   |                                         |
+                   v                                         v
++------------------------------------+    +------------------------------------+
+| (2) Owner download: at most 100    |    | (3) Optional encryption; passwords |
+| rows                               |    | never logged                       |
+|                                    |    |                                    |
+| WHEN an owner requests a report,   |    | WHEN an owner supplies a password, |
+| THE SYSTEM SHALL export at most    |    | THE SYSTEM SHALL encrypt the file  |
+| 100 rows.                          |    | without logging the password.      |
+| Source: lines 5-7 - Data export    |    | Source: lines 9-11 - Data export   |
+| requirements / Requirement 1:      |    | requirements / Requirement 2:      |
+| Export report                      |    | Protect download                   |
++------------------------------------+    +------------------------------------+
+
 Source snapshot:
 442f36d5defee79017155aa339f8d3befb695595ad4fa05175d0444f676fbe23
-
-Specification map (1 file)
-|
-+-- Data export (1 file)
-|   Feature requirements, design, and tasks
-|   |
-|   +-- [2] .kiro/specs/data-export/requirements.md
-|       Rules for owner downloads and export limits.
-|
-
-Relationships (arrows mean the stated relationship):
-- .kiro/specs/data-export/requirements.md -> .kiro/specs/data-export/design.md:
-  requirements guide the design
-- .kiro/specs/data-export/requirements.md -> .kiro/specs/data-export/tasks.md:
-  Informs implementation tasks (inferred)
-- .kiro/specs/data-export/design.md -> .kiro/specs/data-export/requirements.md:
-  Document reference
-
-File [2]: .kiro/specs/data-export/requirements.md
-Purpose: Rules for owner downloads and export limits.
-Independent rules
-Source lines refer to the file named above.
-| Rule | Source lines
-| -----+--------
-| (1) Data export requirements | lines 1-3
-|   - Requirements for report downloads with optional protection.
-|   Source: lines 1-3 - Data export requirements
-| (2) Owner download: at most 100 rows | lines 5-7
-|   - WHEN an owner requests a report, THE SYSTEM SHALL export at most 100 rows.
-|   Source: lines 5-7 - Data export requirements / Requirement 1: Export report
-| (3) Optional encryption; passwords never logged | lines 9-11
-|   - WHEN an owner supplies a password, THE SYSTEM SHALL encrypt the file
-|     without logging the password.
-|   Source: lines 9-11 - Data export requirements / Requirement 2: Protect
-|   download
-
-Relationships (arrows mean the stated relationship):
-- Data export requirements -> Owner download: at most 100 rows: groups related
-  content
-- Data export requirements -> Optional encryption; passwords never logged:
-  groups related content

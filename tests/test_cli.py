@@ -75,7 +75,7 @@ class CommandTests(unittest.TestCase):
         output = self.invoke("overview", "--detailed", "--max-lines", "12")
         token = re.search(r"--continue-view ([a-f0-9]+)", output)[1]
         next_page = self.invoke("--continue-view", token, "--page", "2")
-        self.assertIn(discover(self.project)["snapshot"], next_page)
+        self.assertEqual(discover(self.project)["snapshot"], ViewStore(self.project, self.state).load(token)["snapshot"])
         self.assertIn("--continue-view", next_page)
         (self.project / self.requirements).write_text("Updated requirement")
         with self.assertRaisesRegex(ValidationError, "changed"):
@@ -89,9 +89,61 @@ class CommandTests(unittest.TestCase):
         output = self.invoke("changes", "--session", "growing-project")
         number = next(i for i, doc in enumerate(discover(self.project)["documents"], 1)
                       if doc["id"] == self.folder + "/design.md")
-        self.assertIn(f"[{number}] {self.folder}/design.md", output)
+        self.assertIn(f"[{number}] design.md", output)
         selected = self.invoke("show", str(number), "--session", "growing-project", "--json")
         self.assertEqual(selected["scope"], [self.folder + "/design.md"])
+
+    def test_only_delivered_file_keys_enable_numbers_in_their_conversation(self):
+        output = self.invoke("overview", "--max-lines", "12", "--session", "paged-reader")
+        token = re.search(r"--continue-view ([a-f0-9]+)", output)[1]
+        store = ViewStore(self.project, self.state)
+        saved = store.load(token)
+        self.assertEqual(saved["visible"], [])
+        with self.assertRaisesRegex(ValidationError, "not been exposed"):
+            store.select(["1"], "paged-reader")
+        with self.assertRaisesRegex(ValidationError, "another conversation"):
+            self.invoke("--continue-view", token, "--page", "2", "--session", "someone-else")
+        identity = saved["selection"][0]
+        for page in saved["document_pages"][identity]:
+            self.invoke("--continue-view", token, "--page", str(page), "--session", "paged-reader")
+        self.assertEqual(store.select(["1"], "paged-reader"), [identity])
+        self.assertEqual(store.load(token)["pages"], saved["pages"])
+        self.assertFalse(list(self.state.glob("*.sqlite3")))
+
+    def test_split_file_key_requires_all_of_its_pages(self):
+        inventory = discover(self.project)
+        identity = inventory["documents"][0]["id"]
+        store = ViewStore(self.project, self.state)
+        token = store.save(inventory, ["Directory prefix", "[1] exact file key"], "split-key",
+                           [[identity], [identity]], initial_page=2)
+        with self.assertRaisesRegex(ValidationError, "not been exposed"):
+            store.select(["1"], "split-key")
+        store.deliver(token, 1, "split-key")
+        self.assertEqual(store.select(["1"], "split-key"), [identity])
+
+    def test_legacy_saved_pages_remain_readable_and_do_not_record_evidence(self):
+        inventory = discover(self.project)
+        store = ViewStore(self.project, self.state)
+        token = store.save(inventory, ["Legacy page one\n", "Legacy page two\n"], "legacy-reader")
+        self.assertEqual(self.invoke("--continue-view", token, "--page", "2"), "Legacy page two\n")
+        self.assertNotIn("document_pages", store.load(token))
+        self.assertEqual(store.select(["1"], "legacy-reader"), [inventory["documents"][0]["id"]])
+        self.assertFalse(list(self.state.glob("*.sqlite3")))
+
+    def test_storage_failure_exposes_complete_view_and_continuation_remains_readable(self):
+        with patch.object(ViewStore, "_write", side_effect=OSError("Read-only state")):
+            output = self.invoke("overview", "--max-lines", "12")
+        self.assertIn("showing the complete view", output.casefold())
+        for doc in discover(self.project)["documents"]:
+            self.assertIn(Path(doc["path"]).name, output)
+        self.assertNotIn("--continue-view", output)
+        output = self.invoke("overview", "--max-lines", "12", "--session", "reader")
+        token = re.search(r"--continue-view ([a-f0-9]+)", output)[1]
+        with patch.object(ViewStore, "_write", side_effect=OSError("Read-only state")):
+            continued = self.invoke("--continue-view", token, "--page", "2", "--session", "reader")
+            self.assertIn("View part 2/", continued)
+            self.assertIn("select newly shown files by path", continued)
+        self.assertFalse(list(self.state.glob("*.sqlite3")))
 
     def event(self):
         inventory = discover(self.project)

@@ -1,59 +1,122 @@
-Specification overview
-Project: Reporting service
-Purpose: Export reports with owner access controls and clear download limits.
+Reporting service - Export reports with owner access controls and clear download
+limits.
+
+Specification map (6 files)
+
++------------------------------------+    +------------------------------------+
+| Check report ownership             |    | Download format undecided          |
+|                                    |    |                                    |
+| Only owners may download their     |    | Which encrypted file format should |
+| reports. Deny requests from anyone |    | owners receive?                    |
+| else.                              |    | Files: [4]                         |
+| Files: [1] [2]                     |    |                                    |
++------------------------------------+    +------------------------------------+
+                   |
+                   |
+            owner accepted
+                   |
+                   v
++------------------------------------+
+| Create the download                |
+|                                    |
+| Limit the file to 100 rows.        |
+| Password protection is optional;   |
+| encrypt protected files before     |
+| sending them and never log         |
+| passwords.                         |
+| Files: [3] [5] [6]                 |
++------------------------------------+
+
+Files (1 file) - Project principles under .specify/memory/:
+[1] constitution.md
+
+Files (5 files) - Data export under specs/001-data-export/:
+[2] contracts/download.md
+[3] plan.md
+[4] research.md
+[5] spec.md
+[6] tasks.md
+
++------------------------------------------------------------------------------+
+| File [1]: .specify/memory/constitution.md                                    |
+|                                                                              |
+| Purpose: Shared ownership and password-handling rules.                       |
+| Project principles                                                           |
+| Protect sensitive report content.                                            |
+| - Owners alone may download their reports.                                   |
+| - Passwords must never appear in logs.                                       |
+| Source: lines 1-6 - Project principles                                       |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [2]: specs/001-data-export/contracts/download.md                        |
+|                                                                              |
+| Purpose: Download responses for allowed and denied access.                   |
+| Download contract                                                            |
+| Describe the response for an authorized report download.                     |
+| | Condition | Response |                                                     |
+| | --- | --- |                                                                |
+| | Owner requests a valid report | Download file |                            |
+| | Another user requests the report | Access denied |                         |
+| Source: lines 1-8 - Download contract                                        |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [3]: specs/001-data-export/plan.md                                      |
+|                                                                              |
+| Purpose: How report ownership and protection work.                           |
+| Export design                                                                |
+| Implement owner-only downloads and optional password protection.             |
+| Source: lines 1-3 - Export design                                            |
+| Decisions for access checks and protection                                   |
+| - Verify report ownership before reading its rows.                           |
+| - Limit exports to 100 rows.                                                 |
+| - Encrypt protected files before sending them.                               |
+| [Requirements](spec.md)                                                      |
+| Source: lines 5-11 - Export design / Design decisions                        |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [4]: specs/001-data-export/research.md                                  |
+|                                                                              |
+| Purpose: Unresolved choice of encrypted download format.                     |
+| Export research                                                              |
+| Record decisions about password-protected downloads.                         |
+| Source: lines 1-3 - Export research                                          |
+| Encrypted file format remains undecided                                      |
+| Which encrypted file format should owners receive?                           |
+| Source: lines 5-7 - Export research / Open question                          |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [5]: specs/001-data-export/spec.md                                      |
+|                                                                              |
+| Purpose: Rules for owner downloads and export limits.                        |
+| Data export                                                                  |
+| Requirements for downloading a protected report.                             |
+| Source: lines 1-3 - Data export                                              |
+| Download limits and optional protection                                      |
+| - A report owner can download up to 100 rows.                                |
+| - Password protection is optional.                                           |
+| Source: lines 5-8 - Data export / User goals                                 |
+| Only owners may download their reports                                       |
+| Only the report owner may download it.                                       |
+| Source: lines 10-12 - Data export / Access rules                             |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [6]: specs/001-data-export/tasks.md                                     |
+|                                                                              |
+| Purpose: Implementation steps for protected downloads.                       |
+| Implementation steps                                                         |
+| Tasks for the report export feature.                                         |
+| - [ ] Add ownership validation.                                              |
+| - [ ] Add export generation with the 100-row limit.                          |
+| - [ ] Verify protected and unprotected downloads.                            |
+| Source: lines 1-7 - Implementation steps                                     |
++------------------------------------------------------------------------------+
+
 Source snapshot:
 10653813977a31cc87f9bc25b36bc6b4772ed02ca771cf4d260635eb56edc9d7
 
-Specification map (6 files)
-|
-+-- Project principles (1 file)
-|   Shared project rules
-|   |
-|   +-- [1] .specify/memory/constitution.md
-|       Shared ownership and password-handling rules.
-|
-+-- Data export (5 files)
-|   Feature requirements and implementation plan
-|   |
-|   +-- [2] specs/001-data-export/contracts/download.md
-|       Download responses for allowed and denied access.
-|   +-- [3] specs/001-data-export/plan.md
-|       How report ownership and protection work.
-|   +-- [4] specs/001-data-export/research.md
-|       Unresolved choice of encrypted download format.
-|   +-- [5] specs/001-data-export/spec.md
-|       Rules for owner downloads and export limits.
-|   +-- [6] specs/001-data-export/tasks.md
-|       Implementation steps for protected downloads.
-|
-
-Relationships (arrows mean the stated relationship):
-- specs/001-data-export/spec.md -> specs/001-data-export/plan.md: Planning
-  dependency (inferred)
-- specs/001-data-export/plan.md -> specs/001-data-export/tasks.md: Planning
-  dependency (inferred)
-- specs/001-data-export/plan.md -> specs/001-data-export/spec.md: Document
-  reference
-
-Document roles and sources:
-+-- [1] .specify/memory/constitution.md
-|   Framework: spec-kit; role: rules; state: current
-|   Sections: Project principles
-+-- [2] specs/001-data-export/contracts/download.md
-|   Framework: spec-kit; role: contract; state: proposed
-|   Sections: Download contract
-+-- [3] specs/001-data-export/plan.md
-|   Framework: spec-kit; role: design; state: proposed
-|   Sections: Export design; Design decisions
-+-- [4] specs/001-data-export/research.md
-|   Framework: spec-kit; role: research; state: proposed
-|   Sections: Export research; Open question
-+-- [5] specs/001-data-export/spec.md
-|   Framework: spec-kit; role: specification; state: proposed
-|   Sections: Data export; User goals; Access rules
-+-- [6] specs/001-data-export/tasks.md
-|   Framework: spec-kit; role: tasks; state: proposed
-|   Sections: Implementation steps
-
-Choose files by number or full path. Use show <file...> to explore them; add
---detailed for complete selected-file content.
+Use show <file number or path> to explore a file; add --detailed to expand it.

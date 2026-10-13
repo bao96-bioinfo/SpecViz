@@ -2,11 +2,16 @@
 
 from __future__ import annotations
 
+import sys
 import unittest
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/specviz/scripts"))
+
 from specviz.core import parse_blocks, validate_model
+from specviz.layout import Graph
 from specviz.render import display_width, render_changes, render_overview, render_show, split_pages, wrap_text
+from specviz.views import show_view
 
 
 GOLDEN = Path(__file__).parent / "golden"
@@ -66,7 +71,7 @@ class RenderTests(unittest.TestCase):
                 rendered = render_show(inventory, ["design.md"], sample_model(inventory, layout))
                 self.assertEqual(rendered, (GOLDEN / f"{layout}.txt").read_text(encoding="utf-8"))
                 self.assertIn("request starts data retrieval", " ".join(rendered.split()))
-                self.assertIn("(inferred)", rendered)
+                self.assertIn("* Inferred relationship", rendered)
                 self.assertTrue(all(ord(char) < 128 for char in rendered))
 
     def test_details_preserve_nodes_and_relationships(self):
@@ -75,11 +80,14 @@ class RenderTests(unittest.TestCase):
             model = sample_model(inventory, layout)
             concise = render_show(inventory, ["design.md"], model)
             detailed = render_show(inventory, ["design.md"], model, detailed=True)
-            skeleton = lambda value: [line for line in value.splitlines() if line.startswith(("+--", "|   +--", "| ("))]
-            self.assertEqual(skeleton(concise), skeleton(detailed))
+            views = [show_view(inventory, ["design.md"], model, detailed=value) for value in (False, True)]
+            graphs = [next(block for block in view.blocks if isinstance(block, Graph)) for view in views]
+            self.assertEqual([(box.identity, box.title) for box in graphs[0].boxes],
+                             [(box.identity, box.title) for box in graphs[1].boxes])
+            self.assertEqual(graphs[0].edges, graphs[1].edges)
             for item in model["documents"][0]["items"]:
-                self.assertIn(item["label"], concise)
-                self.assertIn(item["label"], detailed)
+                self.assertTrue(any(item["label"] in box.title for box in graphs[0].boxes))
+                self.assertTrue(any(item["label"] in box.title for box in graphs[1].boxes))
             self.assertIn("password-protected", detailed)
 
     def test_exact_fallback_preserves_conditions_and_unknown_question(self):
@@ -112,7 +120,8 @@ class RenderTests(unittest.TestCase):
         relationships = model["documents"][0]["relationships"]
         relationships[:] = [{"from": "step-0", "to": "step-1", "type": "containment", "label": "contains this behavior"}]
         rendered = render_show(inventory, ["design.md"], model)
-        self.assertIn("|   +-- (2) User requests export", rendered)
+        self.assertIn("--> node 2: contains this behavior", rendered)
+        self.assertIn("<-- node 1: contains this behavior", rendered)
         relationships.append({"from": "step-1", "to": "step-0", "type": "containment", "label": "cycle in source"})
         cyclic = render_show(inventory, ["design.md"], model)
         self.assertIn("cycle in source", cyclic)
@@ -147,8 +156,8 @@ class RenderTests(unittest.TestCase):
         rendered = render_overview(inventory)
         self.assertIn("[2] design.md", rendered)
         self.assertIn("Related context outside selected scope (1 file)", rendered)
-        self.assertIn("requirements.md - Export", rendered)
-        self.assertNotIn("[1] requirements.md", rendered)
+        self.assertIn("[1] requirements.md [context] - Export", rendered)
+        self.assertNotIn("[3] tasks.md", rendered)
 
     def test_current_work_annotation_keeps_the_entire_project(self):
         inventory = sample_inventory()
@@ -163,7 +172,7 @@ class RenderTests(unittest.TestCase):
         inventory["project"]["purpose"] = ""
         inventory["documents"][0]["purpose"] = ""
         rendered = render_overview(inventory)
-        self.assertIn("Purpose: Unspecified", rendered)
+        self.assertIn("Purpose unspecified", rendered)
         self.assertIn("Purpose unspecified", rendered)
 
     def test_comparison_highlights_ancestors_and_preserves_other_files(self):
@@ -183,6 +192,29 @@ class RenderTests(unittest.TestCase):
         self.assertIn("changes --detailed", concise)
         self.assertIn("changes --check-code", concise)
         self.assertIn("Completion evidence:", detailed)
+
+    def test_boxed_evidence_preserves_every_status_and_input(self):
+        import copy
+        from specviz.views import changes_view
+        from specviz.layout import Box
+        from specviz.render import _evidence_status
+        for status in ("unknown", "partial", "stale", "contradicted", "reported implemented", "code partial", "code supported", "not found", "task progress"):
+            comparison = sample_comparison()
+            comparison["rows"][1]["status"] = status
+            before = copy.deepcopy(comparison)
+            view = changes_view(sample_inventory(), comparison)
+            claim = next(block for block in view.blocks if isinstance(block, Box) and block.identity == "design.md:evidence:0")
+            self.assertIn("Evidence status: " + _evidence_status(comparison["rows"][1]), claim.body)
+            self.assertTrue(any("verification:" in line.casefold() for line in claim.body))
+            self.assertEqual(comparison, before)
+
+    def test_partial_unchanged_claim_has_an_attention_marker(self):
+        comparison = sample_comparison()
+        comparison["rows"][1].update(difference="unchanged", status="partial")
+        rendered = render_changes(sample_inventory(), comparison)
+        self.assertIn("[attention] Password protection", rendered)
+        self.assertIn("[contains attention] Data export", rendered)
+        self.assertIn("[attention] [2] design.md", rendered)
 
     def test_no_evidence_remains_unknown_not_unimplemented(self):
         rendered = render_changes(sample_inventory(), {"rows": [], "warnings": []})
@@ -283,7 +315,8 @@ class RenderTests(unittest.TestCase):
         inventory = sample_inventory()
         inventory["relationships"][0]["label"] = "Requirements first workflow"
         rendered = render_overview(inventory)
-        self.assertIn("Source snapshot:", rendered)
+        self.assertNotIn("Source snapshot:", rendered)
+        self.assertIn(inventory["snapshot"], render_overview(inventory, detailed=True))
         self.assertIn("requirements guide the design", rendered)
         self.assertNotIn("Requirements first workflow", rendered)
 
@@ -302,7 +335,6 @@ class RenderTests(unittest.TestCase):
             flattened = " ".join(rendered.replace("|", " ").split())
             self.assertIn("Historical source correspondence unresolved", flattened)
             self.assertIn("[source unavailable] former/export-rules.md", rendered)
-            self.assertIn("Historical file: former/export-rules.md", rendered)
             self.assertIn("2 requirements with unresolved correspondence", flattened)
             if detailed:
                 self.assertIn("Earlier reported behavior: Owners may download private reports.", flattened)

@@ -29,7 +29,8 @@ class ViewStore:
         finally:
             Path(name).unlink(missing_ok=True)
 
-    def save(self, inventory: dict, pages: list[str], session: str | None = None) -> str:
+    def save(self, inventory: dict, pages: list[str], session: str | None = None,
+             page_documents: list[list[str]] | None = None, initial_page: int = 1) -> str:
         token = uuid.uuid4().hex
         payload = {"schema_version": 1, "view": token, "root": str(self.project),
                    "snapshot": inventory["snapshot"], "pages": pages,
@@ -37,6 +38,13 @@ class ViewStore:
                                for doc in inventory["documents"]],
                    "selection": [doc["id"] for doc in inventory["documents"]],
                    "visible": inventory.get("scope", []) + inventory.get("context", [])}
+        if page_documents is not None:
+            payload["document_pages"] = {
+                identity: [index for index, refs in enumerate(page_documents, 1) if identity in refs]
+                for identity in payload["selection"] if any(identity in refs for refs in page_documents)}
+            payload["delivered_pages"] = [initial_page]
+            payload["conversation"] = digest(session) if session else None
+            self._visibility(payload)
         self._write(self.directory / f"{token}.json", payload)
         if session:
             self._write(self.directory / f"session-{digest(session)}.json", {"view": token})
@@ -59,6 +67,25 @@ class ViewStore:
                 raise ValidationError("Displayed source moved or became unavailable; refresh the overview") from exc
         return payload
 
+    @staticmethod
+    def _visibility(payload: dict) -> None:
+        delivered = set(payload["delivered_pages"])
+        payload["visible"] = [identity for identity, pages in payload["document_pages"].items()
+                              if pages and set(pages).issubset(delivered)]
+
+    def deliver(self, token: str, page: int, session: str | None = None) -> dict:
+        payload = self.load(token)
+        if not 1 <= page <= len(payload["pages"]):
+            raise ValidationError("No such continuation page")
+        if "document_pages" in payload:
+            expected = payload.get("conversation")
+            if expected is not None and expected != (digest(session) if session else None):
+                raise ValidationError("Continuation belongs to another conversation; use the original --session")
+            payload["delivered_pages"] = sorted(set(payload["delivered_pages"]) | {page})
+            self._visibility(payload)
+            self._write(self.directory / f"{token}.json", payload)
+        return payload
+
     def latest(self, session: str) -> dict:
         try:
             value = json.loads((self.directory / f"session-{digest(session)}.json").read_text(encoding="utf-8"))
@@ -76,7 +103,7 @@ class ViewStore:
                 if not 0 <= index < len(paths):
                     raise ValidationError(f"No file {selection} in the displayed inventory")
                 if paths[index] not in payload.get("visible", paths):
-                    raise ValidationError(f"File {selection} was outside the latest displayed map; select a path or refresh overview")
+                    raise ValidationError(f"File {selection} has not been exposed in this conversation; continue the file key or select a path")
                 result.append(paths[index])
             else:
                 result.append(selection)

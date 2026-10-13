@@ -76,5 +76,66 @@ differences. Expand unfamiliar abbreviations in labels; exact paths and source
 identifiers can remain. Distinguish documented relationships from inferences.
 Keep concise and detailed diagrams on the same model and source snapshot.
 
+### Project explanation and concise summaries
+
+Version 1 also accepts `summary` on a document item: optional plain text shown
+inside its concise box. Keep `notes` comprehensive for detailed mode. A title
+can stand alone; add a sentence when it makes the behavior clearer.
+
+Supply `project_view` for an overview of the project's behavior or components:
+
+```json
+{
+  "nodes": [{
+    "id": "prepare-export",
+    "label": "Prepare the report file",
+    "summary": "Include at most 100 rows. Encrypt it if the owner requests protection.",
+    "sources": [{"document": "design.md", "blocks": ["design.md:L3-3"]}]
+  }],
+  "relationships": [],
+  "unresolved_documents": []
+}
+```
+
+Use actual inventory IDs in this structure. A relationship has `from`, `to`,
+`type`, a readable `label`, boolean `inferred`, and the same source-reference
+objects as nodes. Types are `workflow`, `interaction`, `condition`, `containment`,
+`reference`, and `reading`; none imply application execution unless the sources
+establish it. Every behavioral node and relationship needs real source blocks.
+Mark inferences explicitly. Framework-derived document dependencies come from
+discovery and must stay distinguishable from behavior.
+
+A collapsed node uses `kind: "group"` and an explicit `members` list of document
+IDs. It can omit sources when it only groups those documents. Every scoped
+document must occur in a node's sources, group membership, or
+`unresolved_documents`. References may include the inventory's related context,
+which the view labels separately; they cannot silently widen local scope.
+
+Build the project graph for the requested overview scope. `show` and `changes`
+need document interpretations, not a project graph: omit `project_view` from
+those models. Reusing a global graph for a local request can correctly fail
+out-of-scope reference validation even when its source snapshot is unchanged.
+
+Models without `project_view` remain valid and receive a boxed document map.
+Missing project meaning stays unresolved. Structural validation checks identity,
+references, and accounting; review the actual sources to establish whether an
+explanation is accurate and understandable. This addition changes no source,
+requirement, report, or implementation identity.
+
+### Rendering contract
+
+The shared layout module represents a view as measured `Box`, `Graph`, and
+`TextBlock` objects. `View.render()` produces ordinary text. Existing public
+renderer functions continue returning strings; command rendering can retain the
+structured view for pagination. Text is wrapped inside boxes before routing;
+completed diagram lines must never be wrapped again.
+
+Graph panels keep stable identities and carry incoming and outgoing named ports
+when they cannot share a drawing. File keys are text blocks with document
+identities and a common directory context, printed once per contiguous key.
+Only blocks that actually expose a number and its file identity mark that file
+as displayed. A behavior box merely referring to a numbered source does not
+establish that the file key has already been delivered.
+
 Read [evidence.md](evidence.md) only for implementation reports or comparison;
 read [inspection.md](inspection.md) only for explicit code inspection.

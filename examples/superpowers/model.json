@@ -34,7 +34,8 @@
           ],
           "notes": [
             "- [ ] Validate report ownership.\n- [ ] Apply the 100-row limit.\n- [ ] Encrypt files when a password is supplied."
-          ]
+          ],
+          "summary": "- [ ] Validate report ownership.\n- [ ] Apply the 100-row limit.\n- [ ] Encrypt files when a password is supplied."
         }
       ],
       "relationships": [
@@ -62,7 +63,8 @@
           ],
           "notes": [
             "Provide owner-only report downloads with optional password protection."
-          ]
+          ],
+          "summary": "Provide owner-only report downloads with optional password protection."
         },
         {
           "id": "docs/superpowers/specs/2026-10-01-data-export-design.md#data-export-design-goals:1",
@@ -75,7 +77,8 @@
           ],
           "notes": [
             "- Export no more than 100 rows.\n- Preserve existing access controls."
-          ]
+          ],
+          "summary": "- Export no more than 100 rows.\n- Preserve existing access controls."
         },
         {
           "id": "docs/superpowers/specs/2026-10-01-data-export-design.md#data-export-design-decisions:1",
@@ -87,7 +90,8 @@
           ],
           "notes": [
             "Encrypt protected files before delivery and never log passwords."
-          ]
+          ],
+          "summary": "Encrypt protected files before delivery and never log passwords."
         }
       ],
       "relationships": [
@@ -107,5 +111,107 @@
         }
       ]
     }
-  ]
+  ],
+  "project_view": {
+    "nodes": [
+      {
+        "id": "owner",
+        "label": "Download your own report",
+        "summary": "Keep the owner access check and export no more than 100 rows.",
+        "sources": [
+          {
+            "document": "docs/superpowers/plans/2026-10-02-data-export.md",
+            "blocks": [
+              "docs/superpowers/plans/2026-10-02-data-export.md:L1-1",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L3-3",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L5-5",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L7-7",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L9-9",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L10-10",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L11-11"
+            ]
+          },
+          {
+            "document": "docs/superpowers/specs/2026-10-01-data-export-design.md",
+            "blocks": [
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L1-1",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L3-3",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L5-5",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L7-7",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L8-8",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L10-10",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L12-12"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "protect",
+        "label": "Choose password protection",
+        "summary": "If a password is supplied, encrypt the file before delivery. Never log passwords.",
+        "sources": [
+          {
+            "document": "docs/superpowers/plans/2026-10-02-data-export.md",
+            "blocks": [
+              "docs/superpowers/plans/2026-10-02-data-export.md:L1-1",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L3-3",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L5-5",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L7-7",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L9-9",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L10-10",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L11-11"
+            ]
+          },
+          {
+            "document": "docs/superpowers/specs/2026-10-01-data-export-design.md",
+            "blocks": [
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L1-1",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L3-3",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L5-5",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L7-7",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L8-8",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L10-10",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L12-12"
+            ]
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "from": "owner",
+        "to": "protect",
+        "label": "optional password",
+        "type": "condition",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "docs/superpowers/plans/2026-10-02-data-export.md",
+            "blocks": [
+              "docs/superpowers/plans/2026-10-02-data-export.md:L1-1",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L3-3",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L5-5",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L7-7",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L9-9",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L10-10",
+              "docs/superpowers/plans/2026-10-02-data-export.md:L11-11"
+            ]
+          },
+          {
+            "document": "docs/superpowers/specs/2026-10-01-data-export-design.md",
+            "blocks": [
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L1-1",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L3-3",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L5-5",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L7-7",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L8-8",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L10-10",
+              "docs/superpowers/specs/2026-10-01-data-export-design.md:L12-12"
+            ]
+          }
+        ]
+      }
+    ],
+    "unresolved_documents": []
+  }
 }

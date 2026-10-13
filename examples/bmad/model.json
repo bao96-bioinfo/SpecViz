@@ -18,7 +18,8 @@
           ],
           "notes": [
             "Help report owners download and share protected reports."
-          ]
+          ],
+          "summary": "Help report owners download and share protected reports."
         },
         {
           "id": "planning/initiative-reporting/brief-reporting/brief-reporting.md#reporting-brief-goals:1",
@@ -31,7 +32,8 @@
           ],
           "notes": [
             "- Make downloads easy to find.\n- Preserve owner access controls."
-          ]
+          ],
+          "summary": "- Make downloads easy to find.\n- Preserve owner access controls."
         }
       ],
       "relationships": [
@@ -71,7 +73,8 @@
           ],
           "notes": [
             "Owners can export at most 100 rows with optional password protection."
-          ]
+          ],
+          "summary": "Owners can export at most 100 rows with optional password protection."
         },
         {
           "id": "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md#data-export-rules:1",
@@ -84,7 +87,8 @@
           ],
           "notes": [
             "- Reject requests from another user.\n- Do not log passwords."
-          ]
+          ],
+          "summary": "- Reject requests from another user.\n- Do not log passwords."
         }
       ],
       "relationships": [
@@ -130,7 +134,8 @@
           ],
           "notes": [
             "The build report describes protected download work awaiting completion confirmation."
-          ]
+          ],
+          "summary": "The build report describes protected download work awaiting completion confirmation."
         },
         {
           "id": "planning/initiative-reporting/epic-data-export/story-export-plan.md#export-implementation-plan-tasks:1",
@@ -143,7 +148,8 @@
           ],
           "notes": [
             "- [x] Add the owner check.\n- [x] Add protected exports with the 100-row limit."
-          ]
+          ],
+          "summary": "- [x] Add the owner check.\n- [x] Add protected exports with the 100-row limit."
         },
         {
           "id": "planning/initiative-reporting/epic-data-export/story-export-plan.md#export-implementation-plan-verification:1",
@@ -155,7 +161,8 @@
           ],
           "notes": [
             "No verification report is attached."
-          ]
+          ],
+          "summary": "No verification report is attached."
         }
       ],
       "relationships": [
@@ -205,5 +212,137 @@
       ],
       "relationships": []
     }
-  ]
+  ],
+  "project_view": {
+    "nodes": [
+      {
+        "id": "owner",
+        "label": "Report owners request downloads",
+        "summary": "Make downloads easy to find and reject requests from another user.",
+        "sources": [
+          {
+            "document": "planning/initiative-reporting/brief-reporting/brief-reporting.md",
+            "blocks": [
+              "planning/initiative-reporting/brief-reporting/brief-reporting.md:L1-1",
+              "planning/initiative-reporting/brief-reporting/brief-reporting.md:L3-3",
+              "planning/initiative-reporting/brief-reporting/brief-reporting.md:L5-5",
+              "planning/initiative-reporting/brief-reporting/brief-reporting.md:L7-7",
+              "planning/initiative-reporting/brief-reporting/brief-reporting.md:L8-8"
+            ]
+          },
+          {
+            "document": "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md",
+            "blocks": [
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L1-1",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L3-3",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L5-5",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L7-7",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L9-9",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L11-11",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L12-12"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "download",
+        "label": "Create protected downloads",
+        "summary": "Export at most 100 rows. Password protection is optional; never log passwords.",
+        "sources": [
+          {
+            "document": "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md",
+            "blocks": [
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L1-1",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L3-3",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L5-5",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L7-7",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L9-9",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L11-11",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L12-12"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "work",
+        "label": "Track the planned work",
+        "summary": "The story plan marks its tasks complete but still awaits completion confirmation. No verification report is attached. A follow-up story reviews download errors without exposing passwords.",
+        "sources": [
+          {
+            "document": "planning/initiative-reporting/epic-data-export/story-export-plan.md",
+            "blocks": [
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L1-4",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L6-6",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L8-8",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L10-10",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L12-12",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L13-13",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L15-15",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L17-17"
+            ]
+          },
+          {
+            "document": "planning/initiative-reporting/epic-data-export/tickets.toml",
+            "blocks": [
+              "planning/initiative-reporting/epic-data-export/tickets.toml:L1-6",
+              "planning/initiative-reporting/epic-data-export/tickets.toml:L8-13"
+            ]
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "from": "owner",
+        "to": "download",
+        "label": "owner request",
+        "type": "condition",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md",
+            "blocks": [
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L1-1",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L3-3",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L5-5",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L7-7",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L9-9",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L11-11",
+              "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md:L12-12"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "download",
+        "to": "work",
+        "label": "work and review for this feature",
+        "type": "reference",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "planning/initiative-reporting/epic-data-export/story-export-plan.md",
+            "blocks": [
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L1-4",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L6-6",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L8-8",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L10-10",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L12-12",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L13-13",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L15-15",
+              "planning/initiative-reporting/epic-data-export/story-export-plan.md:L17-17"
+            ]
+          },
+          {
+            "document": "planning/initiative-reporting/epic-data-export/tickets.toml",
+            "blocks": [
+              "planning/initiative-reporting/epic-data-export/tickets.toml:L1-6",
+              "planning/initiative-reporting/epic-data-export/tickets.toml:L8-13"
+            ]
+          }
+        ]
+      }
+    ],
+    "unresolved_documents": []
+  }
 }

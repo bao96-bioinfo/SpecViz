@@ -21,7 +21,8 @@
           "notes": [
             "Protect sensitive report content.",
             "- Owners alone may download their reports.\n- Passwords must never appear in logs."
-          ]
+          ],
+          "summary": "Protect sensitive report content."
         }
       ],
       "relationships": []
@@ -63,7 +64,8 @@
           ],
           "notes": [
             "Implement owner-only downloads and optional password protection."
-          ]
+          ],
+          "summary": "Implement owner-only downloads and optional password protection."
         },
         {
           "id": "specs/001-data-export/plan.md#export-design-design-decisions:1",
@@ -79,7 +81,8 @@
           "notes": [
             "- Verify report ownership before reading its rows.\n- Limit exports to 100 rows.\n- Encrypt protected files before sending them.",
             "[Requirements](spec.md)"
-          ]
+          ],
+          "summary": "- Verify report ownership before reading its rows.\n- Limit exports to 100 rows.\n- Encrypt protected files before sending them."
         }
       ],
       "relationships": [
@@ -119,7 +122,8 @@
           ],
           "notes": [
             "Which encrypted file format should owners receive?"
-          ]
+          ],
+          "summary": "Which encrypted file format should owners receive?"
         }
       ],
       "relationships": [
@@ -160,7 +164,8 @@
           ],
           "notes": [
             "- A report owner can download up to 100 rows.\n- Password protection is optional."
-          ]
+          ],
+          "summary": "- A report owner can download up to 100 rows.\n- Password protection is optional."
         },
         {
           "id": "specs/001-data-export/spec.md#data-export-access-rules:1",
@@ -172,7 +177,8 @@
           ],
           "notes": [
             "Only the report owner may download it."
-          ]
+          ],
+          "summary": "Only the report owner may download it."
         }
       ],
       "relationships": [
@@ -216,5 +222,122 @@
       ],
       "relationships": []
     }
-  ]
+  ],
+  "project_view": {
+    "nodes": [
+      {
+        "id": "owner",
+        "label": "Check report ownership",
+        "summary": "Only owners may download their reports. Deny requests from anyone else.",
+        "sources": [
+          {
+            "document": ".specify/memory/constitution.md",
+            "blocks": [
+              ".specify/memory/constitution.md:L1-1",
+              ".specify/memory/constitution.md:L3-3",
+              ".specify/memory/constitution.md:L5-5",
+              ".specify/memory/constitution.md:L6-6"
+            ]
+          },
+          {
+            "document": "specs/001-data-export/contracts/download.md",
+            "blocks": [
+              "specs/001-data-export/contracts/download.md:L1-1",
+              "specs/001-data-export/contracts/download.md:L3-3",
+              "specs/001-data-export/contracts/download.md:L5-8"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "download",
+        "label": "Create the download",
+        "summary": "Limit the file to 100 rows. Password protection is optional; encrypt protected files before sending them and never log passwords.",
+        "sources": [
+          {
+            "document": "specs/001-data-export/plan.md",
+            "blocks": [
+              "specs/001-data-export/plan.md:L1-1",
+              "specs/001-data-export/plan.md:L3-3",
+              "specs/001-data-export/plan.md:L5-5",
+              "specs/001-data-export/plan.md:L7-7",
+              "specs/001-data-export/plan.md:L8-8",
+              "specs/001-data-export/plan.md:L9-9",
+              "specs/001-data-export/plan.md:L11-11"
+            ]
+          },
+          {
+            "document": "specs/001-data-export/spec.md",
+            "blocks": [
+              "specs/001-data-export/spec.md:L1-1",
+              "specs/001-data-export/spec.md:L3-3",
+              "specs/001-data-export/spec.md:L5-5",
+              "specs/001-data-export/spec.md:L7-7",
+              "specs/001-data-export/spec.md:L8-8",
+              "specs/001-data-export/spec.md:L10-10",
+              "specs/001-data-export/spec.md:L12-12"
+            ]
+          },
+          {
+            "document": "specs/001-data-export/tasks.md",
+            "blocks": [
+              "specs/001-data-export/tasks.md:L1-1",
+              "specs/001-data-export/tasks.md:L3-3",
+              "specs/001-data-export/tasks.md:L5-5",
+              "specs/001-data-export/tasks.md:L6-6",
+              "specs/001-data-export/tasks.md:L7-7"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "question",
+        "label": "Download format undecided",
+        "summary": "Which encrypted file format should owners receive?",
+        "sources": [
+          {
+            "document": "specs/001-data-export/research.md",
+            "blocks": [
+              "specs/001-data-export/research.md:L1-1",
+              "specs/001-data-export/research.md:L3-3",
+              "specs/001-data-export/research.md:L5-5",
+              "specs/001-data-export/research.md:L7-7"
+            ]
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "from": "owner",
+        "to": "download",
+        "label": "owner accepted",
+        "type": "condition",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "specs/001-data-export/plan.md",
+            "blocks": [
+              "specs/001-data-export/plan.md:L1-1",
+              "specs/001-data-export/plan.md:L3-3",
+              "specs/001-data-export/plan.md:L5-5",
+              "specs/001-data-export/plan.md:L7-7",
+              "specs/001-data-export/plan.md:L8-8",
+              "specs/001-data-export/plan.md:L9-9",
+              "specs/001-data-export/plan.md:L11-11"
+            ]
+          },
+          {
+            "document": "specs/001-data-export/contracts/download.md",
+            "blocks": [
+              "specs/001-data-export/contracts/download.md:L1-1",
+              "specs/001-data-export/contracts/download.md:L3-3",
+              "specs/001-data-export/contracts/download.md:L5-8"
+            ]
+          }
+        ]
+      }
+    ],
+    "unresolved_documents": []
+  }
 }

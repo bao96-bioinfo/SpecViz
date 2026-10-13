@@ -214,6 +214,8 @@ def validate_model(model: dict, inventory: dict) -> dict:
             item_ids.add(item["id"])
             if not isinstance(item.get("label"), str) or not item["label"].strip():
                 raise ValidationError("Semantic item needs a readable label")
+            if "summary" in item and not isinstance(item["summary"], str):
+                raise ValidationError("Item summary must be text")
             references = item.get("sources")
             if not isinstance(references, list) or not references or not set(references) <= sources:
                 raise ValidationError("Semantic item has missing or invented source references")
@@ -229,8 +231,85 @@ def validate_model(model: dict, inventory: dict) -> dict:
         for relation in doc.get("relationships", []):
             if relation.get("from") not in item_ids or relation.get("to") not in item_ids:
                 raise ValidationError("Interpretation relation refers to an unknown item")
-            if relation.get("type") not in {"containment", "reference", "workflow", "reading", "interaction", "condition"}:
+            if (not isinstance(relation.get("type"), str) or
+                relation["type"] not in {"containment", "reference", "workflow", "reading", "interaction", "condition"}):
                 raise ValidationError("Unsupported semantic relationship type")
     if set(inventory.get("scope", known)) - seen:
         raise ValidationError("Interpretation omits selected documents")
+    if "project_view" in model:
+        _validate_project_view(model["project_view"], inventory)
     return model
+
+
+def _validate_project_view(view: dict, inventory: dict) -> None:
+    """Check references and accounting, without certifying a paraphrase's meaning."""
+    if not isinstance(view, dict) or not isinstance(view.get("nodes"), list):
+        raise ValidationError("Project view needs a list of nodes")
+    known = {doc["id"]: {block["id"] for block in doc["blocks"]}
+             for doc in inventory["documents"]}
+    scope = set(inventory.get("scope", known))
+    visible = scope | set(inventory.get("context", []))
+
+    def documents(values: object) -> set[str]:
+        if (not isinstance(values, list) or any(not isinstance(v, str) for v in values)
+                or len(set(values)) != len(values) or not set(values) <= visible):
+            raise ValidationError("Project view has unknown, duplicate, or out-of-scope document membership")
+        return set(values)
+
+    def sources(values: object, required: bool = True) -> set[str]:
+        if not isinstance(values, list) or (required and not values):
+            raise ValidationError("Project item needs source references")
+        referenced = set()
+        for ref in values:
+            if not isinstance(ref, dict) or not isinstance(ref.get("document"), str):
+                raise ValidationError("Project source needs a document and block references")
+            identity, blocks = ref["document"], ref.get("blocks")
+            if (identity not in visible or not isinstance(blocks, list) or not blocks
+                    or any(not isinstance(b, str) for b in blocks)
+                    or not set(blocks) <= known[identity]):
+                raise ValidationError("Project item has missing or invented source references")
+            referenced.add(identity)
+        return referenced
+
+    def label(item: dict) -> None:
+        if not isinstance(item.get("label"), str) or not item["label"].strip():
+            raise ValidationError("Project item needs a readable label")
+        if "summary" in item and not isinstance(item["summary"], str):
+            raise ValidationError("Project summary must be text")
+
+    ids: set[str] = set()
+    covered: set[str] = set()
+    for node in view["nodes"]:
+        if not isinstance(node, dict):
+            raise ValidationError("Project node must be an object")
+        identity = node.get("id")
+        if not isinstance(identity, str) or not identity.strip() or identity in ids:
+            raise ValidationError("Project node identities must be unique nonempty strings")
+        ids.add(identity)
+        label(node)
+        members = documents(node.get("members", []))
+        if members and node.get("kind") != "group":
+            raise ValidationError("Document membership requires an explicit group node")
+        if node.get("kind") == "group" and not members:
+            raise ValidationError("A project group must name its member documents")
+        covered.update(members)
+        covered.update(sources(node.get("sources", []), required=not members))
+    relations = view.get("relationships", [])
+    if not isinstance(relations, list):
+        raise ValidationError("Project relationships must be a list")
+    for relation in relations:
+        if not isinstance(relation, dict):
+            raise ValidationError("Project relationship must be an object")
+        if (not isinstance(relation.get("from"), str) or not isinstance(relation.get("to"), str)
+                or relation["from"] not in ids or relation["to"] not in ids):
+            raise ValidationError("Project relationship refers to an unknown endpoint")
+        if (not isinstance(relation.get("type"), str) or
+                relation["type"] not in {"containment", "reference", "workflow", "reading", "interaction", "condition"}):
+            raise ValidationError("Unsupported project relationship type")
+        if not isinstance(relation.get("inferred"), bool):
+            raise ValidationError("Project relationship must identify whether it is inferred")
+        label(relation)
+        sources(relation.get("sources"))
+    covered.update(documents(view.get("unresolved_documents", [])))
+    if scope - covered:
+        raise ValidationError("Project view omits selected documents: " + ", ".join(sorted(scope - covered)))

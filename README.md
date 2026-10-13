@@ -1,90 +1,101 @@
-![A pile of specification text crossed out in red, beside SpecViz organizing the same files into a clear text diagram inside a chat.](docs/assets/specviz-overview.png)
-
 # SpecViz
 
-**Your agent wrote the specs. SpecViz turns it into diagrams.**
+**See the plan before reading every specification.**
 
-SpecViz turns specification files into **text diagrams inside your coding
-chat**. See what the project does, how its documents connect, and what each
-file means. Start with the big picture; choose when to go deeper.
-
-**Codex · Claude Code · Antigravity**
+SpecViz turns your specs into connected **text boxes inside your coding chat**.
+Follow the behavior, understand the conditions, then choose a file to explore.
+Works with **Codex · Claude Code · Antigravity**.
 
 [Get started](#quick-start) · [Commands](#three-commands-one-workflow) ·
-[More examples](examples/README.md) · [Compatibility](docs/compatibility.md)
+[Eight-file example](examples/diagram-first/README.md) · [Compatibility](docs/compatibility.md)
 
-## From three files to one clear picture
+## Three files. One visible workflow.
 
-Your agent has planned a **report-download feature** across three files.
-Who can download a report? How many rows can it contain? When is it encrypted?
-SpecViz connects those details in two steps.
+An agent spread a report-download feature across `requirements.md`, `design.md`,
+and `tasks.md`. Ask `/specviz overview` (Codex: `$specviz overview`):
+
+<!-- example: examples/kiro/overview.txt -->
+```text
+Reporting service - Export reports with owner access controls and clear download
+limits.
+
+Specification map (3 files)
+
+                     +------------------------------------+
+                     | Check report ownership             |
+                     |                                    |
+                     | Reject requests from anyone except |
+                     | the report owner.                  |
+                     | Files: [1] [3]                     |
+                     +------------------------------------+
+                                        |
+                                        |
+                                 owner accepted
+                                        |
+                                        v
+                     +------------------------------------+
+                     | Collect report rows                |
+                     |                                    |
+                     | Export at most 100 rows.           |
+                     | Files: [1] [2]                     |
+                     +------------------------------------+
+                                        |
+                   +--------------------+--------------------+
+          password supplied                            no password
+                   |                                         |
+                   v                                         v
++------------------------------------+    +------------------------------------+
+| Protect the download               |    | Continue without protection        |
+|                                    |    |                                    |
+| Encrypt the file when its owner    |    | Password protection is optional.   |
+| supplies a password. Never log the |    | Files: [1]                         |
+| password.                          |    |                                    |
+| Files: [2]                         |    |                                    |
++------------------------------------+    +------------------------------------+
+                   |                                         |
+                   |                                         |
+            encrypted file                           unprotected file
+                   +--------------------+--------------------+
+                                        v
+                     +------------------------------------+
+                     | Download the report                |
+                     |                                    |
+                     | Files: [2]                         |
+                     +------------------------------------+
+
+Files (3 files) under .kiro/specs/data-export/:
+[1] design.md
+[2] requirements.md
+[3] tasks.md
+
+Use show <file number or path> to explore a file; add --detailed to expand it.
+```
+
+This is actual output from the [Kiro example](examples/kiro/README.md).
+The arrows show what happens. File keys show where the rules live.
+No diagram viewer, browser, or downloaded image is needed.
 
 <details>
-<summary>See the specification text behind this example</summary>
+<summary>Compare with the specification text</summary>
 
-Shortened excerpts from the [Kiro Specs example](examples/kiro/README.md).
-All three files live in `.kiro/specs/data-export/`:
+Shortened source excerpts from `.kiro/specs/data-export/`:
 
 ```text
 requirements.md
   When an owner requests a report, export at most 100 rows.
   If a password is supplied, encrypt the file. Never log the password.
-
 design.md
   Check ownership, collect report rows, optionally encrypt the download.
   Reject requests from anyone except the owner. Keep the 100-row limit.
-
 tasks.md
   [ ] Validate report ownership.
   [ ] Add bounded export generation.
   [ ] Verify optional encryption and password handling.
 ```
 
+![Specification text beside SpecViz's in-chat diagrams.](docs/assets/specviz-overview.png)
+
 </details>
-
-**1. Get the project map.** See each file's purpose before choosing what to read.
-
-```text
-You: /specviz overview
-
-Reporting service
-Purpose: Let report owners download reports with optional password protection.
-|
-+-- Data export - 3 specification files
-    |
-    +-- requirements.md  Rules for access, row limits, and passwords
-    +-- design.md        How ownership checks and encryption work
-    +-- tasks.md         Steps to build and verify the feature
-
-Suggested reading order:
-requirements.md --> design.md --> tasks.md
-
-SpecViz: Which file would you like to explore?
-```
-
-**2. Pick a file. Follow the behavior.** Open `design.md` to understand the
-download flow and the rules it draws from `requirements.md`.
-
-```text
-You: /specviz show design.md
-
-Someone requests a report
-|
-Is this person the report owner?
-+-- No  --> Reject the request
-+-- Yes --> Collect at most 100 rows
-            |
-            Was a password supplied?
-            +-- Yes --> Encrypt the file --> Download
-            +-- No  -----------------------> Download
-
-Password rule: Never write the password to logs.
-```
-
-Now you can follow who gets a download, where the limit applies, and when
-encryption happens. These shortened views illustrate the specified behavior;
-full views include source paths and references. Commands below use `/specviz`;
-in Codex, use `$specviz` with the same arguments.
 
 ## Quick start
 
@@ -125,69 +136,55 @@ Examples use `/specviz`; in Codex, use `$specviz` with the same arguments.
 | `/specviz show design.md tasks.md` | Explain the files you choose. |
 | `/specviz changes` | Compare the current specs with reported implementation. |
 
-Focus on a feature with `/specviz overview openspec/changes/data-export`.
+Focus on a feature with `/specviz overview openspec/changes/password-export`.
 Use full paths when filenames repeat, and quote paths containing spaces.
 [All commands and options →](docs/commands.md)
 
 ## Choose how much to read
 
-The default view gives you the essentials. Add **`--detailed`** to expand the
-same structure with conditions, exceptions, and open questions:
+Start with the project map. In the example above, `/specviz show 2` opens the
+requirements; `/specviz show 2 --detailed` expands the same nodes with complete
+source notes, conditions, and open questions. The file number comes from your
+conversation's displayed key. You can always use a full path instead.
 
+`--detailed` works with all three actions. Long diagrams continue in closed
+panels; follow the continuation hint to reveal the remaining content and file
+keys. For a larger branch-and-join example, explore the
+[eight-file training workflow](examples/diagram-first/README.md).
+
+## See what still needs implementation evidence
+
+`/specviz changes` compares current specifications with workflow completion and
+verification reports. Changed files and their groups are marked in the map;
+each behavior gets its own evidence box. Here is one actual box from the
+[report-based example](examples/comparison/reports.txt):
+
+<!-- example excerpt: examples/comparison/reports.txt -->
 ```text
-You: /specviz show requirements.md
+File [2]: design.md
 
-Export rules
-+-- Owner downloads: at most 100 rows
-+-- Optional encryption; passwords never logged
-
-You: /specviz show requirements.md --detailed
-
-Export rules
-+-- Owner downloads: at most 100 rows
-|   When an owner requests a report, export at most 100 rows.
-+-- Optional encryption; passwords never logged
-    When an owner supplies a password, encrypt the file.
-    Never log that password.
++------------------------------------------------------------------------------+
+| [changed] Export design                                                      |
+|                                                                              |
+| Difference: behavioral                                                       |
+| Evidence status: Earlier behavior reported implemented                       |
+| Password protection adds a requested obligation to earlier file creation     |
+| Earlier behavior verification: Unavailable; passing checks are not           |
+| established.                                                                 |
++------------------------------------------------------------------------------+
 ```
 
-These excerpts show the two reading depths. `--detailed` works with
-`overview`, `show`, and `changes`. Depending on the content, SpecViz uses a
-tree, a flow, an interaction diagram, or a rule table.
+The previous report covers file creation. Password protection is a newer
+request. Displaying another diagram never clears that difference, and missing
+evidence means **unknown implementation**.
 
-## See what changed since implementation
+Use `/specviz changes --check-code` to request a separate inspection of relevant
+code and existing test definitions. It does not execute tests or change code.
+Ordinary overview and file views only explain the specifications.
 
-A new password requirement touches more than one file. `changes` highlights
-it in the feature map and shows the implementation evidence underneath:
-
-```text
-You: /specviz changes
-
-Reporting service - Download reports safely
-|
-+-- Data export [contains changes]
-    +-- requirements.md  Export rules        [unchanged]
-    +-- design.md        Password protection [changed]
-    +-- tasks.md         Add protection      [changed]
-
-Earlier report: File creation implemented.
-Password protection: No matching completion evidence.
-Verification: Unavailable.
-```
-
-This shortened [comparison example](examples/comparison/README.md) uses
-workflow completion and verification reports. The comparison stays tied to
-reported implementation when you display another diagram. Missing evidence
-means **unknown implementation**.
-
-Add `/specviz changes --check-code` to ask your agent to inspect relevant
-code and existing test evidence. Inspection reads files without running tests
-or changing your implementation.
-
-Reports currently need an explicit SpecViz workflow handoff; native framework
-reports are not imported automatically.
-[Connect a workflow](docs/installation.md#workflow-handoffs) ·
-[Understand the evidence](docs/comparison.md)
+Reports need an explicit SpecViz handoff; native framework reports are not
+imported automatically. [Connect a workflow](docs/installation.md#workflow-handoffs)
+· [Understand the evidence](docs/comparison.md)
 
 ## Bring your existing specs
 
@@ -204,8 +201,8 @@ Keep your specification workflow and use SpecViz to explore what it produces:
 You can also select other Markdown files for generic views. Framework readers
 and agent integrations are separate, making room for more of both.
 
-Live checks cover the terminal interfaces of Codex, Claude Code, and
-Antigravity. Desktop and editor interfaces have not been validated.
+Installation checks cover all three agents. Live conversation results are
+versioned separately; see the [acceptance record](docs/acceptance.md).
 [Supported layouts and limits →](docs/compatibility.md)
 
 ## Explore further

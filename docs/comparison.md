@@ -5,6 +5,12 @@ paths to select a feature or files. `--detailed` adds the previously implemented
 text, requested text, sources, and reason. `--check-code` explicitly asks the
 agent to inspect relevant code and existing tests without executing them.
 
+Changes use the same text boxes and document connectors as other views. Group
+and file boxes retain unchanged context while marking requested changes or
+uncertain evidence. Each behavior box keeps its evidence status, explanation,
+and verification limits together. Detailed mode expands that same claim with
+retained wording and report or inspection sources. No display creates a report.
+
 ## What the labels mean
 
 | Label | Meaning |
@@ -25,15 +31,17 @@ passed, and code support does not establish a test run.
 ## Earlier implementation, newer requested behavior
 
 ```text
-Reporting service
-|
-+-- [contains changes] Data export
-    +-- [changed] design.md  Export protection
-        +-- Password protection: requested change
+File [2]: design.md
 
-Previously reported: Create export files.
-Currently requested: Create password protected export files.
-Basis: workflow report; verification unavailable.
++------------------------------------------------------------------------------+
+| [changed] Export design                                                      |
+|                                                                              |
+| Difference: behavioral                                                       |
+| Evidence status: Earlier behavior reported implemented                       |
+| Password protection adds a requested obligation to earlier file creation     |
+| Earlier behavior verification: Unavailable; passing checks are not           |
+| established.                                                                 |
++------------------------------------------------------------------------------+
 ```
 
 The earlier implemented text remains the reference when specifications change.
@@ -49,14 +57,9 @@ reference; changes to actual application sources still make it stale.
 
 ## Missing reports and partial completion
 
-```text
-Data export
-+-- Create files: reported implemented
-+-- Reject invalid formats: partial / outstanding portions described in report
-+-- Password protection: implementation unknown
-
-No reference for password protection. Optional next command: changes --check-code
-```
+See the [complete report-based output](../examples/comparison/reports.txt)
+for implemented and changed behavior in the same map. Each box carries its own
+evidence and verification limits; unknown and partial states are not completion.
 
 Missing history does not demonstrate unmet behavior. The existing project may
 already implement it. A report for one feature or one part of a requirement does
@@ -101,11 +104,20 @@ rejects invented sources and comparisons against superseded reports.
 ## Reports and inspection can disagree
 
 ```text
-Data export
-+-- Export creation: contradicted
-    Workflow: reported implemented; verification unavailable
-    Inspection: current guard rejects creation (export.py:18)
-    Attention: both evidence sources require review
+File [2]: design.md
+
++------------------------------------------------------------------------------+
+| [changed] Export design                                                      |
+|                                                                              |
+| Difference: behavioral                                                       |
+| Evidence status: Current code contradicts requested behavior                 |
+| The password guard raises an error instead of protecting the file; current   |
+| code contradicts retained workflow completion evidence                       |
+| Verification: Unavailable; passing checks are not established.               |
+| Code finding: contradicted                                                   |
+| Inspection limit: Observation only; workflow rounds unchanged and tests were |
+| not executed.                                                                |
++------------------------------------------------------------------------------+
 ```
 
 Inspection is separate history, so this discrepancy never rewrites the original

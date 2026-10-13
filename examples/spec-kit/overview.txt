@@ -1,39 +1,40 @@
-Specification overview
-Project: Reporting service
-Purpose: Export reports with owner access controls and clear download limits.
-Source snapshot:
-10653813977a31cc87f9bc25b36bc6b4772ed02ca771cf4d260635eb56edc9d7
+Reporting service - Export reports with owner access controls and clear download
+limits.
 
 Specification map (6 files)
-|
-+-- Project principles (1 file)
-|   Shared project rules
-|   |
-|   +-- [1] .specify/memory/constitution.md
-|       Shared ownership and password-handling rules.
-|
-+-- Data export (5 files)
-|   Feature requirements and implementation plan
-|   |
-|   +-- [2] specs/001-data-export/contracts/download.md
-|       Download responses for allowed and denied access.
-|   +-- [3] specs/001-data-export/plan.md
-|       How report ownership and protection work.
-|   +-- [4] specs/001-data-export/research.md
-|       Unresolved choice of encrypted download format.
-|   +-- [5] specs/001-data-export/spec.md
-|       Rules for owner downloads and export limits.
-|   +-- [6] specs/001-data-export/tasks.md
-|       Implementation steps for protected downloads.
-|
 
-Relationships (arrows mean the stated relationship):
-- specs/001-data-export/spec.md -> specs/001-data-export/plan.md: Planning
-  dependency (inferred)
-- specs/001-data-export/plan.md -> specs/001-data-export/tasks.md: Planning
-  dependency (inferred)
-- specs/001-data-export/plan.md -> specs/001-data-export/spec.md: Document
-  reference
++------------------------------------+    +------------------------------------+
+| Check report ownership             |    | Download format undecided          |
+|                                    |    |                                    |
+| Only owners may download their     |    | Which encrypted file format should |
+| reports. Deny requests from anyone |    | owners receive?                    |
+| else.                              |    | Files: [4]                         |
+| Files: [1] [2]                     |    |                                    |
++------------------------------------+    +------------------------------------+
+                   |
+                   |
+            owner accepted
+                   |
+                   v
++------------------------------------+
+| Create the download                |
+|                                    |
+| Limit the file to 100 rows.        |
+| Password protection is optional;   |
+| encrypt protected files before     |
+| sending them and never log         |
+| passwords.                         |
+| Files: [3] [5] [6]                 |
++------------------------------------+
 
-Choose files by number or full path. Use show <file...> to explore them; add
---detailed for complete selected-file content.
+Files (1 file) - Project principles under .specify/memory/:
+[1] constitution.md
+
+Files (5 files) - Data export under specs/001-data-export/:
+[2] contracts/download.md
+[3] plan.md
+[4] research.md
+[5] spec.md
+[6] tasks.md
+
+Use show <file number or path> to explore a file; add --detailed to expand it.

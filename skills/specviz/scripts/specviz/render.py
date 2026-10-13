@@ -2,72 +2,13 @@
 
 from __future__ import annotations
 
-import json
-import unicodedata
+import re
 from typing import Any
 
 from .core import default_items
 
 
-def display_width(value: str) -> int:
-    """Measure ordinary terminal labels, including wide and combining characters."""
-    return sum(
-        0 if unicodedata.combining(char) or char == "\u200d" else
-        2 if unicodedata.east_asian_width(char) in {"W", "F"} else 1
-        for char in value
-    )
-
-
-def _clean(value: Any) -> str:
-    if value is None:
-        return ""
-    if not isinstance(value, str):
-        value = json.dumps(value, ensure_ascii=False, sort_keys=True)
-    return "".join(
-        char if char in "\n\t" or unicodedata.category(char) != "Cc"
-        else "\\x%02x" % ord(char)
-        for char in value
-    ).expandtabs(2)
-
-
-def _chunks(word: str, limit: int) -> list[str]:
-    parts: list[str] = []
-    current = ""
-    for char in word:
-        if current and display_width(current + char) > limit:
-            parts.append(current)
-            current = ""
-        current += char
-    if current:
-        parts.append(current)
-    return parts or [""]
-
-
-def wrap_text(value: Any, limit: int) -> list[str]:
-    """Wrap while retaining complete words and all non-whitespace source characters."""
-    limit = max(2, limit)
-    result: list[str] = []
-    for paragraph in _clean(value).split("\n"):
-        if not paragraph.strip():
-            result.append("")
-            continue
-        indentation = paragraph[:len(paragraph) - len(paragraph.lstrip(" "))]
-        indentation = indentation[:max(0, limit - 2)]
-        current = indentation
-        for word in paragraph.lstrip(" ").split():
-            parts = _chunks(word, limit)
-            for part_number, part in enumerate(parts):
-                separator = " " if current.strip() and part_number == 0 else ""
-                if current and display_width(current + separator + part) > limit:
-                    result.append(current)
-                    current = ""
-                    separator = ""
-                current += separator + part
-                if part_number < len(parts) - 1:
-                    result.append(current)
-                    current = ""
-        result.append(current)
-    return result or [""]
+from .text import clean as _clean, display_width, wrap_text
 
 
 class _Writer:
@@ -115,27 +56,6 @@ def _purpose(document: dict, interpreted: dict | None = None) -> str:
     return str((interpreted or {}).get("purpose") or document.get("purpose") or "Purpose unspecified")
 
 
-def _header(writer: _Writer, inventory: dict, model: dict | None, title: str) -> None:
-    project = inventory.get("project", {})
-    writer.add(title)
-    writer.add("Project: " + str(project.get("name") or "Unnamed project"))
-    writer.add("Purpose: " + str((model or {}).get("project_purpose") or project.get("purpose") or "Unspecified"))
-    writer.add("Source snapshot: " + _snapshot(inventory))
-    if inventory.get("current_work"):
-        writer.add("Current work: " + _clean(inventory["current_work"]))
-    writer.raw()
-
-
-def _warnings(writer: _Writer, warnings: list[Any]) -> None:
-    if warnings:
-        writer.raw()
-        writer.add("Limits and unresolved information:")
-        for warning in warnings:
-            if isinstance(warning, dict):
-                warning = warning.get("message", warning)
-            writer.add(warning, "- ")
-
-
 def _groups(inventory: dict, documents: list[dict]) -> list[tuple[dict, list[dict]]]:
     ordered = list(inventory.get("groups", []))
     known = {str(group["id"]) for group in ordered}
@@ -157,81 +77,11 @@ def _file_count(count: int) -> str:
     return f"{count} file" + ("" if count == 1 else "s")
 
 
-def _relationship_text(relation: dict, labels: dict[str, str]) -> str:
-    source = labels.get(str(relation.get("from")), str(relation.get("from", "Unknown source")))
-    target = labels.get(str(relation.get("to")), str(relation.get("to", "Unknown target")))
-    meaning = str(relation.get("label") or relation.get("type") or "Relationship unspecified")
-    meaning = {"Requirements first workflow": "requirements guide the design",
-               "Design first workflow": "design guides the requirements"}.get(meaning, meaning)
-    inferred = " (inferred)" if relation.get("inferred") else ""
-    return f"{source} -> {target}: {meaning}{inferred}"
-
-
-def _inventory_tree(writer: _Writer, inventory: dict, documents: list[dict], model: dict | None,
-                    file_markers: dict[str, str] | None = None,
-                    group_markers: dict[str, str] | None = None) -> None:
-    interpreted = _model_documents(model)
-    numbers = _numbers(inventory)
-    writer.add(f"Specification map ({_file_count(len(documents))})")
-    writer.raw("|")
-    for group, group_documents in _groups(inventory, documents):
-        marker = (group_markers or {}).get(str(group["id"]), "")
-        history = " [history]" if group.get("lifecycle") in {"archive", "archived", "history"} else ""
-        writer.add(f"{marker}{group.get('label', group['id'])}{history} ({_file_count(len(group_documents))})", "+-- ", "|   ")
-        writer.add(group.get("purpose") or "Purpose unspecified", "|   ", "|   ")
-        writer.add("|", "|   ")
-        for document in group_documents:
-            marker = (file_markers or {}).get(document["id"], "")
-            label = f"{marker}[{numbers[document['id']]}] {document['path']}"
-            writer.add(label, "|   +-- ", "|       ")
-            writer.add(_purpose(document, interpreted.get(document["id"])), "|       ", "|       ")
-        writer.raw("|")
-
-
-def _relations(writer: _Writer, inventory: dict, documents: list[dict]) -> None:
-    ids = {doc["id"] for doc in documents}
-    labels = {doc["id"]: doc["path"] for doc in inventory.get("documents", [])}
-    group_ids = {group["id"] for group in inventory.get("groups", [])}
-    labels.update({group["id"]: group.get("label", group["id"]) for group in inventory.get("groups", [])})
-    relationships = [relation for relation in inventory.get("relationships", [])
-                     if (relation.get("from") in ids or relation.get("to") in ids)
-                     and not (relation.get("type") == "containment" and relation.get("from") in group_ids)]
-    if relationships:
-        writer.raw()
-        writer.add("Relationships (arrows mean the stated relationship):")
-        for relation in relationships:
-            writer.add(_relationship_text(relation, labels), "- ")
-
-
 def render_overview(inventory: dict, model: dict | None = None, detailed: bool = False,
                     width: int = 80) -> str:
-    """Render global or explicitly scoped inventory without inventing a reading order."""
-    writer = _Writer(width)
-    _header(writer, inventory, model, "Specification overview")
-    documents = _documents(inventory)
-    _inventory_tree(writer, inventory, documents, model)
-    _relations(writer, inventory, documents)
-    context = _documents(inventory, inventory.get("context", []))
-    if context:
-        writer.raw()
-        writer.add(f"Related context outside selected scope ({_file_count(len(context))}):")
-        for document in context:
-            writer.add(f"{document['path']} - {_purpose(document, _model_documents(model).get(document['id']))}", "- ")
-    if detailed:
-        writer.raw()
-        writer.add("Document roles and sources:")
-        for document in documents:
-            writer.add(f"[{_numbers(inventory)[document['id']]}] {document['path']}", "+-- ")
-            writer.add(f"Framework: {document.get('framework') or 'Unspecified'}; role: {document.get('role') or 'Unspecified'}; state: {document.get('lifecycle') or 'Unspecified'}", "|   ", "|   ")
-            headings = [block["text"].lstrip("# ") for block in document.get("blocks", []) if block.get("kind") == "heading"]
-            writer.add("Sections: " + ("; ".join(headings) or "No named sections"), "|   ", "|   ")
-    if documents:
-        writer.raw()
-        writer.add("Choose files by number or full path. Use show <file...> to explore them; add --detailed for complete selected-file content.")
-    else:
-        writer.add("No specification files found in this scope. Select a Markdown file explicitly, or check the project path.")
-    _warnings(writer, inventory.get("warnings", []))
-    return writer.result()
+    """Return the structured overview as ordinary fixed-width text."""
+    from .views import overview_view
+    return overview_view(inventory, model, detailed, width).render()
 
 
 def _items(document: dict, interpreted: dict | None) -> list[dict]:
@@ -279,118 +129,11 @@ def _item_notes(document: dict, item: dict) -> list[str]:
     return [str(blocks[source]["text"]) for source in item.get("sources", []) if source in blocks]
 
 
-def _ordered_tree(items: list[dict], relationships: list[dict]) -> list[tuple[dict, int]]:
-    """Use explicit single-parent containment, preserving order and cycles visibly."""
-    by_id = {item["id"]: item for item in items}
-    parents: dict[str, set[str]] = {}
-    for relationship in relationships:
-        if relationship.get("type") == "containment" and relationship.get("from") in by_id and relationship.get("to") in by_id:
-            parents.setdefault(relationship["to"], set()).add(relationship["from"])
-    unique_parent = {child: next(iter(values)) for child, values in parents.items() if len(values) == 1}
-    children = {identity: [item for item in items if unique_parent.get(item["id"]) == identity] for identity in by_id}
-    visited: set[str] = set()
-    result = []
-
-    def visit(item: dict, depth: int) -> None:
-        pending = [(item, depth)]
-        while pending:
-            current, current_depth = pending.pop()
-            if current["id"] in visited:
-                continue
-            visited.add(current["id"])
-            result.append((current, current_depth))
-            pending.extend((child, current_depth + 1) for child in reversed(children[current["id"]]))
-
-    for item in items:
-        if item["id"] not in unique_parent:
-            visit(item, 0)
-    for item in items:
-        visit(item, 0)
-    return result
-
-
-def _render_items(writer: _Writer, document: dict, interpreted: dict | None, detailed: bool) -> None:
-    items = _items(document, interpreted)
-    layout = (interpreted or {}).get("layout", "tree")
-    if interpreted is None:
-        writer.add("Interpretation unavailable: source sections below remain unresolved. Detailed mode retains their exact wording.")
-    writer.add({"tree": "Content hierarchy", "flow": "Behavior flow", "interaction": "Interactions", "rules": "Independent rules"}.get(layout, "Content hierarchy"))
-    writer.add("Source lines refer to the file named above.")
-    if layout == "rules":
-        writer.add("Rule | Source lines", "| ")
-        writer.add("-----+--------", "| ")
-    indexes = {item["id"]: index for index, item in enumerate(items, 1)}
-    relationships = (interpreted or {}).get("relationships", [])
-    ordered = _ordered_tree(items, relationships) if layout == "tree" else [(item, 0) for item in items]
-    for item, depth in ordered:
-        index = indexes[item["id"]]
-        label = str(item.get("label") or "Meaning unspecified")
-        kind = str(item.get("kind") or "item")
-        unresolved = " [unresolved]" if kind in {"unresolved", "unknown"} else ""
-        identity = f"({index}) {label}{unresolved}"
-        references = _source_refs(document, item)
-        if layout == "rules":
-            sources = "; ".join(reference.split(" - ", 1)[0] for reference in references) or "Unresolved"
-            writer.add(f"{identity} | {sources}", "| ", "| ")
-            prefix, continuation = "|   ", "|   "
-        elif layout == "flow":
-            writer.add(identity, "+-- ", "|   ")
-            prefix, continuation = "|   ", "|   "
-        elif layout == "interaction":
-            writer.add(identity, "+-- ", "|   ")
-            prefix, continuation = "|   ", "|   "
-        else:
-            shown_depth = min(depth, max(0, (writer.width - 24) // 4))
-            indent = "|   " * shown_depth
-            if depth > shown_depth:
-                identity += f" (depth {depth + 1})"
-            writer.add(identity, indent + "+-- ", indent + "|   ")
-            prefix, continuation = indent + "|   ", indent + "|   "
-        if detailed:
-            for note in _item_notes(document, item):
-                writer.add(note, prefix + "- ", continuation + "  ")
-        if layout != "rules" or detailed:
-            for reference in references:
-                writer.add("Source: " + reference, prefix, continuation)
-    if not items:
-        writer.add("No substantive content identified. Coverage unresolved.")
-    if relationships:
-        writer.raw()
-        writer.add("Relationships (arrows mean the stated relationship):")
-        labels = {str(item["id"]): str(item.get("label") or "Meaning unspecified") for item in items}
-        for relationship in relationships:
-            if layout in {"flow", "interaction"}:
-                source = labels.get(str(relationship.get("from")), "Unknown source")
-                target = labels.get(str(relationship.get("to")), "Unknown target")
-                meaning = str(relationship.get("label") or relationship.get("type") or "Meaning unspecified")
-                if relationship.get("inferred"):
-                    meaning += " (inferred)"
-                writer.add(source, "+-- ", "|   ")
-                writer.add("| " + meaning, "|   ", "|   ")
-                writer.add("v", "|   ")
-                writer.add(target, "+-- ", "|   ")
-            else:
-                writer.add(_relationship_text(relationship, labels), "- ")
-
-
 def render_show(inventory: dict, document_ids: list[str] | None = None, model: dict | None = None,
                 detailed: bool = False, width: int = 80) -> str:
-    """Render a selected-file map and source-traceable text explanations."""
-    writer = _Writer(width)
-    _header(writer, inventory, model, "Selected specification files")
-    documents = _documents(inventory, document_ids)
-    _inventory_tree(writer, inventory, documents, model)
-    _relations(writer, inventory, documents)
-    interpreted = _model_documents(model)
-    for document in documents:
-        writer.raw()
-        writer.add(f"File [{_numbers(inventory)[document['id']]}]: {document['path']}")
-        writer.add("Purpose: " + _purpose(document, interpreted.get(document["id"])))
-        _render_items(writer, document, interpreted.get(document["id"]), detailed)
-    if not documents:
-        writer.add("No selected files found. Use overview to see available numbers and paths.")
-    _warnings(writer, inventory.get("warnings", []))
-    return writer.result()
+    """Return the structured selected-file view as ordinary fixed-width text."""
+    from .views import show_view
+    return show_view(inventory, document_ids, model, detailed, width).render()
 
 
 def _active_change(row: dict) -> bool:
@@ -533,7 +276,7 @@ def _evidence_status(row: dict) -> str:
 
 
 def _comparison_row(writer: _Writer, row: dict, item_labels: dict, detailed: bool) -> None:
-    marker = "[changed] " if row.get("difference") not in {"unchanged", "documentation-only", "unresolved", "source-unavailable"} else ""
+    marker = "[changed] " if row.get("difference") not in {"unchanged", "documentation-only", "unresolved", "source-unavailable"} else ("[attention] " if _active_change(row) else "")
     requirement_id = row.get("requirement_id") or "Unidentified requirement"
     writer.add(f"{marker}{item_labels.get(requirement_id) or row.get('label') or requirement_id}", "+-- ", "|   ")
     code_matches = row.get("difference_basis") == "current code inspection" and row.get("status") == "code supported"
@@ -574,69 +317,11 @@ def _comparison_row(writer: _Writer, row: dict, item_labels: dict, detailed: boo
         _inspection(writer, row["inspection"], detailed=detailed, reason_shown=_brief(row.get("reason", "")))
 
 
-def _historical_sources(writer: _Writer, rows_by_document: dict[str, list[dict]], current: list[dict], detailed: bool) -> None:
-    known = {value for document in current for value in (document["id"], document["path"])}
-    missing = {path: rows for path, rows in rows_by_document.items() if path not in known}
-    if not missing:
-        return
-    writer.raw()
-    writer.add("[contains attention] Historical source correspondence unresolved (" + _file_count(len(missing)) + ")", "+-- ", "|   ")
-    writer.add("Earlier paths are unavailable in the current specification inventory. A missing or moved file does not establish a behavior-removal request.", "|   ", "|   ")
-    for path, rows in missing.items():
-        writer.add("[source unavailable] " + (path or "Unidentified historical file"), "|   +-- ", "|       ")
-        writer.add(f"Earlier specification; {len(rows)} requirement" + ("" if len(rows) == 1 else "s") + " with unresolved correspondence.", "|       ", "|       ")
-    for path, rows in missing.items():
-        writer.raw()
-        writer.add("Historical file: " + (path or "Unidentified historical file"))
-        writer.add("Source disclosure: not located in the current inventory; it may have moved or become unavailable. Implementation and requested removal remain unconfirmed.")
-        for row in rows:
-            _comparison_row(writer, row, {}, detailed)
-
-
 def render_changes(inventory: dict, comparison: dict, model: dict | None = None,
                    detailed: bool = False, width: int = 80) -> str:
-    """Render hierarchical changes without equating reports, verification and inspection."""
-    writer = _Writer(width)
-    _header(writer, inventory, model, "Specification and implementation comparison")
-    writer.add("Basis: " + _clean(comparison.get("basis") or "Workflow completion and verification reports; missing evidence remains unknown."))
-    if not detailed:
-        writer.add("Concise view: behavior labels and evidence limits. Full source wording is available with --detailed.")
-    documents = _documents(inventory)
-    rows_by_document: dict[str, list[dict]] = {}
-    for row in comparison.get("rows", []):
-        rows_by_document.setdefault(str(row.get("document", "")), []).append(row)
-    markers: dict[str, str] = {}
-    groups: dict[str, str] = {}
-    for document in documents:
-        rows = rows_by_document.get(document["path"], rows_by_document.get(document["id"], []))
-        if not rows or any(_active_change(row) for row in rows):
-            known_difference = any(row.get("difference") not in {"unchanged", "documentation-only", "unresolved", "source-unavailable"} for row in rows)
-            markers[document["id"]] = "[changed] " if known_difference else "[attention] "
-            group = str(document.get("group") or "Other specifications")
-            if known_difference:
-                groups[group] = "[contains changes] "
-            else:
-                groups.setdefault(group, "[contains attention] ")
-    writer.raw()
-    _inventory_tree(writer, inventory, documents, model, markers, groups)
-    writer.add("[changed] marks a requested difference; [attention] marks uncertain or incomplete evidence. [contains changes] and [contains attention] mark their ancestors.")
-    for document in documents:
-        rows = rows_by_document.get(document["path"], rows_by_document.get(document["id"], []))
-        item_labels = {item["id"]: item.get("label") for item in _items(document, _model_documents(model).get(document["id"]))}
-        writer.raw()
-        writer.add(f"File [{_numbers(inventory)[document['id']]}]: {document['path']}")
-        if not rows:
-            writer.add("Implementation unknown: no applicable requirement evidence.", "+-- ")
-        for row in rows:
-            _comparison_row(writer, row, item_labels, detailed)
-    _historical_sources(writer, rows_by_document, inventory.get("documents", []), detailed)
-    _relations(writer, inventory, documents)
-    _warnings(writer, inventory.get("warnings", []) + comparison.get("warnings", []))
-    writer.raw()
-    writer.add("Explore further: changes --detailed for expanded evidence; changes --check-code to inspect relevant code.")
-    if set(inventory.get("scope", [])) != {document["id"] for document in inventory.get("documents", [])}:
-        writer.add("Include the same selected paths to keep this local scope.")
-    return writer.result()
+    """Render boxed changes while preserving separate evidence sources."""
+    from .views import changes_view
+    return changes_view(inventory, comparison, model, detailed, width).render()
 
 
 def split_pages(text: str, snapshot: str, max_lines: int = 100, width: int = 80) -> list[str]:
@@ -659,7 +344,8 @@ def split_pages(text: str, snapshot: str, max_lines: int = 100, width: int = 80)
             remaining_lines = lines[(index + 1) * max_lines:]
             remaining_headers = [line for line in remaining_lines if line.startswith("File [")]
             if not remaining_headers:
-                remaining_headers = [line.lstrip("| ") for line in remaining_lines if line.lstrip("| ").startswith("+-- [")]
+                remaining_headers = [line.lstrip("| ") for line in remaining_lines
+                                     if line.lstrip("| ").startswith("+-- [") or re.match(r"^\[\d+\] ", line)]
             writer.add(f"{remaining} content lines remain. Continue with this snapshot and part {index + 2}.")
             if remaining_headers:
                 listed = remaining_headers[:4]

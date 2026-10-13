@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import sys
 import uuid
 from pathlib import Path
@@ -14,7 +15,8 @@ from .core import ValidationError, validate_inventory, validate_model
 from .discovery import discover, resolve_project, select_inventory
 from .evidence import EvidenceStore, PersistenceError, default_state_directory, implementation_identity
 from .inspection import validate_inspection
-from .render import render_changes, render_overview, render_show, split_pages
+from .views import changes_view, overview_view, show_view
+from .pagination import paginate
 from .session import ViewStore
 
 
@@ -95,6 +97,13 @@ class _UnavailableEvidence:
         return []
 
 
+def _continuation(token: str, page: int, session: str | None) -> str:
+    command = f"\nContinue this view: --continue-view {token} --page {page}"
+    if session:
+        command += " --session " + shlex.quote(session)
+    return command + "\n"
+
+
 def run(args: argparse.Namespace) -> dict | str:
     if args.check_code and args.action != "changes":
         raise ValidationError("--check-code is available through changes; use changes <scope> --check-code")
@@ -115,12 +124,21 @@ def run(args: argparse.Namespace) -> dict | str:
     if args.continue_view:
         if views is None:
             raise ValidationError("View state unavailable; request a new overview")
-        view = views.load(args.continue_view)
+        delivery_warning = ""
+        try:
+            view = views.deliver(args.continue_view, args.page, args.session)
+        except OSError:
+            view = views.load(args.continue_view)
+            expected = view.get("conversation")
+            from .core import digest
+            if expected is not None and expected != (digest(args.session) if args.session else None):
+                raise ValidationError("Continuation belongs to another conversation; use the original --session")
+            delivery_warning = "\nSelection storage unavailable; select newly shown files by path.\n"
         if args.page > len(view["pages"]):
             raise ValidationError("No such continuation page")
-        output = view["pages"][args.page - 1]
+        output = view["pages"][args.page - 1] + delivery_warning
         if args.page < len(view["pages"]):
-            output += f"\nContinue this view: --continue-view {args.continue_view} --page {args.page + 1}\n"
+            output += _continuation(args.continue_view, args.page + 1, args.session)
         return output
     paths = args.paths
     if any(path.isdecimal() for path in paths):
@@ -193,25 +211,26 @@ def run(args: argparse.Namespace) -> dict | str:
             return result
         return inventory
     if args.action == "changes":
-        text = render_changes(inventory, comparison, model, args.detailed, args.width)
+        view = changes_view(inventory, comparison, model, args.detailed, args.width)
     elif args.action == "show":
-        text = render_show(inventory, model=model, detailed=args.detailed, width=args.width)
+        view = show_view(inventory, model=model, detailed=args.detailed, width=args.width)
     else:
-        text = render_overview(inventory, model, args.detailed, args.width)
+        view = overview_view(inventory, model, args.detailed, args.width)
     if receipts:
-        text += "\nWorkflow evidence handled separately from this display.\n"
-    pages = split_pages(text, inventory["snapshot"], args.max_lines, args.width)
+        view.text("Workflow evidence handled separately from this display.")
+    rendered_pages = paginate(view, args.max_lines)
+    pages = [page.text for page in rendered_pages]
     if args.page > len(pages):
         raise ValidationError("No such output page")
     if views is None:
-        return pages[args.page - 1] + "\nView persistence unavailable; request a new view to continue.\n"
+        return view.render() + "\nView persistence unavailable; showing the complete view. Select files by path.\n"
     try:
-        token = views.save(inventory, pages, args.session)
+        token = views.save(inventory, pages, args.session, [page.documents for page in rendered_pages], args.page)
     except OSError as exc:
-        return pages[0] + f"\nView persistence unavailable: {exc}\n"
+        return view.render() + f"\nView persistence unavailable: {exc}\nShowing the complete view. Select files by path.\n"
     output = pages[args.page - 1]
     if args.page < len(pages):
-        output += f"\nContinue this view: --continue-view {token} --page {args.page + 1}\n"
+        output += _continuation(token, args.page + 1, args.session)
     return output
 
 

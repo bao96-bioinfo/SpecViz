@@ -18,7 +18,8 @@
           ],
           "notes": [
             "Check ownership, collect report rows, and optionally encrypt the download."
-          ]
+          ],
+          "summary": "Check ownership, collect report rows, and optionally encrypt the download."
         },
         {
           "id": ".kiro/specs/data-export/design.md#export-design-design-decisions:1",
@@ -33,7 +34,8 @@
           "notes": [
             "- Keep the 100-row limit.\n- Reject requests from anyone except the owner.",
             "[Requirements](requirements.md)"
-          ]
+          ],
+          "summary": "- Keep the 100-row limit.\n- Reject requests from anyone except the owner."
         }
       ],
       "relationships": [
@@ -73,7 +75,8 @@
           ],
           "notes": [
             "WHEN an owner requests a report, THE SYSTEM SHALL export at most 100 rows."
-          ]
+          ],
+          "summary": "WHEN an owner requests a report, THE SYSTEM SHALL export at most 100 rows."
         },
         {
           "id": ".kiro/specs/data-export/requirements.md#data-export-requirements-requirement-2-protect-download:1",
@@ -85,7 +88,8 @@
           ],
           "notes": [
             "WHEN an owner supplies a password, THE SYSTEM SHALL encrypt the file without logging the password."
-          ]
+          ],
+          "summary": "WHEN an owner supplies a password, THE SYSTEM SHALL encrypt the file without logging the password."
         }
       ],
       "relationships": [
@@ -129,5 +133,234 @@
       ],
       "relationships": []
     }
-  ]
+  ],
+  "project_view": {
+    "nodes": [
+      {
+        "id": "owner",
+        "label": "Check report ownership",
+        "summary": "Reject requests from anyone except the report owner.",
+        "sources": [
+          {
+            "document": ".kiro/specs/data-export/design.md",
+            "blocks": [
+              ".kiro/specs/data-export/design.md:L1-1",
+              ".kiro/specs/data-export/design.md:L3-3",
+              ".kiro/specs/data-export/design.md:L5-5",
+              ".kiro/specs/data-export/design.md:L7-7",
+              ".kiro/specs/data-export/design.md:L8-8",
+              ".kiro/specs/data-export/design.md:L10-10"
+            ]
+          },
+          {
+            "document": ".kiro/specs/data-export/tasks.md",
+            "blocks": [
+              ".kiro/specs/data-export/tasks.md:L1-1",
+              ".kiro/specs/data-export/tasks.md:L3-3",
+              ".kiro/specs/data-export/tasks.md:L5-5",
+              ".kiro/specs/data-export/tasks.md:L6-6",
+              ".kiro/specs/data-export/tasks.md:L7-7"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rows",
+        "label": "Collect report rows",
+        "summary": "Export at most 100 rows.",
+        "sources": [
+          {
+            "document": ".kiro/specs/data-export/requirements.md",
+            "blocks": [
+              ".kiro/specs/data-export/requirements.md:L1-1",
+              ".kiro/specs/data-export/requirements.md:L3-3",
+              ".kiro/specs/data-export/requirements.md:L5-5",
+              ".kiro/specs/data-export/requirements.md:L7-7",
+              ".kiro/specs/data-export/requirements.md:L9-9",
+              ".kiro/specs/data-export/requirements.md:L11-11"
+            ]
+          },
+          {
+            "document": ".kiro/specs/data-export/design.md",
+            "blocks": [
+              ".kiro/specs/data-export/design.md:L1-1",
+              ".kiro/specs/data-export/design.md:L3-3",
+              ".kiro/specs/data-export/design.md:L5-5",
+              ".kiro/specs/data-export/design.md:L7-7",
+              ".kiro/specs/data-export/design.md:L8-8",
+              ".kiro/specs/data-export/design.md:L10-10"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "protect",
+        "label": "Protect the download",
+        "summary": "Encrypt the file when its owner supplies a password. Never log the password.",
+        "sources": [
+          {
+            "document": ".kiro/specs/data-export/requirements.md",
+            "blocks": [
+              ".kiro/specs/data-export/requirements.md:L1-1",
+              ".kiro/specs/data-export/requirements.md:L3-3",
+              ".kiro/specs/data-export/requirements.md:L5-5",
+              ".kiro/specs/data-export/requirements.md:L7-7",
+              ".kiro/specs/data-export/requirements.md:L9-9",
+              ".kiro/specs/data-export/requirements.md:L11-11"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "plain",
+        "label": "Continue without protection",
+        "summary": "Password protection is optional.",
+        "sources": [
+          {
+            "document": ".kiro/specs/data-export/design.md",
+            "blocks": [
+              ".kiro/specs/data-export/design.md:L1-1",
+              ".kiro/specs/data-export/design.md:L3-3",
+              ".kiro/specs/data-export/design.md:L5-5",
+              ".kiro/specs/data-export/design.md:L7-7",
+              ".kiro/specs/data-export/design.md:L8-8",
+              ".kiro/specs/data-export/design.md:L10-10"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "download",
+        "label": "Download the report",
+        "summary": "",
+        "sources": [
+          {
+            "document": ".kiro/specs/data-export/requirements.md",
+            "blocks": [
+              ".kiro/specs/data-export/requirements.md:L1-1",
+              ".kiro/specs/data-export/requirements.md:L3-3",
+              ".kiro/specs/data-export/requirements.md:L5-5",
+              ".kiro/specs/data-export/requirements.md:L7-7",
+              ".kiro/specs/data-export/requirements.md:L9-9",
+              ".kiro/specs/data-export/requirements.md:L11-11"
+            ]
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "from": "owner",
+        "to": "rows",
+        "label": "owner accepted",
+        "type": "condition",
+        "inferred": false,
+        "sources": [
+          {
+            "document": ".kiro/specs/data-export/design.md",
+            "blocks": [
+              ".kiro/specs/data-export/design.md:L1-1",
+              ".kiro/specs/data-export/design.md:L3-3",
+              ".kiro/specs/data-export/design.md:L5-5",
+              ".kiro/specs/data-export/design.md:L7-7",
+              ".kiro/specs/data-export/design.md:L8-8",
+              ".kiro/specs/data-export/design.md:L10-10"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "rows",
+        "to": "protect",
+        "label": "password supplied",
+        "type": "condition",
+        "inferred": false,
+        "sources": [
+          {
+            "document": ".kiro/specs/data-export/requirements.md",
+            "blocks": [
+              ".kiro/specs/data-export/requirements.md:L1-1",
+              ".kiro/specs/data-export/requirements.md:L3-3",
+              ".kiro/specs/data-export/requirements.md:L5-5",
+              ".kiro/specs/data-export/requirements.md:L7-7",
+              ".kiro/specs/data-export/requirements.md:L9-9",
+              ".kiro/specs/data-export/requirements.md:L11-11"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "rows",
+        "to": "plain",
+        "label": "no password",
+        "type": "condition",
+        "inferred": false,
+        "sources": [
+          {
+            "document": ".kiro/specs/data-export/design.md",
+            "blocks": [
+              ".kiro/specs/data-export/design.md:L1-1",
+              ".kiro/specs/data-export/design.md:L3-3",
+              ".kiro/specs/data-export/design.md:L5-5",
+              ".kiro/specs/data-export/design.md:L7-7",
+              ".kiro/specs/data-export/design.md:L8-8",
+              ".kiro/specs/data-export/design.md:L10-10"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "protect",
+        "to": "download",
+        "label": "encrypted file",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": ".kiro/specs/data-export/design.md",
+            "blocks": [
+              ".kiro/specs/data-export/design.md:L1-1",
+              ".kiro/specs/data-export/design.md:L3-3",
+              ".kiro/specs/data-export/design.md:L5-5",
+              ".kiro/specs/data-export/design.md:L7-7",
+              ".kiro/specs/data-export/design.md:L8-8",
+              ".kiro/specs/data-export/design.md:L10-10"
+            ]
+          },
+          {
+            "document": ".kiro/specs/data-export/requirements.md",
+            "blocks": [
+              ".kiro/specs/data-export/requirements.md:L1-1",
+              ".kiro/specs/data-export/requirements.md:L3-3",
+              ".kiro/specs/data-export/requirements.md:L5-5",
+              ".kiro/specs/data-export/requirements.md:L7-7",
+              ".kiro/specs/data-export/requirements.md:L9-9",
+              ".kiro/specs/data-export/requirements.md:L11-11"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "plain",
+        "to": "download",
+        "label": "unprotected file",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": ".kiro/specs/data-export/design.md",
+            "blocks": [
+              ".kiro/specs/data-export/design.md:L1-1",
+              ".kiro/specs/data-export/design.md:L3-3",
+              ".kiro/specs/data-export/design.md:L5-5",
+              ".kiro/specs/data-export/design.md:L7-7",
+              ".kiro/specs/data-export/design.md:L8-8",
+              ".kiro/specs/data-export/design.md:L10-10"
+            ]
+          }
+        ]
+      }
+    ],
+    "unresolved_documents": []
+  }
 }

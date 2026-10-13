@@ -1,34 +1,27 @@
-Selected specification files
-Project: Reporting service
-Purpose: Export reports with owner access controls and clear download limits.
-Source snapshot:
-10653813977a31cc87f9bc25b36bc6b4772ed02ca771cf4d260635eb56edc9d7
+Reporting service - Export reports with owner access controls and clear download
+limits.
 
-Specification map (1 file)
-|
-+-- Data export (1 file)
-|   Feature requirements and implementation plan
-|   |
-|   +-- [5] specs/001-data-export/spec.md
-|       Rules for owner downloads and export limits.
-|
+Files (1 file) under specs/001-data-export/:
+[5] spec.md
 
-Relationships (arrows mean the stated relationship):
-- specs/001-data-export/spec.md -> specs/001-data-export/plan.md: Planning
-  dependency (inferred)
-- specs/001-data-export/plan.md -> specs/001-data-export/spec.md: Document
-  reference
+File [5]: spec.md - Independent rules
 
-File [5]: specs/001-data-export/spec.md
-Purpose: Rules for owner downloads and export limits.
-Independent rules
-Source lines refer to the file named above.
-| Rule | Source lines
-| -----+--------
-| (1) Data export | lines 1-3
-| (2) Download limits and optional protection | lines 5-8
-| (3) Only owners may download their reports | lines 10-12
-
-Relationships (arrows mean the stated relationship):
-- Data export -> Download limits and optional protection: groups related content
-- Data export -> Only owners may download their reports: groups related content
+                     +------------------------------------+
+                     | (1) Data export                    |
+                     |                                    |
+                     | Source: lines 1-3                  |
+                     +------------------------------------+
+                                        |
+                   +--------------------+--------------------+
+        groups related content                    groups related content
+                   |                                         |
+                   v                                         v
++------------------------------------+    +------------------------------------+
+| (2) Download limits and optional   |    | (3) Only owners may download their |
+| protection                         |    | reports                            |
+|                                    |    |                                    |
+| - A report owner can download up   |    | Only the report owner may download |
+| to 100 rows.                       |    | it.                                |
+| - Password protection is optional. |    | Source: lines 10-12                |
+| Source: lines 5-8                  |    |                                    |
++------------------------------------+    +------------------------------------+

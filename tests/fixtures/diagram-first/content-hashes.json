@@ -1,0 +1,12 @@
+{
+  "README.md": "8c47892cabb3831e0379ae194914e262f027bf34ef35e064a87ebc60fd5586da",
+  "openspec/changes/reproducible-model-training/design.md": "d8500a99d76cf865eabca2c5a0dcfcf6ea769983d43bceb42003d74e9abb4fcf",
+  "openspec/changes/reproducible-model-training/proposal.md": "592c7ff4137bd85f7a9f69427e38db0fc2d2ad7d269f75bd94e420eaf2360224",
+  "openspec/changes/reproducible-model-training/specs/data-preparation/spec.md": "dd721477abe150803afe784b431e15d2a11e7c114f8f52554ffce3ab10b48d9e",
+  "openspec/changes/reproducible-model-training/specs/evaluation/spec.md": "59a2597335d1cb89e748914d694574617e4e5bc06a451fce3046bf3777d7cc2f",
+  "openspec/changes/reproducible-model-training/specs/predictions/spec.md": "4b8edc3669b45be1e613662ffed16cadb0b009ab63bc2859212e120c339873a6",
+  "openspec/changes/reproducible-model-training/specs/run-records/spec.md": "1a4404cccb1004b6b946f2d4fd970ecf287a6c75ce73a795a7975a1cd5ec30e0",
+  "openspec/changes/reproducible-model-training/specs/training-run/spec.md": "0a8e6bc07b44d1cfa3c23b001142a965531fdb462bcdf7e85b971116dd727d56",
+  "openspec/changes/reproducible-model-training/tasks.md": "31df32f6f8aa02a58aec6b33c37278899696fca5551ea5639eba5414a0de91f7",
+  "openspec/config.yaml": "85b53dd24fbe7d19c8b0f0ddccf5e82600c5c372c76b57a2a89dc34dfb0fc5b9"
+}

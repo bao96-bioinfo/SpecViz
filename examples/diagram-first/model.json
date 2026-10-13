@@ -1,0 +1,595 @@
+{
+  "schema_version": 1,
+  "snapshot": "1a5c7ea729b016baf40adeac9de0509738159e2afa8056d5eebc93a17b00d2e9",
+  "project_purpose": "Train a model from several datasets and compare its predictions with answers kept out of training.",
+  "documents": [
+    {
+      "id": "openspec/changes/reproducible-model-training/design.md",
+      "purpose": "Prepare samples, train the model, compare predictions, and retain the run records.",
+      "layout": "flow",
+      "items": [
+        {
+          "id": "prepare",
+          "label": "Prepare the samples",
+          "summary": "Use consistent fields and units, then save which samples belong to training and evaluation.",
+          "kind": "behavior",
+          "sources": [
+            "openspec/changes/reproducible-model-training/design.md:L1-1",
+            "openspec/changes/reproducible-model-training/design.md:L3-3",
+            "openspec/changes/reproducible-model-training/design.md:L5-5"
+          ],
+          "notes": [
+            "Put the datasets into one consistent format. Divide the samples into a training group and an evaluation group, and save those assignments."
+          ]
+        },
+        {
+          "id": "train",
+          "label": "Train the model",
+          "summary": "Run a small trial first. Train fully only if its checks pass; otherwise stop and report the failures.",
+          "kind": "behavior",
+          "sources": [
+            "openspec/changes/reproducible-model-training/design.md:L7-7",
+            "openspec/changes/reproducible-model-training/design.md:L9-9"
+          ],
+          "notes": [
+            "Send only the training group to model training. Use the same settings for every run. Run a small trial first; start the full run only if the trial passes its checks. Otherwise stop and report the failed checks."
+          ]
+        },
+        {
+          "id": "reserve",
+          "label": "Keep evaluation answers separate",
+          "summary": "Keep the known evaluation answers hidden from training and prediction.",
+          "kind": "behavior",
+          "sources": [
+            "openspec/changes/reproducible-model-training/design.md:L11-11",
+            "openspec/changes/reproducible-model-training/design.md:L13-13"
+          ],
+          "notes": [
+            "Keep the evaluation group's known answers separate from training and prediction. Do not reveal them to the model."
+          ]
+        },
+        {
+          "id": "predict",
+          "label": "Make predictions",
+          "summary": "Use the trained model to predict answers for the evaluation samples.",
+          "kind": "behavior",
+          "sources": [
+            "openspec/changes/reproducible-model-training/design.md:L15-15",
+            "openspec/changes/reproducible-model-training/design.md:L17-17"
+          ],
+          "notes": [
+            "After training finishes, use the trained model to predict answers for the evaluation samples without revealing their known answers."
+          ]
+        },
+        {
+          "id": "evaluate",
+          "label": "Compare predictions with answers",
+          "summary": "Measure prediction error. The acceptable error threshold is still undecided.",
+          "kind": "behavior",
+          "sources": [
+            "openspec/changes/reproducible-model-training/design.md:L19-19",
+            "openspec/changes/reproducible-model-training/design.md:L21-21"
+          ],
+          "notes": [
+            "Compare the predictions with the answers kept aside earlier. The acceptable error threshold is not yet decided; report the measured error without declaring the model ready for use."
+          ]
+        },
+        {
+          "id": "record",
+          "label": "Save the run records",
+          "summary": "Save settings, sample assignments, predictions, and measured error so the run can be repeated.",
+          "kind": "behavior",
+          "sources": [
+            "openspec/changes/reproducible-model-training/design.md:L23-23",
+            "openspec/changes/reproducible-model-training/design.md:L25-25"
+          ],
+          "notes": [
+            "After evaluation, save the settings, sample assignments, predictions, and measured error so another person can repeat the run and check its results."
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "from": "prepare",
+          "to": "train",
+          "label": "training samples",
+          "type": "workflow",
+          "inferred": false
+        },
+        {
+          "from": "prepare",
+          "to": "reserve",
+          "label": "evaluation answers",
+          "type": "workflow",
+          "inferred": false
+        },
+        {
+          "from": "train",
+          "to": "predict",
+          "label": "trained model",
+          "type": "workflow",
+          "inferred": false
+        },
+        {
+          "from": "predict",
+          "to": "evaluate",
+          "label": "saved predictions",
+          "type": "workflow",
+          "inferred": false
+        },
+        {
+          "from": "reserve",
+          "to": "evaluate",
+          "label": "known answers",
+          "type": "workflow",
+          "inferred": false
+        },
+        {
+          "from": "evaluate",
+          "to": "record",
+          "label": "measured error",
+          "type": "workflow",
+          "inferred": false
+        }
+      ]
+    },
+    {
+      "id": "openspec/changes/reproducible-model-training/proposal.md",
+      "purpose": "Train one model and evaluate it using answers kept out of training.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "proposal.md#meaning",
+          "label": "Repeatable model training",
+          "summary": "Train one model and evaluate it using answers kept out of training.",
+          "kind": "rule",
+          "sources": [
+            "openspec/changes/reproducible-model-training/proposal.md:L1-1",
+            "openspec/changes/reproducible-model-training/proposal.md:L3-3",
+            "openspec/changes/reproducible-model-training/proposal.md:L5-5"
+          ],
+          "notes": [
+            "Build a workflow that combines several datasets, trains one model, and evaluates predictions using answers the model has not seen.",
+            "Keep enough records to repeat a run and understand its results. This proposal does not claim that the workflow is implemented."
+          ]
+        }
+      ],
+      "relationships": []
+    },
+    {
+      "id": "openspec/changes/reproducible-model-training/specs/data-preparation/spec.md",
+      "purpose": "Use consistent input fields and reuse saved training and evaluation groups.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "specs/data-preparation/spec.md#meaning",
+          "label": "Prepare consistent samples",
+          "summary": "Use consistent input fields and reuse saved training and evaluation groups.",
+          "kind": "rule",
+          "sources": [
+            "openspec/changes/reproducible-model-training/specs/data-preparation/spec.md:L1-1",
+            "openspec/changes/reproducible-model-training/specs/data-preparation/spec.md:L3-3",
+            "openspec/changes/reproducible-model-training/specs/data-preparation/spec.md:L5-5"
+          ],
+          "notes": [
+            "Combine datasets using the same field names and units. Divide the samples into training and evaluation groups before training starts.",
+            "Save each sample's group assignment. Supporting notes call this a \"persisted split\": resuming a run must reuse the same saved assignments instead of dividing the samples again."
+          ]
+        }
+      ],
+      "relationships": []
+    },
+    {
+      "id": "openspec/changes/reproducible-model-training/specs/evaluation/spec.md",
+      "purpose": "Measure prediction error; the acceptable error threshold is still undecided.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "specs/evaluation/spec.md#meaning",
+          "label": "Measure prediction error",
+          "summary": "Measure prediction error; the acceptable error threshold is still undecided.",
+          "kind": "rule",
+          "sources": [
+            "openspec/changes/reproducible-model-training/specs/evaluation/spec.md:L1-1",
+            "openspec/changes/reproducible-model-training/specs/evaluation/spec.md:L3-3",
+            "openspec/changes/reproducible-model-training/specs/evaluation/spec.md:L5-5"
+          ],
+          "notes": [
+            "Compare saved predictions with the evaluation answers kept out of training. Report the measured error.",
+            "The acceptable error threshold is undecided. Do not declare that the model is ready for use on the basis of an unspecified threshold."
+          ]
+        }
+      ],
+      "relationships": []
+    },
+    {
+      "id": "openspec/changes/reproducible-model-training/specs/predictions/spec.md",
+      "purpose": "Predict answers for evaluation samples without revealing their known answers.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "specs/predictions/spec.md#meaning",
+          "label": "Predict unseen answers",
+          "summary": "Predict answers for evaluation samples without revealing their known answers.",
+          "kind": "rule",
+          "sources": [
+            "openspec/changes/reproducible-model-training/specs/predictions/spec.md:L1-1",
+            "openspec/changes/reproducible-model-training/specs/predictions/spec.md:L3-3"
+          ],
+          "notes": [
+            "After training finishes, apply the trained model to the evaluation samples. Keep their known answers hidden until all predictions have been saved."
+          ]
+        }
+      ],
+      "relationships": []
+    },
+    {
+      "id": "openspec/changes/reproducible-model-training/specs/run-records/spec.md",
+      "purpose": "Save enough information for another person to repeat and check the run.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "specs/run-records/spec.md#meaning",
+          "label": "Keep repeatable run records",
+          "summary": "Save enough information for another person to repeat and check the run.",
+          "kind": "rule",
+          "sources": [
+            "openspec/changes/reproducible-model-training/specs/run-records/spec.md:L1-1",
+            "openspec/changes/reproducible-model-training/specs/run-records/spec.md:L3-3"
+          ],
+          "notes": [
+            "After evaluation, save the model settings, sample assignments, predictions, and measured error. Another person must be able to identify the input datasets and repeat the run from these records."
+          ]
+        }
+      ],
+      "relationships": []
+    },
+    {
+      "id": "openspec/changes/reproducible-model-training/specs/training-run/spec.md",
+      "purpose": "Run a small trial first; train fully only after its checks pass.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "specs/training-run/spec.md#meaning",
+          "label": "Run training reproducibly",
+          "summary": "Run a small trial first; train fully only after its checks pass.",
+          "kind": "rule",
+          "sources": [
+            "openspec/changes/reproducible-model-training/specs/training-run/spec.md:L1-1",
+            "openspec/changes/reproducible-model-training/specs/training-run/spec.md:L3-3",
+            "openspec/changes/reproducible-model-training/specs/training-run/spec.md:L5-5",
+            "openspec/changes/reproducible-model-training/specs/training-run/spec.md:L7-7"
+          ],
+          "notes": [
+            "Use the same specified model settings for every full training run. Supporting notes call these settings the \"fixed recipe\".",
+            "Run a small trial first and check that inputs load, training completes, and output can be saved. Supporting notes call this a \"smoke gate\". Start full training only if every trial check passes; otherwise stop and report the failed checks.",
+            "When resuming a run, load its saved settings and sample assignments. Never include the evaluation answers in training."
+          ]
+        }
+      ],
+      "relationships": []
+    },
+    {
+      "id": "openspec/changes/reproducible-model-training/tasks.md",
+      "purpose": "Track the five planned steps; implementation evidence is unavailable.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "tasks.md#meaning",
+          "label": "Implementation tasks",
+          "summary": "Track the five planned steps; implementation evidence is unavailable.",
+          "kind": "task",
+          "sources": [
+            "openspec/changes/reproducible-model-training/tasks.md:L1-1",
+            "openspec/changes/reproducible-model-training/tasks.md:L3-3",
+            "openspec/changes/reproducible-model-training/tasks.md:L4-4",
+            "openspec/changes/reproducible-model-training/tasks.md:L5-5",
+            "openspec/changes/reproducible-model-training/tasks.md:L6-6",
+            "openspec/changes/reproducible-model-training/tasks.md:L7-7",
+            "openspec/changes/reproducible-model-training/tasks.md:L9-9"
+          ],
+          "notes": [
+            "- [ ] Prepare consistent input data and save training/evaluation assignments.",
+            "- [ ] Add the trial checks and full training run.",
+            "- [ ] Keep evaluation answers hidden until predictions are complete.",
+            "- [ ] Compare predictions with the saved answers.",
+            "- [ ] Save the settings, assignments, predictions, and measured error.",
+            "These checkboxes describe planned work; completion and verification evidence are not available."
+          ]
+        }
+      ],
+      "relationships": []
+    }
+  ],
+  "project_view": {
+    "nodes": [
+      {
+        "id": "prepare",
+        "label": "Prepare the samples",
+        "summary": "Use consistent fields and units, then save which samples belong to training and evaluation.",
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L1-1",
+              "openspec/changes/reproducible-model-training/design.md:L3-3",
+              "openspec/changes/reproducible-model-training/design.md:L5-5"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/proposal.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/proposal.md:L1-1",
+              "openspec/changes/reproducible-model-training/proposal.md:L3-3",
+              "openspec/changes/reproducible-model-training/proposal.md:L5-5"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/specs/data-preparation/spec.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/specs/data-preparation/spec.md:L1-1",
+              "openspec/changes/reproducible-model-training/specs/data-preparation/spec.md:L3-3",
+              "openspec/changes/reproducible-model-training/specs/data-preparation/spec.md:L5-5"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "train",
+        "label": "Train the model",
+        "summary": "First check input loading, a short training run, and saving results. Run full training only if all checks pass; otherwise stop and report failures.",
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L7-7",
+              "openspec/changes/reproducible-model-training/design.md:L9-9"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/specs/training-run/spec.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/specs/training-run/spec.md:L1-1",
+              "openspec/changes/reproducible-model-training/specs/training-run/spec.md:L3-3",
+              "openspec/changes/reproducible-model-training/specs/training-run/spec.md:L5-5",
+              "openspec/changes/reproducible-model-training/specs/training-run/spec.md:L7-7"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "reserve",
+        "label": "Keep evaluation answers separate",
+        "summary": "Keep the known evaluation answers hidden from training and prediction.",
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L11-11",
+              "openspec/changes/reproducible-model-training/design.md:L13-13"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "predict",
+        "label": "Make predictions",
+        "summary": "Use the trained model to predict answers for the evaluation samples.",
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L15-15",
+              "openspec/changes/reproducible-model-training/design.md:L17-17"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/specs/predictions/spec.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/specs/predictions/spec.md:L1-1",
+              "openspec/changes/reproducible-model-training/specs/predictions/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "evaluate",
+        "label": "Compare predictions with answers",
+        "summary": "Measure prediction error. The acceptable error threshold is still undecided; do not declare the model ready.",
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L19-19",
+              "openspec/changes/reproducible-model-training/design.md:L21-21"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/specs/evaluation/spec.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/specs/evaluation/spec.md:L1-1",
+              "openspec/changes/reproducible-model-training/specs/evaluation/spec.md:L3-3",
+              "openspec/changes/reproducible-model-training/specs/evaluation/spec.md:L5-5"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "record",
+        "label": "Save the run records",
+        "summary": "Save settings, sample assignments, predictions, and measured error so the run can be repeated.",
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L23-23",
+              "openspec/changes/reproducible-model-training/design.md:L25-25"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/specs/run-records/spec.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/specs/run-records/spec.md:L1-1",
+              "openspec/changes/reproducible-model-training/specs/run-records/spec.md:L3-3"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/tasks.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/tasks.md:L1-1",
+              "openspec/changes/reproducible-model-training/tasks.md:L3-3",
+              "openspec/changes/reproducible-model-training/tasks.md:L4-4",
+              "openspec/changes/reproducible-model-training/tasks.md:L5-5",
+              "openspec/changes/reproducible-model-training/tasks.md:L6-6",
+              "openspec/changes/reproducible-model-training/tasks.md:L7-7",
+              "openspec/changes/reproducible-model-training/tasks.md:L9-9"
+            ]
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "from": "prepare",
+        "to": "train",
+        "label": "training samples",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L1-1",
+              "openspec/changes/reproducible-model-training/design.md:L3-3",
+              "openspec/changes/reproducible-model-training/design.md:L5-5"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L7-7",
+              "openspec/changes/reproducible-model-training/design.md:L9-9"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "prepare",
+        "to": "reserve",
+        "label": "evaluation answers",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L1-1",
+              "openspec/changes/reproducible-model-training/design.md:L3-3",
+              "openspec/changes/reproducible-model-training/design.md:L5-5"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L11-11",
+              "openspec/changes/reproducible-model-training/design.md:L13-13"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "train",
+        "to": "predict",
+        "label": "trained model",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L7-7",
+              "openspec/changes/reproducible-model-training/design.md:L9-9"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L15-15",
+              "openspec/changes/reproducible-model-training/design.md:L17-17"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "predict",
+        "to": "evaluate",
+        "label": "saved predictions",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L15-15",
+              "openspec/changes/reproducible-model-training/design.md:L17-17"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L19-19",
+              "openspec/changes/reproducible-model-training/design.md:L21-21"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "reserve",
+        "to": "evaluate",
+        "label": "known answers",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L11-11",
+              "openspec/changes/reproducible-model-training/design.md:L13-13"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L19-19",
+              "openspec/changes/reproducible-model-training/design.md:L21-21"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "evaluate",
+        "to": "record",
+        "label": "measured error",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L19-19",
+              "openspec/changes/reproducible-model-training/design.md:L21-21"
+            ]
+          },
+          {
+            "document": "openspec/changes/reproducible-model-training/design.md",
+            "blocks": [
+              "openspec/changes/reproducible-model-training/design.md:L23-23",
+              "openspec/changes/reproducible-model-training/design.md:L25-25"
+            ]
+          }
+        ]
+      }
+    ],
+    "unresolved_documents": []
+  }
+}

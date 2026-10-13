@@ -1,0 +1,80 @@
+Training workspace - Train a model from several datasets and compare its
+predictions with answers kept out of training.
+
+Specification map (8 files)
+
+                     +------------------------------------+
+                     | Prepare the samples                |
+                     |                                    |
+                     | Use consistent fields and units,   |
+                     | then save which samples belong to  |
+                     | training and evaluation.           |
+                     | Files: [1] [2] [3]                 |
+                     +------------------------------------+
+                                        |
+                   +--------------------+--------------------+
+           training samples                         evaluation answers
+                   |                                         |
+                   v                                         v
++------------------------------------+    +------------------------------------+
+| Train the model                    |    | Keep evaluation answers separate   |
+|                                    |    |                                    |
+| First check input loading, a short |    | Keep the known evaluation answers  |
+| training run, and saving results.  |    | hidden from training and           |
+| Run full training only if all      |    | prediction.                        |
+| checks pass; otherwise stop and    |    | Files: [1]                         |
+| report failures.                   |    |                                    |
+| Files: [1] [7]                     |    |                                    |
++------------------------------------+    +------------------------------------+
+                   |                                         |
+                   |                                         |
+            trained model                             known answers
+                   |                                         |
+                   v                                         |
++------------------------------------+                       |
+| Make predictions                   |                       |
+|                                    |                       |
+| Use the trained model to predict   |                       |
+| answers for the evaluation         |                       |
+| samples.                           |                       |
+| Files: [1] [5]                     |                       |
++------------------------------------+                       |
+                   |                                         |
+                   |                                         |
+          saved predictions                                  |
+                   +--------------------+--------------------+
+                                        v
+                     +------------------------------------+
+                     | Compare predictions with answers   |
+                     |                                    |
+                     | Measure prediction error. The      |
+                     | acceptable error threshold is      |
+                     | still undecided; do not declare    |
+                     | the model ready.                   |
+                     | Files: [1] [4]                     |
+                     +------------------------------------+
+                                        |
+                                        |
+                                 measured error
+                                        |
+                                        v
+                     +------------------------------------+
+                     | Save the run records               |
+                     |                                    |
+                     | Save settings, sample assignments, |
+                     | predictions, and measured error so |
+                     | the run can be repeated.           |
+                     | Files: [1] [6] [8]                 |
+                     +------------------------------------+
+
+Files (8 files) under openspec/changes/reproducible-model-training/:
+[1] design.md
+[2] proposal.md
+[3] specs/data-preparation/spec.md
+[4] specs/evaluation/spec.md
+[5] specs/predictions/spec.md
+[6] specs/run-records/spec.md
+[7] specs/training-run/spec.md
+[8] tasks.md
+
+Use show <file number or path> to explore a file; add --detailed to expand it.

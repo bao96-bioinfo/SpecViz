@@ -1,0 +1,219 @@
+Training workspace - Train a model from several datasets and compare its
+predictions with answers kept out of training.
+
+Specification map (8 files)
+
+                     +------------------------------------+
+                     | Prepare the samples                |
+                     |                                    |
+                     | Use consistent fields and units,   |
+                     | then save which samples belong to  |
+                     | training and evaluation.           |
+                     | Files: [1] [2] [3]                 |
+                     +------------------------------------+
+                                        |
+                   +--------------------+--------------------+
+           training samples                         evaluation answers
+                   |                                         |
+                   v                                         v
++------------------------------------+    +------------------------------------+
+| Train the model                    |    | Keep evaluation answers separate   |
+|                                    |    |                                    |
+| First check input loading, a short |    | Keep the known evaluation answers  |
+| training run, and saving results.  |    | hidden from training and           |
+| Run full training only if all      |    | prediction.                        |
+| checks pass; otherwise stop and    |    | Files: [1]                         |
+| report failures.                   |    |                                    |
+| Files: [1] [7]                     |    |                                    |
++------------------------------------+    +------------------------------------+
+                   |                                         |
+                   |                                         |
+            trained model                             known answers
+                   |                                         |
+                   v                                         |
++------------------------------------+                       |
+| Make predictions                   |                       |
+|                                    |                       |
+| Use the trained model to predict   |                       |
+| answers for the evaluation         |                       |
+| samples.                           |                       |
+| Files: [1] [5]                     |                       |
++------------------------------------+                       |
+                   |                                         |
+                   |                                         |
+          saved predictions                                  |
+                   +--------------------+--------------------+
+                                        v
+                     +------------------------------------+
+                     | Compare predictions with answers   |
+                     |                                    |
+                     | Measure prediction error. The      |
+                     | acceptable error threshold is      |
+                     | still undecided; do not declare    |
+                     | the model ready.                   |
+                     | Files: [1] [4]                     |
+                     +------------------------------------+
+                                        |
+                                        |
+                                 measured error
+                                        |
+                                        v
+                     +------------------------------------+
+                     | Save the run records               |
+                     |                                    |
+                     | Save settings, sample assignments, |
+                     | predictions, and measured error so |
+                     | the run can be repeated.           |
+                     | Files: [1] [6] [8]                 |
+                     +------------------------------------+
+
+Files (8 files) under openspec/changes/reproducible-model-training/:
+[1] design.md
+[2] proposal.md
+[3] specs/data-preparation/spec.md
+[4] specs/evaluation/spec.md
+[5] specs/predictions/spec.md
+[6] specs/run-records/spec.md
+[7] specs/training-run/spec.md
+[8] tasks.md
+
++------------------------------------------------------------------------------+
+| File [1]: openspec/changes/reproducible-model-training/design.md             |
+|                                                                              |
+| Purpose: Prepare samples, train the model, compare predictions, and retain   |
+| the run records.                                                             |
+| Prepare the samples                                                          |
+| Put the datasets into one consistent format. Divide the samples into a       |
+| training group and an evaluation group, and save those assignments.          |
+| Source: lines 1 - Model training design                                      |
+| Source: lines 3-5 - Model training design / Prepare the samples              |
+| Train the model                                                              |
+| Send only the training group to model training. Use the same settings for    |
+| every run. Run a small trial first; start the full run only if the trial     |
+| passes its checks. Otherwise stop and report the failed checks.              |
+| Source: lines 7-9 - Model training design / Train the model                  |
+| Keep evaluation answers separate                                             |
+| Keep the evaluation group's known answers separate from training and         |
+| prediction. Do not reveal them to the model.                                 |
+| Source: lines 11-13 - Model training design / Keep evaluation answers        |
+| separate                                                                     |
+| Make predictions                                                             |
+| After training finishes, use the trained model to predict answers for the    |
+| evaluation samples without revealing their known answers.                    |
+| Source: lines 15-17 - Model training design / Make predictions               |
+| Compare predictions with answers                                             |
+| Compare the predictions with the answers kept aside earlier. The acceptable  |
+| error threshold is not yet decided; report the measured error without        |
+| declaring the model ready for use.                                           |
+| Source: lines 19-21 - Model training design / Compare predictions with       |
+| answers                                                                      |
+| Save the run records                                                         |
+| After evaluation, save the settings, sample assignments, predictions, and    |
+| measured error so another person can repeat the run and check its results.   |
+| Source: lines 23-25 - Model training design / Save the run records           |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [2]: openspec/changes/reproducible-model-training/proposal.md           |
+|                                                                              |
+| Purpose: Train one model and evaluate it using answers kept out of training. |
+| Repeatable model training                                                    |
+| Build a workflow that combines several datasets, trains one model, and       |
+| evaluates predictions using answers the model has not seen.                  |
+| Keep enough records to repeat a run and understand its results. This         |
+| proposal does not claim that the workflow is implemented.                    |
+| Source: lines 1-5 - Repeatable model training                                |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [3]:                                                                    |
+| openspec/changes/reproducible-model-training/specs/data-preparation/spec.md  |
+|                                                                              |
+| Purpose: Use consistent input fields and reuse saved training and evaluation |
+| groups.                                                                      |
+| Prepare consistent samples                                                   |
+| Combine datasets using the same field names and units. Divide the samples    |
+| into training and evaluation groups before training starts.                  |
+| Save each sample's group assignment. Supporting notes call this a "persisted |
+| split": resuming a run must reuse the same saved assignments instead of      |
+| dividing the samples again.                                                  |
+| Source: lines 1-5 - Prepare consistent samples                               |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [4]:                                                                    |
+| openspec/changes/reproducible-model-training/specs/evaluation/spec.md        |
+|                                                                              |
+| Purpose: Measure prediction error; the acceptable error threshold is still   |
+| undecided.                                                                   |
+| Measure prediction error                                                     |
+| Compare saved predictions with the evaluation answers kept out of training.  |
+| Report the measured error.                                                   |
+| The acceptable error threshold is undecided. Do not declare that the model   |
+| is ready for use on the basis of an unspecified threshold.                   |
+| Source: lines 1-5 - Measure prediction error                                 |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [5]:                                                                    |
+| openspec/changes/reproducible-model-training/specs/predictions/spec.md       |
+|                                                                              |
+| Purpose: Predict answers for evaluation samples without revealing their      |
+| known answers.                                                               |
+| Predict unseen answers                                                       |
+| After training finishes, apply the trained model to the evaluation samples.  |
+| Keep their known answers hidden until all predictions have been saved.       |
+| Source: lines 1-3 - Predict unseen answers                                   |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [6]:                                                                    |
+| openspec/changes/reproducible-model-training/specs/run-records/spec.md       |
+|                                                                              |
+| Purpose: Save enough information for another person to repeat and check the  |
+| run.                                                                         |
+| Keep repeatable run records                                                  |
+| After evaluation, save the model settings, sample assignments, predictions,  |
+| and measured error. Another person must be able to identify the input        |
+| datasets and repeat the run from these records.                              |
+| Source: lines 1-3 - Keep repeatable run records                              |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [7]:                                                                    |
+| openspec/changes/reproducible-model-training/specs/training-run/spec.md      |
+|                                                                              |
+| Purpose: Run a small trial first; train fully only after its checks pass.    |
+| Run training reproducibly                                                    |
+| Use the same specified model settings for every full training run.           |
+| Supporting notes call these settings the "fixed recipe".                     |
+| Run a small trial first and check that inputs load, training completes, and  |
+| output can be saved. Supporting notes call this a "smoke gate". Start full   |
+| training only if every trial check passes; otherwise stop and report the     |
+| failed checks.                                                               |
+| When resuming a run, load its saved settings and sample assignments. Never   |
+| include the evaluation answers in training.                                  |
+| Source: lines 1-7 - Run training reproducibly                                |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [8]: openspec/changes/reproducible-model-training/tasks.md              |
+|                                                                              |
+| Purpose: Track the five planned steps; implementation evidence is            |
+| unavailable.                                                                 |
+| Implementation tasks                                                         |
+| - [ ] Prepare consistent input data and save training/evaluation             |
+| assignments.                                                                 |
+| - [ ] Add the trial checks and full training run.                            |
+| - [ ] Keep evaluation answers hidden until predictions are complete.         |
+| - [ ] Compare predictions with the saved answers.                            |
+| - [ ] Save the settings, assignments, predictions, and measured error.       |
+| These checkboxes describe planned work; completion and verification evidence |
+| are not available.                                                           |
+| Source: lines 1-9 - Implementation tasks                                     |
++------------------------------------------------------------------------------+
+
+Source snapshot:
+1a5c7ea729b016baf40adeac9de0509738159e2afa8056d5eebc93a17b00d2e9
+
+Use show <file number or path> to explore a file; add --detailed to expand it.

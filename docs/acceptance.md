@@ -1,6 +1,7 @@
 # Acceptance checks
 
-Checks recorded on October 12, 2026. Automated fixtures, live coding hosts,
+Earlier host checks recorded on October 12, 2026. Diagram-first checks below
+were recorded on October 13, 2026. Automated fixtures, live coding hosts,
 language interpretation, and reader feedback are separate evidence.
 
 ## Automated checks
@@ -51,7 +52,7 @@ proving that an agent can interpret every specification correctly.
 
 ## Recorded live results
 
-The final native runs exercised the current installed bundle. Each host invoked
+The October 12 native runs exercised the pre-change installed bundle. Each host invoked
 a fixed fixture driver using supplied interpretations and previously reviewed,
 agent-authored observational findings. The driver executed 14 commands per
 framework, including whole/local views, numbered selection, both detail levels,
@@ -129,3 +130,98 @@ The project author also reviewed the compact hierarchical change prototype and
 answered **“Clear enough.”** This is a small qualitative review, not a usability
 study. [Interpretation cases](interpretation-review.md) explain how contributors
 should check meaning preservation beyond deterministic source coverage.
+
+## Diagram-first response review
+
+Use `tests/fixtures/diagram-first/project/` and an installed current skill. Read
+raw source rather than supplying an expected answer. Request an overview, then
+`show` for the design file in both detail levels. Check the final chat response,
+not just helper output, against [the interpretation rubric](interpretation-review.md).
+
+| Request or context | Required observation |
+| --- | --- |
+| Ordinary overview | Project purpose, connected boxes, compact file keys, at most one selection hint |
+| Prior conversation contains code changes | No unsolicited drift report, implementation inspection, or offer to edit specs |
+| Meaningful connector labels already present | No second edge list or prose retelling |
+| Unknown term or unavailable source | Uncertainty stays visible beside its claim or in a keyed warning |
+| `show <file>` then `--detailed` | Same logical nodes and edges; full source conditions and unresolved decisions retained |
+| `changes` | Reports only; missing evidence remains unknown |
+| `changes --check-code` | Separate source-backed observations; no fabricated test execution or completion |
+| Paged file key | Continue with the same session; unopened file numbers are rejected |
+
+An opaque box or a fluent unsupported explanation fails this review even when
+model validation and golden-output tests pass. Previous host results above
+apply to their recorded bundle, not automatically to this presentation change.
+
+## Diagram-first implementation checks — October 13, 2026
+
+The complete 163-test suite passes locally on macOS 26.5.2 (Apple Silicon) with
+Python 3.14.5 and 3.11.17. It covers boxed branches and joins, source-backed
+project interpretations, legacy models, all comparison evidence states,
+12-line continuation pages, long keys, per-conversation delivered selections,
+legacy saved pages, and persistence failures. The original five framework
+fixture hashes and comparison inputs are unchanged.
+
+Linux and Windows runs for this change are **not yet verified**. The maintained
+GitHub Actions matrix remains Python 3.11/3.14 on all three operating systems.
+The local Python checks do not substitute for those pending platform runs.
+
+The ZIP was rebuilt with `tools/package.py` and compared byte-for-byte with
+every maintained bundle file, including `layout.py`, `views.py`, `text.py`, and
+`pagination.py`. `tools/host_acceptance.py --prepare-only` installed that bundle
+into five isolated framework projects. All 15 combinations of three agent
+installation paths and five fixture overviews ran successfully through the
+installed helper. Project and installed-bundle hashes remained unchanged.
+These are packaging/helper checks, not fresh Claude Code or Antigravity chats.
+
+### Current conversation and reader preview
+
+The current Codex assistant used an isolated, installed SpecViz skill to read
+the eight-file fixture, validate its source-backed interpretation, and run the
+installed helper for overview, `show 1`, and `show 1 --detailed`. The local desktop
+bundle reports ChatGPT 26.1007.30912 (build 20156); Python was 3.14.5. This was an
+interactive tool-driven conversation, not a new `codex exec` run or a test of
+native command discovery. Fresh Claude Code and Antigravity conversations for
+this change remain **unverified**.
+
+The overview and file views retained six logical compartments, the training
+branch, separately held answers, their evaluation join, and all eight source
+files. Detailed design notes preserved the all-checks-pass condition, the
+stop-and-report outcome, hidden evaluation answers, repeated settings, and the
+prohibition on declaring readiness with an undecided threshold. The comparison
+and source-integrity checks remain separate from this explanation review.
+
+The review improved the training annotation to name input loading, a short run,
+and saving results; it also made “do not declare the model ready” explicit in
+the overview. An initial selected-file attempt reused the global project graph
+and correctly failed out-of-scope reference validation. The skill and contract
+now explicitly use document models for `show`/`changes` and scope-specific
+project graphs for overviews. Both selected-file requests then passed. No
+specification hash changed and no implementation-evidence database was created.
+
+The complete 80-line overview was printed in the conversation for a reader
+check. The project author replied **“It's much clearer.”** They asked about
+future console-width detection and horizontal layouts, explicitly requesting
+no modification for now. This is qualitative reader feedback, not an
+independent comprehension study. Width behavior remains unchanged. The maintained source and all
+three generated view forms are reproducible in
+[the eight-file example](../examples/diagram-first/README.md).
+
+### Requirement coverage
+
+| Requirement group | Delivered behavior and verification |
+| --- | --- |
+| Project/document purpose; connected boxes | `views.py` uses the project graph and compact file key; eight-file overview and legacy fallback tests in `test_diagram_views.py` |
+| Stable detail; appropriate visual form | Box/edge identities remain stable; hierarchy, flow, interactions, independent rules, branches, joins, and cycles in `test_layout.py` and `test_render.py` |
+| Understandable labels; useful annotations | Skill asks for meaningful titles and supported sentences; source review and negative cases in `interpretation-review.md` |
+| Large/narrow views; traceability | Measured wrapping, counted groups, keyed panels, complete source keys, and 12-line pages in `test_pagination.py`; selection and stale-source rejection in `test_cli.py` |
+| Grounded project explanation; older models | Additive version-one contract, source/scope/coverage validation, and boxed fallback in `test_core.py` and `test_diagram_views.py` |
+| Comparison evidence distinctions | Adjacent evidence limits and group/file/behavior markers; unchanged comparison engine, renderer tests, and both maintained comparison modes |
+| Approachable entry point; representative examples | README embeds actual Kiro output; five framework examples, eight-file branch/join, and both comparison modes reproduce from checked source bytes |
+| No duplicate explanation; requested-mode boundary | Installed skill instructions and response-review cases above; current conversation printed the generated overview without drift claims |
+| Understanding checked against source | All eight source files reviewed against concise/detailed output; reader feedback requested separately from automated results |
+
+Strict OpenSpec validation passes all eight items. `git diff --check` passes.
+The pre-existing `AGENTS.md` hash is unchanged. Visualization preserved the
+original source fixtures, report/inspection inputs, and evidence semantics;
+OpenSpec baseline synchronization and task tracking were explicit workflow work.

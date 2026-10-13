@@ -1,70 +1,97 @@
-Specification and implementation comparison
-Project: Reporting service
-Purpose: Create downloadable reports
-Source snapshot:
-86c6a780a947ed8d4b3574920487ba69f4c695e5726cc702430d815322d0431b
+Reporting service - Create downloadable reports
 
 Basis: Workflow completion/progress reports; verification is separate; requested
 direct code inspection findings are shown separately
-Concise view: behavior labels and evidence limits. Full source wording is
-available with --detailed.
 
-Specification map (3 files)
-|
-+-- [contains changes] Data export (3 files)
-|   Create and protect report files
-|   |
-|   +-- [attention] [1] requirements.md
-|       Export rules
-|   +-- [changed] [2] design.md
-|       Export protection
-|   +-- [attention] [3] tasks.md
-|       Implementation checklist
-|
+Full source wording is available with --detailed.
+
++------------------------------------------------------------------------------+
+| [contains changes] Data export (3 files)                                     |
++------------------------------------------------------------------------------+
+
+          +----------------------------------------------------------+
+          | [attention] [1] requirements.md                          |
+          |                                                          |
+          | Export rules                                             |
+          +----------------------------------------------------------+
+                                        |
+                                        |
+                              Rules inform design
+                                        |
+                                        v
+          +----------------------------------------------------------+
+          | [changed] [2] design.md                                  |
+          |                                                          |
+          | Export protection                                        |
+          +----------------------------------------------------------+
+                                        |
+                                        |
+                      Design informs implementation steps
+                                        |
+                                        v
+          +----------------------------------------------------------+
+          | [attention] [3] tasks.md                                 |
+          |                                                          |
+          | Implementation checklist                                 |
+          +----------------------------------------------------------+
+
+Files (3 files):
+[1] requirements.md
+[2] design.md
+[3] tasks.md
+
 [changed] marks a requested difference; [attention] marks uncertain or
-incomplete evidence. [contains changes] and [contains attention] mark their
-ancestors.
+incomplete evidence. Their groups carry [contains changes] or [contains
+attention].
 
 File [1]: requirements.md
-+-- Export rules
-|   Difference: unchanged
-|   Evidence status: Current code supports part of requested behavior
-|   Plain export returns a filename; file creation and delivery are not
-|   established
-|   Verification: Unavailable; passing checks are not established.
-|   Code finding: partial
-|   Uninspected scope: ["File creation and delivery beyond the returned
-|   filename"]
-|   Inspection limit: Observation only; workflow rounds unchanged and tests were
-|   not executed.
+
++------------------------------------------------------------------------------+
+| [attention] Export rules                                                     |
+|                                                                              |
+| Difference: unchanged                                                        |
+| Evidence status: Current code supports part of requested behavior            |
+| Plain export returns a filename; file creation and delivery are not          |
+| established                                                                  |
+| Verification: Unavailable; passing checks are not established.               |
+| Code finding: partial                                                        |
+| Uninspected scope: ["File creation and delivery beyond the returned          |
+| filename"]                                                                   |
+| Inspection limit: Observation only; workflow rounds unchanged and tests were |
+| not executed.                                                                |
++------------------------------------------------------------------------------+
 
 File [2]: design.md
-+-- [changed] Export design
-|   Difference: behavioral
-|   Evidence status: Current code contradicts requested behavior
-|   The password guard raises an error instead of protecting the file; current
-|   code contradicts retained workflow completion evidence
-|   Verification: Unavailable; passing checks are not established.
-|   Code finding: contradicted
-|   Inspection limit: Observation only; workflow rounds unchanged and tests were
-|   not executed.
+
++------------------------------------------------------------------------------+
+| [changed] Export design                                                      |
+|                                                                              |
+| Difference: behavioral                                                       |
+| Evidence status: Current code contradicts requested behavior                 |
+| The password guard raises an error instead of protecting the file; current   |
+| code contradicts retained workflow completion evidence                       |
+| Verification: Unavailable; passing checks are not established.               |
+| Code finding: contradicted                                                   |
+| Inspection limit: Observation only; workflow rounds unchanged and tests were |
+| not executed.                                                                |
++------------------------------------------------------------------------------+
 
 File [3]: tasks.md
-+-- Implementation steps
-|   Difference: unchanged
-|   Evidence status: Current code supports part of requested behavior
-|   An export function returns a filename; file creation and password protection
-|   remain unfinished
-|   Verification: Unavailable; passing checks are not established.
-|   Code finding: partial
-|   Uninspected scope: ["File creation and delivery beyond the returned
-|   filename"]
-|   Inspection limit: Observation only; workflow rounds unchanged and tests were
-|   not executed.
 
-Relationships (arrows mean the stated relationship):
-- requirements.md -> design.md: Rules inform design
-- design.md -> tasks.md: Design informs implementation steps
++------------------------------------------------------------------------------+
+| [attention] Implementation steps                                             |
+|                                                                              |
+| Difference: unchanged                                                        |
+| Evidence status: Current code supports part of requested behavior            |
+| An export function returns a filename; file creation and password protection |
+| remain unfinished                                                            |
+| Verification: Unavailable; passing checks are not established.               |
+| Code finding: partial                                                        |
+| Uninspected scope: ["File creation and delivery beyond the returned          |
+| filename"]                                                                   |
+| Inspection limit: Observation only; workflow rounds unchanged and tests were |
+| not executed.                                                                |
++------------------------------------------------------------------------------+
 
 Explore further: changes --detailed for expanded evidence; changes --check-code
 to inspect relevant code.

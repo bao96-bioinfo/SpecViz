@@ -5,7 +5,8 @@ description: Explain specification documents as plain-text diagrams directly in 
 
 # SpecViz
 
-Show an understandable project map first, then selected documents on request.
+Show what the project does with connected text boxes first, then explore
+selected documents on request. A file tree is an index, not the explanation.
 Output diagrams in fenced `text` blocks directly in the conversation. Use ASCII
 structure and familiar words. Preserve exact filenames and necessary source
 identifiers; expand unfamiliar abbreviations in explanations.
@@ -42,9 +43,23 @@ Use a unique `--session` value per conversation for stable numbered selection.
    If a clearly selected specification folder has unfamiliar layout, select
    that folder explicitly for a generic view; keep framework semantics unknown.
 2. Read [contracts.md](references/contracts.md) when building the structured
-   interpretation. Give every file a short purpose, and every selected
-   substantive source block a visual item, attached note, or unresolved entry.
-   Use a tree, flow, interaction, or rule table according to the content.
+   interpretation. For `overview`, build `project_view` from source-supported goals, behavior,
+   components, and their relationships, with document/block references on each
+   claim and connector. Account for every selected file through a node, explicit
+   group membership, or `unresolved_documents`. Do not turn the framework's
+   document order into an invented application process. Rebuild this graph for
+   a local overview's scope and related context. `show` and `changes` use
+   document-level interpretations; omit the unused `project_view` in those
+   models. A whole-project graph can contain sources outside a file request.
+   Give files informative purposes and nodes meaningful titles. Add a complete,
+   plain-language sentence when a title alone cannot explain what happens, why,
+   or under what condition. Omit optional notes that add no information. Use
+   source definitions: “reuse the saved training and evaluation assignments,”
+   not an unexplained “persisted split.” If a term is undefined, retain its
+   exact source reference and say its meaning is unresolved; do not guess.
+   Every selected substantive source block needs a visual item, attached note,
+   or unresolved entry. Use hierarchy, flow, interaction, or independent rules
+   according to the content; put concise explanations in each item's `summary`.
    Preserve numbers, conditions, negations, exceptions, and must/may differences.
    Reuse returned requirement identities where applicable. New or renamed items
    need explicit correspondence to earlier evidence, rather than guessed IDs.
@@ -53,14 +68,32 @@ Use a unique `--session` value per conversation for stable numbered selection.
    The helper validates source versions and coverage, then prints the diagram.
    If references or coverage are invalid, correct the interpretation. Never
    claim complete meaning from a failed validation or an uninterpreted fallback.
-4. Print the resulting text in chat. Start overview with what the project does;
-   retain group/file purposes and explain arrow meanings. Detailed mode expands
-   the same skeleton with comprehensive notes, including open questions.
+4. Print the resulting fixed-width text in a fenced `text` block. Keep its
+   closed boxes, connectors, file keys, qualifications, and continuation hint.
+   Detailed mode expands the same nodes and relationships with complete notes,
+   including unresolved decisions; physical placement can reflow.
 
 For many files, use counted named groups. If output is split, preserve the
 snapshot and explicit remaining sections. Use the returned `--continue-view`
-and page to continue; refresh if sources changed. Keep selection bound to the
-latest displayed file map, rather than a newly sorted inventory.
+and page with the same conversation session to continue; refresh if sources
+changed. A file number becomes usable only after its full key is delivered.
+Continue to reveal a counted group's members before selecting their numbers;
+never guess a hidden number from the inventory. If storage is unavailable,
+use paths. Keep the latest displayed map and the user's requested scope.
+
+## Deliver only the requested view
+
+Use at most one brief purpose introduction, the diagram, necessary warnings or
+legends, and one next-action hint. The helper already supplies these; do not
+repeat its purpose, file descriptions, or complete relationships as paragraphs.
+Put an essential qualification beside the affected box or in a keyed note.
+An unexplained abbreviation must not require a lecture after the diagram.
+
+For `overview` and `show`, explain specifications only. Previous coding history
+is not a request to inspect code or report drift. Do not append implementation
+claims, code inspection, or an offer to rewrite specifications. Comparison
+belongs to `changes`; source inspection requires `changes --check-code`.
+Viewing specifications does not initiate edits or record implementation.
 
 ## Compare implementation
 
