@@ -1,0 +1,23 @@
+Specification overview
+Project: Reporting service
+Purpose: Export reports with owner access controls and clear download limits.
+Source snapshot:
+cac830d20403d0feca61d9f7b35f5145fdab754f57681147fac306765279e94c
+
+Specification map (2 files)
+|
++-- Data export (2 files)
+|   Design and implementation plan
+|   |
+|   +-- [1] docs/superpowers/plans/2026-10-02-data-export.md
+|       Work needed to implement protected downloads.
+|   +-- [2] docs/superpowers/specs/2026-10-01-data-export-design.md
+|       Owner checks, row limits, and optional protection.
+|
+
+Relationships (arrows mean the stated relationship):
+- docs/superpowers/plans/2026-10-02-data-export.md ->
+  docs/superpowers/specs/2026-10-01-data-export-design.md: Plan specification
+
+Choose files by number or full path. Use show <file...> to explore them; add
+--detailed for complete selected-file content.

@@ -1,0 +1,52 @@
+Specification overview
+Project: Reporting service
+Purpose: Export reports with owner access controls and clear download limits.
+Source snapshot:
+3e6aa1a95a96f9b7af1ea226d4a8ac6d2d8c78978c49cfc7a9f8d7dfe64cb4e5
+
+Specification map (6 files)
+|
++-- Add export [history] (1 file)
+|   Completed change history; implementation evidence separate
+|   |
+|   +-- [1] openspec/changes/archive/2026-09-01-add-export/proposal.md
+|       Earlier proposal for report downloads.
+|
++-- Data export (1 file)
+|   Existing documented behavior
+|   |
+|   +-- [6] openspec/specs/data-export/spec.md
+|       Rules for owner-only downloads of up to 100 rows.
+|
++-- Password export (4 files)
+|   Proposed behavior changes
+|   |
+|   +-- [2] openspec/changes/password-export/design.md
+|       How report ownership and protection work.
+|   +-- [3] openspec/changes/password-export/proposal.md
+|       Purpose and scope of the export change.
+|   +-- [4] openspec/changes/password-export/specs/data-export/spec.md
+|       Requested optional protection for report exports.
+|   +-- [5] openspec/changes/password-export/tasks.md
+|       Implementation steps for protected downloads.
+|
+
+Relationships (arrows mean the stated relationship):
+- openspec/changes/password-export/specs/data-export/spec.md ->
+  openspec/specs/data-export/spec.md: Change to current capability (inferred)
+- openspec/changes/password-export/proposal.md ->
+  openspec/changes/password-export/design.md: Planning dependency (inferred)
+- openspec/changes/password-export/design.md ->
+  openspec/changes/password-export/tasks.md: Informs implementation tasks
+  (inferred)
+- openspec/changes/password-export/proposal.md ->
+  openspec/changes/password-export/specs/data-export/spec.md: Planning
+  dependency (inferred)
+- openspec/changes/password-export/specs/data-export/spec.md ->
+  openspec/changes/password-export/tasks.md: Informs implementation tasks
+  (inferred)
+- openspec/changes/password-export/design.md ->
+  openspec/changes/password-export/specs/data-export/spec.md: Document reference
+
+Choose files by number or full path. Use show <file...> to explore them; add
+--detailed for complete selected-file content.

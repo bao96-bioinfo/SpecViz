@@ -1,0 +1,39 @@
+Selected specification files
+Project: Reporting service
+Purpose: Export reports with owner access controls and clear download limits.
+Source snapshot:
+9f67eea4ed1a9441c2d13ea239f94508989be2713eee737033ca84e771be6d59
+
+Specification map (1 file)
+|
++-- Epic data export (1 file)
+|   Planning and story tracking
+|   |
+|   +-- [2]
+|       planning/initiative-reporting/epic-data-export/spec-data-export/spec-dat
+|       a-export.md
+|       Rules for owner downloads and export limits.
+|
+
+Relationships (arrows mean the stated relationship):
+- planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-expo
+  rt.md -> planning/initiative-reporting/epic-data-export/story-export-plan.md:
+  Story planning context (inferred)
+
+File [2]:
+planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export
+.md
+Purpose: Rules for owner downloads and export limits.
+Independent rules
+Source lines refer to the file named above.
+| Rule | Source lines
+| -----+--------
+| (1) Data export | lines 1-3
+| (2) Download up to 100 rows; protection optional | lines 5-7
+| (3) Reject other users; passwords never logged | lines 9-12
+
+Relationships (arrows mean the stated relationship):
+- Data export -> Download up to 100 rows; protection optional: groups related
+  content
+- Data export -> Reject other users; passwords never logged: groups related
+  content

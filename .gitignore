@@ -1,0 +1,20 @@
+# Generated Python files
+__pycache__/
+*.py[cod]
+.coverage
+
+# Local packages, installation records, and comparison state
+/dist/
+.specviz-install.json
+*.sqlite3
+*.sqlite3-*
+
+# Local authoring setup; keep similarly named examples and fixtures visible
+/.agents/
+/.claude/
+/openspec/
+/AGENTS.md
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db

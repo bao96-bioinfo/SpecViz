@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "snapshot": "442f36d5defee79017155aa339f8d3befb695595ad4fa05175d0444f676fbe23",
+  "project_purpose": "Export reports with owner access controls and clear download limits.",
+  "documents": [
+    {
+      "id": ".kiro/specs/data-export/design.md",
+      "purpose": "How report ownership and protection work.",
+      "layout": "tree",
+      "items": [
+        {
+          "id": ".kiro/specs/data-export/design.md#export-design:1",
+          "label": "Export design",
+          "kind": "decision",
+          "sources": [
+            ".kiro/specs/data-export/design.md:L1-1",
+            ".kiro/specs/data-export/design.md:L3-3"
+          ],
+          "notes": [
+            "Check ownership, collect report rows, and optionally encrypt the download."
+          ]
+        },
+        {
+          "id": ".kiro/specs/data-export/design.md#export-design-design-decisions:1",
+          "label": "Decisions for access checks and protection",
+          "kind": "decision",
+          "sources": [
+            ".kiro/specs/data-export/design.md:L5-5",
+            ".kiro/specs/data-export/design.md:L7-7",
+            ".kiro/specs/data-export/design.md:L8-8",
+            ".kiro/specs/data-export/design.md:L10-10"
+          ],
+          "notes": [
+            "- Keep the 100-row limit.\n- Reject requests from anyone except the owner.",
+            "[Requirements](requirements.md)"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "from": ".kiro/specs/data-export/design.md#export-design:1",
+          "to": ".kiro/specs/data-export/design.md#export-design-design-decisions:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        }
+      ]
+    },
+    {
+      "id": ".kiro/specs/data-export/requirements.md",
+      "purpose": "Rules for owner downloads and export limits.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": ".kiro/specs/data-export/requirements.md#data-export-requirements:1",
+          "label": "Data export requirements",
+          "kind": "rule",
+          "sources": [
+            ".kiro/specs/data-export/requirements.md:L1-1",
+            ".kiro/specs/data-export/requirements.md:L3-3"
+          ],
+          "notes": [
+            "Requirements for report downloads with optional protection."
+          ]
+        },
+        {
+          "id": ".kiro/specs/data-export/requirements.md#data-export-requirements-requirement-1-export-report:1",
+          "label": "Owner download: at most 100 rows",
+          "kind": "rule",
+          "sources": [
+            ".kiro/specs/data-export/requirements.md:L5-5",
+            ".kiro/specs/data-export/requirements.md:L7-7"
+          ],
+          "notes": [
+            "WHEN an owner requests a report, THE SYSTEM SHALL export at most 100 rows."
+          ]
+        },
+        {
+          "id": ".kiro/specs/data-export/requirements.md#data-export-requirements-requirement-2-protect-download:1",
+          "label": "Optional encryption; passwords never logged",
+          "kind": "rule",
+          "sources": [
+            ".kiro/specs/data-export/requirements.md:L9-9",
+            ".kiro/specs/data-export/requirements.md:L11-11"
+          ],
+          "notes": [
+            "WHEN an owner supplies a password, THE SYSTEM SHALL encrypt the file without logging the password."
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "from": ".kiro/specs/data-export/requirements.md#data-export-requirements:1",
+          "to": ".kiro/specs/data-export/requirements.md#data-export-requirements-requirement-1-export-report:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        },
+        {
+          "from": ".kiro/specs/data-export/requirements.md#data-export-requirements:1",
+          "to": ".kiro/specs/data-export/requirements.md#data-export-requirements-requirement-2-protect-download:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        }
+      ]
+    },
+    {
+      "id": ".kiro/specs/data-export/tasks.md",
+      "purpose": "Implementation steps for protected downloads.",
+      "layout": "tree",
+      "items": [
+        {
+          "id": ".kiro/specs/data-export/tasks.md#implementation-steps:1",
+          "label": "Implementation steps",
+          "kind": "task",
+          "sources": [
+            ".kiro/specs/data-export/tasks.md:L1-1",
+            ".kiro/specs/data-export/tasks.md:L3-3",
+            ".kiro/specs/data-export/tasks.md:L5-5",
+            ".kiro/specs/data-export/tasks.md:L6-6",
+            ".kiro/specs/data-export/tasks.md:L7-7"
+          ],
+          "notes": [
+            "Tasks for implementing protected report exports.",
+            "- [ ] Validate report ownership.\n- [ ] Add bounded export generation.\n- [ ] Verify optional encryption and password handling."
+          ]
+        }
+      ],
+      "relationships": []
+    }
+  ]
+}

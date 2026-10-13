@@ -1,0 +1,59 @@
+Specification overview
+Project: Reporting service
+Purpose: Export reports with owner access controls and clear download limits.
+Source snapshot:
+10653813977a31cc87f9bc25b36bc6b4772ed02ca771cf4d260635eb56edc9d7
+
+Specification map (6 files)
+|
++-- Project principles (1 file)
+|   Shared project rules
+|   |
+|   +-- [1] .specify/memory/constitution.md
+|       Shared ownership and password-handling rules.
+|
++-- Data export (5 files)
+|   Feature requirements and implementation plan
+|   |
+|   +-- [2] specs/001-data-export/contracts/download.md
+|       Download responses for allowed and denied access.
+|   +-- [3] specs/001-data-export/plan.md
+|       How report ownership and protection work.
+|   +-- [4] specs/001-data-export/research.md
+|       Unresolved choice of encrypted download format.
+|   +-- [5] specs/001-data-export/spec.md
+|       Rules for owner downloads and export limits.
+|   +-- [6] specs/001-data-export/tasks.md
+|       Implementation steps for protected downloads.
+|
+
+Relationships (arrows mean the stated relationship):
+- specs/001-data-export/spec.md -> specs/001-data-export/plan.md: Planning
+  dependency (inferred)
+- specs/001-data-export/plan.md -> specs/001-data-export/tasks.md: Planning
+  dependency (inferred)
+- specs/001-data-export/plan.md -> specs/001-data-export/spec.md: Document
+  reference
+
+Document roles and sources:
++-- [1] .specify/memory/constitution.md
+|   Framework: spec-kit; role: rules; state: current
+|   Sections: Project principles
++-- [2] specs/001-data-export/contracts/download.md
+|   Framework: spec-kit; role: contract; state: proposed
+|   Sections: Download contract
++-- [3] specs/001-data-export/plan.md
+|   Framework: spec-kit; role: design; state: proposed
+|   Sections: Export design; Design decisions
++-- [4] specs/001-data-export/research.md
+|   Framework: spec-kit; role: research; state: proposed
+|   Sections: Export research; Open question
++-- [5] specs/001-data-export/spec.md
+|   Framework: spec-kit; role: specification; state: proposed
+|   Sections: Data export; User goals; Access rules
++-- [6] specs/001-data-export/tasks.md
+|   Framework: spec-kit; role: tasks; state: proposed
+|   Sections: Implementation steps
+
+Choose files by number or full path. Use show <file...> to explore them; add
+--detailed for complete selected-file content.

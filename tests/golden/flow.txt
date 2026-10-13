@@ -1,0 +1,40 @@
+Selected specification files
+Project: Reporting service
+Purpose: Export and share reports safely.
+Source snapshot: example-source-version-1
+
+Specification map (1 file)
+|
++-- Data export (1 file)
+|   Produce downloadable reports.
+|   |
+|   +-- [2] design.md
+|       How password-protected export works.
+|
+
+Relationships (arrows mean the stated relationship):
+- requirements.md -> design.md: defines the design's rules
+- design.md -> tasks.md: guides implementation (inferred)
+
+File [2]: design.md
+Purpose: How password-protected export works.
+Behavior flow
+Source lines refer to the file named above.
++-- (1) Protect exported reports
+|   Source: lines 3 - Export design
++-- (2) User requests export
+|   Source: lines 7 - Export design / Request
++-- (3) Export service reads report
+|   Source: lines 11 - Export design / Processing
++-- (4) User receives protected file
+|   Source: lines 15 - Export design / Delivery
+
+Relationships (arrows mean the stated relationship):
++-- User requests export
+|   | request starts data retrieval
+|   v
++-- Export service reads report
++-- Export service reads report
+|   | result is encrypted and returned (inferred)
+|   v
++-- User receives protected file

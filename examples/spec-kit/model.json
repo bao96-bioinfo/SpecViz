@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "snapshot": "10653813977a31cc87f9bc25b36bc6b4772ed02ca771cf4d260635eb56edc9d7",
+  "project_purpose": "Export reports with owner access controls and clear download limits.",
+  "documents": [
+    {
+      "id": ".specify/memory/constitution.md",
+      "purpose": "Shared ownership and password-handling rules.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": ".specify/memory/constitution.md#project-principles:1",
+          "label": "Project principles",
+          "kind": "rule",
+          "sources": [
+            ".specify/memory/constitution.md:L1-1",
+            ".specify/memory/constitution.md:L3-3",
+            ".specify/memory/constitution.md:L5-5",
+            ".specify/memory/constitution.md:L6-6"
+          ],
+          "notes": [
+            "Protect sensitive report content.",
+            "- Owners alone may download their reports.\n- Passwords must never appear in logs."
+          ]
+        }
+      ],
+      "relationships": []
+    },
+    {
+      "id": "specs/001-data-export/contracts/download.md",
+      "purpose": "Download responses for allowed and denied access.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "specs/001-data-export/contracts/download.md#download-contract:1",
+          "label": "Download contract",
+          "kind": "rule",
+          "sources": [
+            "specs/001-data-export/contracts/download.md:L1-1",
+            "specs/001-data-export/contracts/download.md:L3-3",
+            "specs/001-data-export/contracts/download.md:L5-8"
+          ],
+          "notes": [
+            "Describe the response for an authorized report download.",
+            "| Condition | Response |\n| --- | --- |\n| Owner requests a valid report | Download file |\n| Another user requests the report | Access denied |"
+          ]
+        }
+      ],
+      "relationships": []
+    },
+    {
+      "id": "specs/001-data-export/plan.md",
+      "purpose": "How report ownership and protection work.",
+      "layout": "tree",
+      "items": [
+        {
+          "id": "specs/001-data-export/plan.md#export-design:1",
+          "label": "Export design",
+          "kind": "decision",
+          "sources": [
+            "specs/001-data-export/plan.md:L1-1",
+            "specs/001-data-export/plan.md:L3-3"
+          ],
+          "notes": [
+            "Implement owner-only downloads and optional password protection."
+          ]
+        },
+        {
+          "id": "specs/001-data-export/plan.md#export-design-design-decisions:1",
+          "label": "Decisions for access checks and protection",
+          "kind": "decision",
+          "sources": [
+            "specs/001-data-export/plan.md:L5-5",
+            "specs/001-data-export/plan.md:L7-7",
+            "specs/001-data-export/plan.md:L8-8",
+            "specs/001-data-export/plan.md:L9-9",
+            "specs/001-data-export/plan.md:L11-11"
+          ],
+          "notes": [
+            "- Verify report ownership before reading its rows.\n- Limit exports to 100 rows.\n- Encrypt protected files before sending them.",
+            "[Requirements](spec.md)"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "from": "specs/001-data-export/plan.md#export-design:1",
+          "to": "specs/001-data-export/plan.md#export-design-design-decisions:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        }
+      ]
+    },
+    {
+      "id": "specs/001-data-export/research.md",
+      "purpose": "Unresolved choice of encrypted download format.",
+      "layout": "tree",
+      "items": [
+        {
+          "id": "specs/001-data-export/research.md#export-research:1",
+          "label": "Export research",
+          "kind": "question",
+          "sources": [
+            "specs/001-data-export/research.md:L1-1",
+            "specs/001-data-export/research.md:L3-3"
+          ],
+          "notes": [
+            "Record decisions about password-protected downloads."
+          ]
+        },
+        {
+          "id": "specs/001-data-export/research.md#export-research-open-question:1",
+          "label": "Encrypted file format remains undecided",
+          "kind": "question",
+          "sources": [
+            "specs/001-data-export/research.md:L5-5",
+            "specs/001-data-export/research.md:L7-7"
+          ],
+          "notes": [
+            "Which encrypted file format should owners receive?"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "from": "specs/001-data-export/research.md#export-research:1",
+          "to": "specs/001-data-export/research.md#export-research-open-question:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        }
+      ]
+    },
+    {
+      "id": "specs/001-data-export/spec.md",
+      "purpose": "Rules for owner downloads and export limits.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "specs/001-data-export/spec.md#data-export:1",
+          "label": "Data export",
+          "kind": "rule",
+          "sources": [
+            "specs/001-data-export/spec.md:L1-1",
+            "specs/001-data-export/spec.md:L3-3"
+          ],
+          "notes": [
+            "Requirements for downloading a protected report."
+          ]
+        },
+        {
+          "id": "specs/001-data-export/spec.md#data-export-user-goals:1",
+          "label": "Download limits and optional protection",
+          "kind": "rule",
+          "sources": [
+            "specs/001-data-export/spec.md:L5-5",
+            "specs/001-data-export/spec.md:L7-7",
+            "specs/001-data-export/spec.md:L8-8"
+          ],
+          "notes": [
+            "- A report owner can download up to 100 rows.\n- Password protection is optional."
+          ]
+        },
+        {
+          "id": "specs/001-data-export/spec.md#data-export-access-rules:1",
+          "label": "Only owners may download their reports",
+          "kind": "rule",
+          "sources": [
+            "specs/001-data-export/spec.md:L10-10",
+            "specs/001-data-export/spec.md:L12-12"
+          ],
+          "notes": [
+            "Only the report owner may download it."
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "from": "specs/001-data-export/spec.md#data-export:1",
+          "to": "specs/001-data-export/spec.md#data-export-user-goals:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        },
+        {
+          "from": "specs/001-data-export/spec.md#data-export:1",
+          "to": "specs/001-data-export/spec.md#data-export-access-rules:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        }
+      ]
+    },
+    {
+      "id": "specs/001-data-export/tasks.md",
+      "purpose": "Implementation steps for protected downloads.",
+      "layout": "tree",
+      "items": [
+        {
+          "id": "specs/001-data-export/tasks.md#implementation-steps:1",
+          "label": "Implementation steps",
+          "kind": "task",
+          "sources": [
+            "specs/001-data-export/tasks.md:L1-1",
+            "specs/001-data-export/tasks.md:L3-3",
+            "specs/001-data-export/tasks.md:L5-5",
+            "specs/001-data-export/tasks.md:L6-6",
+            "specs/001-data-export/tasks.md:L7-7"
+          ],
+          "notes": [
+            "Tasks for the report export feature.",
+            "- [ ] Add ownership validation.\n- [ ] Add export generation with the 100-row limit.\n- [ ] Verify protected and unprotected downloads."
+          ]
+        }
+      ],
+      "relationships": []
+    }
+  ]
+}

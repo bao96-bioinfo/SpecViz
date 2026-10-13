@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "inspection_id": "fictional-code-inspection",
+  "observational": true,
+  "tests_executed": false,
+  "complete": true,
+  "scope": [
+    "requirements.md",
+    "design.md",
+    "tasks.md"
+  ],
+  "specifications": [
+    {
+      "path": "requirements.md",
+      "hash": "48cbc9455db7d3bd23d1a3fe00eee539f49950d0437bfcd90e918cc6b30a9f23"
+    },
+    {
+      "path": "design.md",
+      "hash": "4200f1a1d74d17b682f7d269c407e720ca593d1faf2a1c6411719de2d84002bd"
+    },
+    {
+      "path": "tasks.md",
+      "hash": "2330326d48f8b27a4c6233eef09cd132c4de711bc0405e9cd6ca36aef99301f3"
+    }
+  ],
+  "implementation": {
+    "files": {
+      "export.py": "a7f379096b6c12c82bce956000929b393ac6a2389870be7c4a2c14fc95fb79c7",
+      "test_export.py": "4e1a9b73a00fbb4b929af7e46c701aeeebab3e1d13044182b87f05f2e07c467f"
+    },
+    "revision": null,
+    "complete_manifest": false,
+    "manifest_available": true,
+    "unavailable": [],
+    "excluded_specifications": [],
+    "limitation": "Only the declared relevant source files were fingerprinted"
+  },
+  "findings": [
+    {
+      "document": "requirements.md",
+      "requirement_id": "requirements.md#export-rules:1",
+      "status": "partial",
+      "reason": "Plain export returns a filename; file creation and delivery are not established",
+      "locations": [
+        {
+          "path": "export.py",
+          "line": 7
+        }
+      ],
+      "uninspected": [
+        "File creation and delivery beyond the returned filename"
+      ],
+      "tests": {
+        "executed": false,
+        "definitions": [
+          "test_export.py:6"
+        ]
+      }
+    },
+    {
+      "document": "design.md",
+      "requirement_id": "design.md#export-design:1",
+      "status": "contradicted",
+      "reason": "The password guard raises an error instead of protecting the file",
+      "locations": [
+        {
+          "path": "export.py",
+          "line": 6
+        }
+      ],
+      "uninspected": [],
+      "tests": {
+        "executed": false,
+        "definitions": [
+          "test_export.py:6"
+        ]
+      }
+    },
+    {
+      "document": "tasks.md",
+      "requirement_id": "tasks.md#implementation-steps:1",
+      "status": "partial",
+      "reason": "An export function returns a filename; file creation and password protection remain unfinished",
+      "locations": [
+        {
+          "path": "export.py",
+          "line": 5
+        }
+      ],
+      "uninspected": [
+        "File creation and delivery beyond the returned filename"
+      ],
+      "tests": {
+        "executed": false,
+        "definitions": [
+          "test_export.py:6"
+        ]
+      }
+    }
+  ]
+}

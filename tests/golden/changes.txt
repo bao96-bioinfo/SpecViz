@@ -1,0 +1,52 @@
+Specification and implementation comparison
+Project: Reporting service
+Purpose: Export and share reports safely.
+Source snapshot: example-source-version-1
+
+Basis: Workflow completion report from the previous implementation round.
+Concise view: behavior labels and evidence limits. Full source wording is
+available with --detailed.
+
+Specification map (3 files)
+|
++-- [contains changes] Data export (3 files)
+|   Produce downloadable reports.
+|   |
+|   +-- [1] requirements.md
+|       Export reports without sharing account secrets.
+|   +-- [changed] [2] design.md
+|       Protect exported reports with a password.
+|   +-- [3] tasks.md
+|       Add password protection to report export.
+|
+[changed] marks a requested difference; [attention] marks uncertain or
+incomplete evidence. [contains changes] and [contains attention] mark their
+ancestors.
+
+File [1]: requirements.md
++-- Export time
+|   Difference: unchanged
+|   Evidence status: Requested behavior reported implemented
+|   Verification: Reported check information; execution provenance is
+|   unspecified.
+
+File [2]: design.md
++-- [changed] Password protection
+|   Difference: behavioral
+|   Evidence status: Earlier behavior reported implemented
+|   Requested protection is not covered by the earlier report.
+|   Earlier behavior verification: Unavailable; passing checks are not
+|   established.
+
+File [3]: tasks.md
++-- Implementation steps
+|   Difference: unchanged
+|   Evidence status: Requested behavior reported implemented
+|   Verification: Unavailable; passing checks are not established.
+
+Relationships (arrows mean the stated relationship):
+- requirements.md -> design.md: defines the design's rules
+- design.md -> tasks.md: guides implementation (inferred)
+
+Explore further: changes --detailed for expanded evidence; changes --check-code
+to inspect relevant code.

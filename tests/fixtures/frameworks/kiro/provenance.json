@@ -1,0 +1,9 @@
+{
+  "framework": "Kiro Specs",
+  "version": "IDE 0.12",
+  "source_url": "https://kiro.dev/changelog/ide/0-12/",
+  "layout_source_url": "https://kiro.dev/docs/specs/feature-specs/",
+  "metadata_source_url": "https://github.com/kirodotdev/Kiro/issues/9435",
+  "retrieved": "2026-10-12",
+  "fixture_kind": "Original illustrative content; layout and workflow semantics from official documentation; metadata is a limited observed field mapping, not a promised public schema"
+}

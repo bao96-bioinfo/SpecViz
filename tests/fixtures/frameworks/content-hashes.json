@@ -1,0 +1,43 @@
+{
+  "bmad": {
+    "README.md": "7bcc759325cc3b48853e7c5894ce2c31f62686bf5d9a944dbc4d09a75bc73e9f",
+    "_bmad/custom/config.toml": "3a82eef7fef7c2b9fde5cab70a39a5e4cd09de6e83e784b0d164e3b777832ba0",
+    "_bmad/custom/config.user.toml": "b1b02d6ca2ea53f7aacce74b9af5c9259d3f47065a3de8b969f7ddded72041b4",
+    "planning/initiative-reporting/brief-reporting/brief-reporting.md": "bfd5527d3e2008c42b538146fdd545418615f5ba9248be88969fd576bf95e292",
+    "planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md": "b6fd52c3b703d4b8eea58cdb40a6d366e5a1cb79d6069be2621a50d53e70196b",
+    "planning/initiative-reporting/epic-data-export/story-export-plan.md": "09fdaf808382e4d3551cffd6ba677be81bb8fc4617107a7fd4ac796585251970",
+    "planning/initiative-reporting/epic-data-export/tickets.toml": "453e5613e91b69d700f669690448308ecb13f6ca2fd10f897d1d33d36207e461"
+  },
+  "kiro": {
+    ".kiro/specs/data-export/.config.kiro": "0382321b4bcb7424280bb3922caf634c3c2039809ca802844a6fb9d22d17cd0d",
+    ".kiro/specs/data-export/design.md": "919b47fe495d9a03ccee257eddb282fbaf3fc821a06d372310a7941ddaf6bce7",
+    ".kiro/specs/data-export/requirements.md": "38b72ad94e3f6221a081fa4d2b006a4871a663f680f7a6f86cfb8bb04c1e78ab",
+    ".kiro/specs/data-export/tasks.md": "2bae3a471a352160ea3c060b5fbd6f4efd3bd01db095d5190db4dddfff57b610",
+    "README.md": "7bcc759325cc3b48853e7c5894ce2c31f62686bf5d9a944dbc4d09a75bc73e9f"
+  },
+  "openspec": {
+    "README.md": "7bcc759325cc3b48853e7c5894ce2c31f62686bf5d9a944dbc4d09a75bc73e9f",
+    "openspec/changes/archive/2026-09-01-add-export/proposal.md": "4850e1e15e694e73d1e7c280b8fd95e0d08cce551bae208ce5ff7f2a68f90f9b",
+    "openspec/changes/password-export/design.md": "9b8fd3f66d2242ba0868dd7564d96befe34214d94184bd79be23d6360216227c",
+    "openspec/changes/password-export/proposal.md": "cd0c96979b6603db861ad9ba18b7b6f506c102df8d7c7ce6317b39d43b722794",
+    "openspec/changes/password-export/specs/data-export/spec.md": "6ab56941f1c9bd9e1fcbf36f91fec8c8bb9829f2b82355839b8e9bd80a96d863",
+    "openspec/changes/password-export/tasks.md": "6fd5dc36f8d5477fe56d41f3cdedbf8516f91343d3e6c3e19aec305425022f79",
+    "openspec/config.yaml": "85b53dd24fbe7d19c8b0f0ddccf5e82600c5c372c76b57a2a89dc34dfb0fc5b9",
+    "openspec/specs/data-export/spec.md": "96fbd9d20c2ac53e03750e15e174c003c43622f23d8ce830c9653d16565f2e51"
+  },
+  "spec-kit": {
+    ".specify/feature.json": "e52e1eeac754e167b9b06e89252512ab24615c3d6fe1b46bc0efa0e7fb2233f1",
+    ".specify/memory/constitution.md": "65d4073c2639441f86d4b250aba2ee21adf1697b20e9b2d9d688ab3a33f35321",
+    "README.md": "7bcc759325cc3b48853e7c5894ce2c31f62686bf5d9a944dbc4d09a75bc73e9f",
+    "specs/001-data-export/contracts/download.md": "63544684e4b010b09c0e0281ee83685a715c2cf8d2c512d3ec11e723e4116cda",
+    "specs/001-data-export/plan.md": "f5bc2d0e249c11e13ca0116eb4deab5f1504cc207994239b1d438cf2dfe28e24",
+    "specs/001-data-export/research.md": "f397ef87ed47750ef06c597a645e7272e21d24993fe202d3304a94e9142b545f",
+    "specs/001-data-export/spec.md": "be2390b7d23425af5f18962c9e5f856437860a31e93877b72a461180ce6ef25b",
+    "specs/001-data-export/tasks.md": "ba6a0cc9f4ff17fae7b0851dcee96d7fe6bfb18be4d11d96cc90f89f7bcb6a62"
+  },
+  "superpowers": {
+    "README.md": "7bcc759325cc3b48853e7c5894ce2c31f62686bf5d9a944dbc4d09a75bc73e9f",
+    "docs/superpowers/plans/2026-10-02-data-export.md": "a00a1abf3369a7105632210f89cec51113eae3abf75c35eeee1c62ba6dcffd0c",
+    "docs/superpowers/specs/2026-10-01-data-export-design.md": "3d411b69c1cdd383e03a408bff623981fcbe09050c0f5b1ded65288ad0a4fd18"
+  }
+}

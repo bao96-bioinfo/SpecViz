@@ -1,0 +1,56 @@
+Selected specification files
+Project: Reporting service
+Purpose: Export reports with owner access controls and clear download limits.
+Source snapshot:
+3e6aa1a95a96f9b7af1ea226d4a8ac6d2d8c78978c49cfc7a9f8d7dfe64cb4e5
+
+Specification map (1 file)
+|
++-- Password export (1 file)
+|   Proposed behavior changes
+|   |
+|   +-- [4] openspec/changes/password-export/specs/data-export/spec.md
+|       Requested optional protection for report exports.
+|
+
+Relationships (arrows mean the stated relationship):
+- openspec/changes/password-export/specs/data-export/spec.md ->
+  openspec/specs/data-export/spec.md: Change to current capability (inferred)
+- openspec/changes/password-export/proposal.md ->
+  openspec/changes/password-export/specs/data-export/spec.md: Planning
+  dependency (inferred)
+- openspec/changes/password-export/specs/data-export/spec.md ->
+  openspec/changes/password-export/tasks.md: Informs implementation tasks
+  (inferred)
+- openspec/changes/password-export/design.md ->
+  openspec/changes/password-export/specs/data-export/spec.md: Document reference
+
+File [4]: openspec/changes/password-export/specs/data-export/spec.md
+Purpose: Requested optional protection for report exports.
+Independent rules
+Source lines refer to the file named above.
+| Rule | Source lines
+| -----+--------
+| (1) Export changes | lines 1-3
+|   - Requested password protection for report exports.
+|   Source: lines 1-3 - Export changes
+| (2) Requested changes to export rules | lines 5
+|   - ## MODIFIED Requirements
+|   Source: lines 5 - Export changes / MODIFIED Requirements
+| (3) Owner downloads at most 100 rows | lines 7-8
+|   - The system SHALL allow report owners to export up to 100 rows as a
+|     comma-separated file and request optional password protection.
+|   Source: lines 7-8 - Export changes / MODIFIED Requirements / Requirement:
+|   Export report
+| (4) Requested password protects the download | lines 10-12
+|   - - **WHEN** the owner requests password protection
+|     - **THEN** the exported file is encrypted and contains at most 100 rows
+|   Source: lines 10-12 - Export changes / MODIFIED Requirements / Requirement:
+|   Export report / Scenario: Download a protected report
+
+Relationships (arrows mean the stated relationship):
+- Export changes -> Requested changes to export rules: groups related content
+- Requested changes to export rules -> Owner downloads at most 100 rows: groups
+  related content
+- Owner downloads at most 100 rows -> Requested password protects the download:
+  groups related content

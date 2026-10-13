@@ -1,0 +1,13 @@
+[[tickets]]
+id = "1"
+type = "story"
+title = "Add protected downloads"
+description = "Implement CAP-1 with the owner check and 100-row limit."
+verify = "Owner can download; another user is denied."
+
+[[tickets]]
+id = "2"
+type = "story"
+title = "Review download errors"
+after = ["1"]
+description = "Document errors without exposing passwords."

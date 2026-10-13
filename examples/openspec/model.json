@@ -1,0 +1,304 @@
+{
+  "schema_version": 1,
+  "snapshot": "3e6aa1a95a96f9b7af1ea226d4a8ac6d2d8c78978c49cfc7a9f8d7dfe64cb4e5",
+  "project_purpose": "Export reports with owner access controls and clear download limits.",
+  "documents": [
+    {
+      "id": "openspec/changes/archive/2026-09-01-add-export/proposal.md",
+      "purpose": "Earlier proposal for report downloads.",
+      "layout": "tree",
+      "items": [
+        {
+          "id": "openspec/changes/archive/2026-09-01-add-export/proposal.md#initial-report-exports:1",
+          "label": "Initial report exports",
+          "kind": "goal",
+          "sources": [
+            "openspec/changes/archive/2026-09-01-add-export/proposal.md:L1-1",
+            "openspec/changes/archive/2026-09-01-add-export/proposal.md:L3-3"
+          ],
+          "notes": [
+            "Historical proposal for adding report downloads."
+          ]
+        }
+      ],
+      "relationships": []
+    },
+    {
+      "id": "openspec/changes/password-export/design.md",
+      "purpose": "How report ownership and protection work.",
+      "layout": "tree",
+      "items": [
+        {
+          "id": "openspec/changes/password-export/design.md#export-design:1",
+          "label": "Export design",
+          "kind": "decision",
+          "sources": [
+            "openspec/changes/password-export/design.md:L1-1",
+            "openspec/changes/password-export/design.md:L3-3"
+          ],
+          "notes": [
+            "Encrypt an export when its owner provides a password."
+          ]
+        },
+        {
+          "id": "openspec/changes/password-export/design.md#export-design-design-decisions:1",
+          "label": "Decisions for access checks and protection",
+          "kind": "decision",
+          "sources": [
+            "openspec/changes/password-export/design.md:L5-5",
+            "openspec/changes/password-export/design.md:L7-7",
+            "openspec/changes/password-export/design.md:L8-8",
+            "openspec/changes/password-export/design.md:L9-9"
+          ],
+          "notes": [
+            "- Keep the existing access check.\n- Encrypt the file before sending it to the owner.\n- Do not log passwords."
+          ]
+        },
+        {
+          "id": "openspec/changes/password-export/design.md#export-design-sources:1",
+          "label": "Specification source",
+          "kind": "decision",
+          "sources": [
+            "openspec/changes/password-export/design.md:L11-11",
+            "openspec/changes/password-export/design.md:L13-13"
+          ],
+          "notes": [
+            "[Export rules](specs/data-export/spec.md)"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "from": "openspec/changes/password-export/design.md#export-design:1",
+          "to": "openspec/changes/password-export/design.md#export-design-design-decisions:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        },
+        {
+          "from": "openspec/changes/password-export/design.md#export-design:1",
+          "to": "openspec/changes/password-export/design.md#export-design-sources:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        }
+      ]
+    },
+    {
+      "id": "openspec/changes/password-export/proposal.md",
+      "purpose": "Purpose and scope of the export change.",
+      "layout": "tree",
+      "items": [
+        {
+          "id": "openspec/changes/password-export/proposal.md#protect-report-exports:1",
+          "label": "Protect report exports",
+          "kind": "goal",
+          "sources": [
+            "openspec/changes/password-export/proposal.md:L1-1",
+            "openspec/changes/password-export/proposal.md:L3-3"
+          ],
+          "notes": [
+            "Add optional password protection to report downloads."
+          ]
+        },
+        {
+          "id": "openspec/changes/password-export/proposal.md#protect-report-exports-scope:1",
+          "label": "Preserve limits and add optional protection",
+          "kind": "goal",
+          "sources": [
+            "openspec/changes/password-export/proposal.md:L5-5",
+            "openspec/changes/password-export/proposal.md:L7-7",
+            "openspec/changes/password-export/proposal.md:L8-8"
+          ],
+          "notes": [
+            "- Preserve the 100-row limit.\n- Allow report owners to request a password."
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "from": "openspec/changes/password-export/proposal.md#protect-report-exports:1",
+          "to": "openspec/changes/password-export/proposal.md#protect-report-exports-scope:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        }
+      ]
+    },
+    {
+      "id": "openspec/changes/password-export/specs/data-export/spec.md",
+      "purpose": "Requested optional protection for report exports.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/changes/password-export/specs/data-export/spec.md#export-changes:1",
+          "label": "Export changes",
+          "kind": "rule",
+          "sources": [
+            "openspec/changes/password-export/specs/data-export/spec.md:L1-1",
+            "openspec/changes/password-export/specs/data-export/spec.md:L3-3"
+          ],
+          "notes": [
+            "Requested password protection for report exports."
+          ]
+        },
+        {
+          "id": "openspec/changes/password-export/specs/data-export/spec.md#export-changes-modified-requirements:1",
+          "label": "Requested changes to export rules",
+          "kind": "rule",
+          "sources": [
+            "openspec/changes/password-export/specs/data-export/spec.md:L5-5"
+          ],
+          "notes": []
+        },
+        {
+          "id": "openspec/changes/password-export/specs/data-export/spec.md#export-changes-modified-requirements-requirement-export-report:1",
+          "label": "Owner downloads at most 100 rows",
+          "kind": "rule",
+          "sources": [
+            "openspec/changes/password-export/specs/data-export/spec.md:L7-7",
+            "openspec/changes/password-export/specs/data-export/spec.md:L8-8"
+          ],
+          "notes": [
+            "The system SHALL allow report owners to export up to 100 rows as a comma-separated file and request optional password protection."
+          ]
+        },
+        {
+          "id": "openspec/changes/password-export/specs/data-export/spec.md#export-changes-modified-requirements-requirement-export-report-scenario-download-a-protected-report:1",
+          "label": "Requested password protects the download",
+          "kind": "rule",
+          "sources": [
+            "openspec/changes/password-export/specs/data-export/spec.md:L10-10",
+            "openspec/changes/password-export/specs/data-export/spec.md:L11-11",
+            "openspec/changes/password-export/specs/data-export/spec.md:L12-12"
+          ],
+          "notes": [
+            "- **WHEN** the owner requests password protection\n- **THEN** the exported file is encrypted and contains at most 100 rows"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "from": "openspec/changes/password-export/specs/data-export/spec.md#export-changes:1",
+          "to": "openspec/changes/password-export/specs/data-export/spec.md#export-changes-modified-requirements:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        },
+        {
+          "from": "openspec/changes/password-export/specs/data-export/spec.md#export-changes-modified-requirements:1",
+          "to": "openspec/changes/password-export/specs/data-export/spec.md#export-changes-modified-requirements-requirement-export-report:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        },
+        {
+          "from": "openspec/changes/password-export/specs/data-export/spec.md#export-changes-modified-requirements-requirement-export-report:1",
+          "to": "openspec/changes/password-export/specs/data-export/spec.md#export-changes-modified-requirements-requirement-export-report-scenario-download-a-protected-report:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        }
+      ]
+    },
+    {
+      "id": "openspec/changes/password-export/tasks.md",
+      "purpose": "Implementation steps for protected downloads.",
+      "layout": "tree",
+      "items": [
+        {
+          "id": "openspec/changes/password-export/tasks.md#implementation-steps:1",
+          "label": "Implementation steps",
+          "kind": "task",
+          "sources": [
+            "openspec/changes/password-export/tasks.md:L1-1",
+            "openspec/changes/password-export/tasks.md:L3-3",
+            "openspec/changes/password-export/tasks.md:L5-5",
+            "openspec/changes/password-export/tasks.md:L6-6"
+          ],
+          "notes": [
+            "Steps to add password protection to exports.",
+            "- [ ] Add the optional password input.\n- [ ] Encrypt exports and verify the row limit."
+          ]
+        }
+      ],
+      "relationships": []
+    },
+    {
+      "id": "openspec/specs/data-export/spec.md",
+      "purpose": "Rules for owner-only downloads of up to 100 rows.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/specs/data-export/spec.md#data-export:1",
+          "label": "Data export",
+          "kind": "rule",
+          "sources": [
+            "openspec/specs/data-export/spec.md:L1-1",
+            "openspec/specs/data-export/spec.md:L3-3"
+          ],
+          "notes": [
+            "Rules for downloading a report."
+          ]
+        },
+        {
+          "id": "openspec/specs/data-export/spec.md#data-export-requirements:1",
+          "label": "Export rules",
+          "kind": "rule",
+          "sources": [
+            "openspec/specs/data-export/spec.md:L5-5"
+          ],
+          "notes": []
+        },
+        {
+          "id": "openspec/specs/data-export/spec.md#data-export-requirements-requirement-export-report:1",
+          "label": "Owner downloads at most 100 rows",
+          "kind": "rule",
+          "sources": [
+            "openspec/specs/data-export/spec.md:L7-7",
+            "openspec/specs/data-export/spec.md:L8-8"
+          ],
+          "notes": [
+            "The system SHALL allow report owners to export up to 100 rows as a comma-separated file."
+          ]
+        },
+        {
+          "id": "openspec/specs/data-export/spec.md#data-export-requirements-requirement-export-report-scenario-download-a-report:1",
+          "label": "Owner receives the bounded report file",
+          "kind": "rule",
+          "sources": [
+            "openspec/specs/data-export/spec.md:L10-10",
+            "openspec/specs/data-export/spec.md:L11-11",
+            "openspec/specs/data-export/spec.md:L12-12"
+          ],
+          "notes": [
+            "- **WHEN** the owner requests a report export\n- **THEN** the system provides a file containing at most 100 rows"
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "from": "openspec/specs/data-export/spec.md#data-export:1",
+          "to": "openspec/specs/data-export/spec.md#data-export-requirements:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        },
+        {
+          "from": "openspec/specs/data-export/spec.md#data-export-requirements:1",
+          "to": "openspec/specs/data-export/spec.md#data-export-requirements-requirement-export-report:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        },
+        {
+          "from": "openspec/specs/data-export/spec.md#data-export-requirements-requirement-export-report:1",
+          "to": "openspec/specs/data-export/spec.md#data-export-requirements-requirement-export-report-scenario-download-a-report:1",
+          "type": "containment",
+          "label": "groups related content",
+          "inferred": false
+        }
+      ]
+    }
+  ]
+}

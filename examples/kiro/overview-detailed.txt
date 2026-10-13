@@ -1,0 +1,43 @@
+Specification overview
+Project: Reporting service
+Purpose: Export reports with owner access controls and clear download limits.
+Source snapshot:
+442f36d5defee79017155aa339f8d3befb695595ad4fa05175d0444f676fbe23
+
+Specification map (3 files)
+|
++-- Data export (3 files)
+|   Feature requirements, design, and tasks
+|   |
+|   +-- [1] .kiro/specs/data-export/design.md
+|       How report ownership and protection work.
+|   +-- [2] .kiro/specs/data-export/requirements.md
+|       Rules for owner downloads and export limits.
+|   +-- [3] .kiro/specs/data-export/tasks.md
+|       Implementation steps for protected downloads.
+|
+
+Relationships (arrows mean the stated relationship):
+- .kiro/specs/data-export/requirements.md -> .kiro/specs/data-export/design.md:
+  requirements guide the design
+- .kiro/specs/data-export/requirements.md -> .kiro/specs/data-export/tasks.md:
+  Informs implementation tasks (inferred)
+- .kiro/specs/data-export/design.md -> .kiro/specs/data-export/tasks.md: Informs
+  implementation tasks (inferred)
+- .kiro/specs/data-export/design.md -> .kiro/specs/data-export/requirements.md:
+  Document reference
+
+Document roles and sources:
++-- [1] .kiro/specs/data-export/design.md
+|   Framework: kiro; role: design; state: proposed
+|   Sections: Export design; Design decisions
++-- [2] .kiro/specs/data-export/requirements.md
+|   Framework: kiro; role: specification; state: proposed
+|   Sections: Data export requirements; Requirement 1: Export report;
+|   Requirement 2: Protect download
++-- [3] .kiro/specs/data-export/tasks.md
+|   Framework: kiro; role: tasks; state: proposed
+|   Sections: Implementation steps
+
+Choose files by number or full path. Use show <file...> to explore them; add
+--detailed for complete selected-file content.

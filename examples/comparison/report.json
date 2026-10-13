@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "event_id": "fictional-export-report-reports",
+  "event": "complete",
+  "framework": "openspec",
+  "round_id": "fictional-export-round-reports",
+  "scope": [
+    "Data export"
+  ],
+  "occurred_at": "2026-10-12T00:00:00+00:00",
+  "origin": {
+    "kind": "handoff",
+    "source": "Fictional completion report for this example",
+    "host": "codex"
+  },
+  "specifications": [
+    {
+      "path": "requirements.md",
+      "hash": "48cbc9455db7d3bd23d1a3fe00eee539f49950d0437bfcd90e918cc6b30a9f23",
+      "text": "# Export rules\n\nCreate downloadable report files.\n"
+    },
+    {
+      "path": "design.md",
+      "hash": "0fa574982f7be1ba8121609e43b913af797909d343665ec2b79c2ef6eab6487c",
+      "text": "# Export design\n\nCreate a downloadable file.\n"
+    },
+    {
+      "path": "tasks.md",
+      "hash": "b81099c8001212f82fde8590bbce666a810e74414619ce94b871c085090a80c2",
+      "text": "# Implementation steps\n\n- [x] Create report files.\n"
+    }
+  ],
+  "implementation": {
+    "files": {
+      "export.py": "a7f379096b6c12c82bce956000929b393ac6a2389870be7c4a2c14fc95fb79c7"
+    },
+    "revision": null,
+    "complete_manifest": false,
+    "manifest_available": true,
+    "unavailable": [],
+    "excluded_specifications": [],
+    "limitation": "Only the declared relevant source files were fingerprinted"
+  },
+  "coverage": [
+    {
+      "requirement_id": "requirements.md#export-rules:1",
+      "document": "requirements.md",
+      "spec_hash": "48cbc9455db7d3bd23d1a3fe00eee539f49950d0437bfcd90e918cc6b30a9f23",
+      "text": "# Export rules\n\nCreate downloadable report files.",
+      "sources": [
+        "requirements.md:L1-1",
+        "requirements.md:L3-3"
+      ],
+      "status": "implemented"
+    },
+    {
+      "requirement_id": "design.md#export-design:1",
+      "document": "design.md",
+      "spec_hash": "0fa574982f7be1ba8121609e43b913af797909d343665ec2b79c2ef6eab6487c",
+      "text": "# Export design\n\nCreate a downloadable file.",
+      "sources": [
+        "design.md:L1-1",
+        "design.md:L3-3"
+      ],
+      "status": "implemented"
+    },
+    {
+      "requirement_id": "tasks.md#implementation-steps:1",
+      "document": "tasks.md",
+      "spec_hash": "b81099c8001212f82fde8590bbce666a810e74414619ce94b871c085090a80c2",
+      "text": "# Implementation steps\n\n- [x] Create report files.",
+      "sources": [
+        "tasks.md:L1-1",
+        "tasks.md:L3-3"
+      ],
+      "status": "implemented"
+    }
+  ],
+  "declared_complete": true
+}

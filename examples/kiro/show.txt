@@ -1,0 +1,38 @@
+Selected specification files
+Project: Reporting service
+Purpose: Export reports with owner access controls and clear download limits.
+Source snapshot:
+442f36d5defee79017155aa339f8d3befb695595ad4fa05175d0444f676fbe23
+
+Specification map (1 file)
+|
++-- Data export (1 file)
+|   Feature requirements, design, and tasks
+|   |
+|   +-- [2] .kiro/specs/data-export/requirements.md
+|       Rules for owner downloads and export limits.
+|
+
+Relationships (arrows mean the stated relationship):
+- .kiro/specs/data-export/requirements.md -> .kiro/specs/data-export/design.md:
+  requirements guide the design
+- .kiro/specs/data-export/requirements.md -> .kiro/specs/data-export/tasks.md:
+  Informs implementation tasks (inferred)
+- .kiro/specs/data-export/design.md -> .kiro/specs/data-export/requirements.md:
+  Document reference
+
+File [2]: .kiro/specs/data-export/requirements.md
+Purpose: Rules for owner downloads and export limits.
+Independent rules
+Source lines refer to the file named above.
+| Rule | Source lines
+| -----+--------
+| (1) Data export requirements | lines 1-3
+| (2) Owner download: at most 100 rows | lines 5-7
+| (3) Optional encryption; passwords never logged | lines 9-11
+
+Relationships (arrows mean the stated relationship):
+- Data export requirements -> Owner download: at most 100 rows: groups related
+  content
+- Data export requirements -> Optional encryption; passwords never logged:
+  groups related content

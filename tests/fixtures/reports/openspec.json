@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "event_id": "fixture-openspec",
+  "event": "complete",
+  "framework": "openspec",
+  "round_id": "fixture-openspec-round",
+  "scope": [
+    "Data export"
+  ],
+  "origin": {
+    "kind": "handoff",
+    "source": "chat:fixture-openspec",
+    "host": "codex"
+  },
+  "specifications": [
+    {
+      "path": "requirements.md",
+      "text": "# Export\nCreate export files.\n",
+      "hash": "83dbfd41d916a48b8d263f8155882a7cfee2b4a4603ff90491141346a0a75b93"
+    }
+  ],
+  "implementation": {
+    "files": {},
+    "complete_manifest": false
+  },
+  "coverage": [
+    {
+      "requirement_id": "export",
+      "document": "requirements.md",
+      "spec_hash": "83dbfd41d916a48b8d263f8155882a7cfee2b4a4603ff90491141346a0a75b93",
+      "text": "Create export files.",
+      "status": "implemented"
+    }
+  ],
+  "declared_complete": true,
+  "fixture_provenance": {
+    "source": "https://openspec.dev/docs/skills",
+    "contract": "SpecViz explicit handoff schema 1",
+    "native_format": false,
+    "note": "Apply completion; verification captured separately"
+  }
+}
