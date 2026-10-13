@@ -99,6 +99,8 @@ def configure(transaction, project: Path, home: Path, source: Path | None,
                 raise BundleError("Dispatcher interpreter changed; remove the existing beta registration before reinstalling")
             _hook(hooks, host, hook, old_entry, active=True)
             registry["projects"][entry_key] = {"project": str(project), "mode": "default", "hook": hook}
+            if host == "antigravity":
+                registry["projects"][entry_key]["settings_file"] = str(settings_path)
             if source is not None:
                 runtime_files = {"specviz_bridge.py": source / "scripts/specviz_bridge.py",
                                  "specviz/display.py": source / "scripts/specviz/display.py"}

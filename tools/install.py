@@ -89,7 +89,11 @@ def install(project: Path, hosts: list[str], *, source: Path = SOURCE,
     if not remove and (not (source / "SKILL.md").is_file() or not files):
         raise InstallError("The maintained skill bundle is incomplete")
     targets = _targets(project, hosts)
-    prior = {target: _owned(target) for target in targets}
+    def owned_for_operation(target):
+        if remove and not (target / MANIFEST).exists():
+            return None  # Repeated removal retains any unrelated remaining files.
+        return _owned(target)
+    prior = {target: owned_for_operation(target) for target in targets}
     # Validate every target before mutating any selected installation.
     if not remove:
         for target in targets:
@@ -112,7 +116,7 @@ def install(project: Path, hosts: list[str], *, source: Path = SOURCE,
     desired = set()
     try:
         with Transaction(storage) as transaction:
-            if any(_owned(target) != prior[target] for target in targets):
+            if any(owned_for_operation(target) != prior[target] for target in targets):
                 raise InstallError("Installation changed during setup; retry from the current state")
             for target in targets:
                 old = prior[target]

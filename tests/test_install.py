@@ -49,6 +49,8 @@ class InstallTests(unittest.TestCase):
         installer.install(self.project, list(installer.HOSTS), source=self.source, remove=True)
         self.assertEqual((target / "reader-notes.txt").read_text(), "Keep me")
         self.assertEqual(unrelated.read_text(), "Other skill")
+        installer.install(self.project, list(installer.HOSTS), source=self.source, remove=True)
+        self.assertEqual((target / "reader-notes.txt").read_text(), "Keep me")
 
     def test_modified_owned_files_and_foreign_skills_refuse_all_changes(self):
         installer.install(self.project, ["codex"], source=self.source)
