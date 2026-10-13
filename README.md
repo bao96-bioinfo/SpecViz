@@ -2,7 +2,7 @@
 
 # SpecViz
 
-**Your agent wrote the specs. Start with the map.**
+**Your agent wrote the specs. SpecViz turns it into diagrams.**
 
 SpecViz turns specification files into **text diagrams inside your coding
 chat**. See what the project does, how its documents connect, and what each
