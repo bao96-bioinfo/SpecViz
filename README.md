@@ -1,8 +1,8 @@
 # SpecViz
 
-**Your agent wrote the specs. Start with the map.**
-
 ![A pile of specification text crossed out in red, beside SpecViz organizing the same files into a clear text diagram inside a chat.](docs/assets/specviz-overview.png)
+
+**Your agent wrote the specs. Start with the map.**
 
 SpecViz turns specification files into **text diagrams inside your coding
 chat**. See what the project does, how its documents connect, and what each
