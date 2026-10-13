@@ -87,7 +87,7 @@ roots are excluded from code-drift checks, including non-Markdown artifacts.
 
 See [comparison meanings](comparison.md) and the [evidence contract](../skills/specviz/references/evidence.md).
 
-## Coding hosts
+## Stable coding hosts
 
 Project-scoped installation, update, removal, shared invocation semantics, and
 the five-framework acceptance pipeline have been checked on these terminal
@@ -103,4 +103,39 @@ Each exercised global/local overview, numbered file selection, both detail
 levels, workflow handoff comparison, and explicit code inspection. Reports and
 inspections stayed usable across hosts in the same checkout. Explicit
 ready-artifact callbacks worked; no native automatic lifecycle observer is
-advertised. Interactive IDE surfaces and other host versions remain untested.
+advertised. Those checks used headless host commands. They do not establish
+interactive display measurements.
+
+## Adaptive beta surfaces
+
+Stable remains the default installation and uses an 80-column content budget.
+The explicit `0.2.0-beta.1` installation enables automatic arrangements only on
+eligible surfaces. The following profiles passed interactive checks on macOS
+on October 13, 2026; they are exact version/mode matches, not version ranges.
+
+| Destination | Beta behavior | Accepted measurement |
+| --- | --- | --- |
+| Claude Code CLI 2.1.296, default mode | Adaptive | Session-bound status-line `COLUMNS`; two-column message inset, then two-column margin |
+| Antigravity CLI 1.3.3, default mode in a local terminal | Adaptive | Session-bound `terminal_width`; eight-column code-block inset, then two-column margin |
+| Direct helper output to an attached terminal | Adaptive | Output descriptor's terminal columns, then two-column margin |
+| Eligible terminal with an unknown version/mode, expired record, or no usable measurement | Automatic fallback | Assumes 80 available columns; 78 content columns; actual narrow-pane fit is unknown |
+| Codex, including a shared Antigravity beta installation | Stable renderer | **Adaptive support under development**; no width provider |
+| Desktop/editor chat or unidentified chat destination | Stable renderer | Measurement deferred; a tool shell's width is never used as the chat width |
+
+Measurements expire after five seconds. The helper waits at most one second
+for a fresh matching callback, then falls back. Each request selects its own
+layout; already printed messages are not redrawn. Unknown host versions and
+rendering modes need separate acceptance before their profiles can be enabled.
+A recent callback cannot rule out a subsequent, unreported resize.
+
+Claude Code was checked at 48 and 160 terminal columns; Antigravity at 48, 120,
+and 160. Both were widened and narrowed while idle before another ordinary
+`/specviz overview` command. No reader-supplied width was used. Direct helper
+output was checked at 48, 80, 120, and 160. See the separate interactive,
+automated, and platform limits in [acceptance](acceptance.md#adaptive-beta-acceptance--october-13-2026).
+
+Beta setup composes host status-line settings and registers session hooks.
+Antigravity requires an owned user-level dispatcher for project registrations;
+Claude Code uses project-local settings. See [settings scope and return to
+stable](installation.md#try-the-adaptive-beta). These are standalone skill
+checks; marketplace/plugin installation remains untested.

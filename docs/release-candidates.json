@@ -1,0 +1,23 @@
+{
+  "status": "Prepared locally; not published",
+  "checked": "2026-10-13",
+  "diagram_first_baseline": "f87f14128af81f55bd6596ad26a06d976c02463f",
+  "channels": {
+    "stable": {
+      "version": "0.1.0",
+      "skill_source_identity": "sha256:7a24866a08e1ef114113abca75412d78cff23008cad4dcccbebf7a8bd1dfe6bd",
+      "archive": "specviz-0.1.0.zip",
+      "archive_sha256": "02f81f2d43baf32f65aada2fac4aea76c7173df0eef334b5c636d8ac36b9cdd2",
+      "files": 29,
+      "reproducible": true
+    },
+    "beta": {
+      "version": "0.2.0-beta.1",
+      "skill_source_identity": "sha256:30f116f9703afce700504d9079e04a438800b61ef71aff0d13f00e995ddda798",
+      "archive": "specviz-0.2.0-beta.1.zip",
+      "archive_sha256": "18f845405084a33252d53e1c07775f8cb48e8c6d15599091c0628c631682d326",
+      "files": 37,
+      "reproducible": true
+    }
+  }
+}

@@ -4,9 +4,109 @@ Earlier host checks recorded on October 12, 2026. Diagram-first checks below
 were recorded on October 13, 2026. Automated fixtures, live coding hosts,
 language interpretation, and reader feedback are separate evidence.
 
+## Adaptive beta acceptance — October 13, 2026
+
+`main` retains stable `0.1.0`; the separate `beta` source prepares
+`0.2.0-beta.1`. These are local release candidates, not published releases.
+The stable renderer and original example fixtures retain their baseline bytes.
+Adaptive rendering, providers, state, and examples exist only in beta.
+
+### Automated and channel checks
+
+| Source | Python 3.11.17 | Python 3.14.5 | Local platform |
+| --- | --- | --- | --- |
+| Stable | 179 passed | 179 passed | macOS 26.5.2, Apple Silicon |
+| Beta | 212 passed | 212 passed | macOS 26.5.2, Apple Silicon |
+
+Linux and Windows are configured in CI but were not executed locally for this
+change. The unit suite includes mocked callback payloads, concurrent session
+isolation, expired/future records, unknown profiles, failed storage, installer
+rollback, later settings edits, and shared host registrations. These are
+automated checks, not live acceptance of other host versions or platforms.
+
+The beta source's `tools/channel_acceptance.py` exercised actual extracted ZIP
+installers: default stable install, rejection of a beta source without opt-in,
+explicit beta install/update, shared Codex stable output, return to stable,
+and repeated removal. Stable continuations and evidence database bytes survived;
+beta-only tokens requested a fresh stable view. Custom files and unrelated
+settings remained intact. Reproduce from the beta checkout:
+
+```sh
+python3 tools/channel_acceptance.py \
+  --stable-source /path/to/SpecViz \
+  --beta-source /path/to/SpecViz-beta
+```
+
+This explicit maintainer check temporarily registers its isolated test project
+with Antigravity's user dispatcher and unregisters it in cleanup. It does not
+launch an agent or execute project source.
+
+### Actual interactive terminal checks
+
+Both installed skills ran ordinary `/specviz overview` requests in interactive
+terminal sessions, using the eight-file training fixture and its supplied,
+source-backed interpretation. The agent received its session binding from the
+installed hook. No width option or width question was used. Terminal dimensions
+were changed by the test harness; the product read real host callbacks.
+
+| Host and rendering mode | Terminal columns | Content columns | Observed result |
+| --- | --- | --- | --- |
+| Claude Code 2.1.296, default | 48 | 44 | Closed single-column panels and complete sentences fit |
+| Claude Code 2.1.296, default | 160 | 156 | Parallel branches and an outside connector fit; detailed `show 1` also fit |
+| Antigravity 1.3.3, default/local terminal | 48 | 38 | Two-part overview; first-part boxes and long file keys fit the code block |
+| Antigravity 1.3.3, default/local terminal | 120 | 110 | Full overview fits with parallel branches |
+| Antigravity 1.3.3, default/local terminal | 160 | 150 | Wider boxes reduce wrapping; the multi-stage flow remains vertical |
+
+Both hosts were widened and narrowed after idle. Subsequent ordinary requests
+used fresh, session-matched host measurements. Initial requests at 120 columns
+with profiles disabled used the expected 78-column fallback. Their success
+did not count as measured-width acceptance.
+
+Calibration caught an Antigravity failure: subtracting only the visible
+four-column left indent left a long path rewrapped by the host. Accounting for
+eight columns of code-block padding corrected the 48-column case; 120- and
+160-column checks then passed. Only the verified profiles are enabled. Other
+versions/modes remain on fallback. A five-second expiry and one-second maximum
+wait limit stale observations, but cannot detect an unreported resize between
+callback and display. Concurrent/resumed binding was checked automatically;
+multiple interactive sessions of the same host were not claimed as a live test.
+
+These were terminal sessions, not `--print` runs or desktop/editor previews.
+The beta's optional `tools/terminal_acceptance.py` drives a real terminal through
+`pyte`; it is not part of CI or a runtime dependency. For future acceptance,
+install beta into an isolated project, request an overview at narrow and wide
+sizes, resize while idle, and inspect the final chat text as well as the saved
+presentation's `display` record. Do not enable a profile solely from a helper
+golden test. Temporary registrations and project trust were removed; original
+Antigravity settings were restored byte-for-byte. Specification hashes remained
+unchanged. Private host transcripts and account information are not checked in.
+
+### Direct output and layout review
+
+The actual beta helper also wrote directly to an attached pseudo-terminal at
+48, 80, 120, and 160 columns, without `--width` or display-context arguments.
+All twelve runs reported `terminal` provenance and reserved two columns:
+
+- A three-stage report-download flow was vertical at 48/80 and horizontal at
+  120/160, preserving both labeled arrows.
+- Sixteen independent report formats used aligned rows; the wide view had four
+  columns and four rows without invented arrows.
+- The eight-file example used named panels when narrow, then connected branches
+  and vertical stages as more space became available.
+
+The rendered text was reviewed for reading order, complete explanations,
+closed borders, useful spacing, and file-key fit. Separately, 40 maintained
+beta examples cover both detail levels, five frameworks, and both comparison
+evidence modes. Their golden tests preserve logical content across widths;
+they do not establish the quality of an arbitrary agent interpretation.
+
+Codex adaptive support remains **under development**. Its stable renderer was
+checked through a shared beta installation; no Codex width provider is claimed.
+Desktop/editor measurement and marketplace installation remain untested.
+
 ## Automated checks
 
-Run from the repository root:
+Run from the selected stable or beta repository root:
 
 ```sh
 python3 -m unittest discover -s tests -v
@@ -22,7 +122,7 @@ Local execution does not establish that the other operating systems have run.
 
 ## Live host procedure
 
-`tools/host_acceptance.py` installs the maintained skill into five isolated
+From the stable checkout, `tools/host_acceptance.py` installs the maintained skill into five isolated
 projects, supplies source-backed interpretation models, and uses an external
 shared state directory. Reports are explicitly fictional test inputs; their
 verification is unavailable. Each project contains a four-line export function

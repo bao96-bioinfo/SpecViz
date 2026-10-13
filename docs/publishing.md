@@ -146,3 +146,9 @@ Only after the beta branch has been published can readers fetch it with
 Until then, use the provided local beta checkout or extracted prerelease bundle.
 Public release creation, marketplace publication, and promotion of adaptive
 layout to stable are separate follow-up work.
+
+The [prepared candidate record](release-candidates.json) records each local
+archive's checksum and sealed skill identity. The accompanying `dist/*.json`
+receipts cover every packaged file, including installer and setup guidance.
+Both candidates were rebuilt byte-for-byte identically. Recheck these records
+after any packaged-file edit; never reuse a published version for changed bytes.
