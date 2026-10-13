@@ -11,12 +11,15 @@ import sys
 import tempfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from bundle import BundleError, CHANNELS, source_files, validate
+
 SOURCE = Path(__file__).resolve().parents[1] / "skills/specviz"
 MANIFEST = ".specviz-install.json"
 HOSTS = {"codex": ".agents/skills/specviz", "claude-code": ".claude/skills/specviz", "antigravity": ".agents/skills/specviz"}
 
 
-class InstallError(ValueError):
+class InstallError(BundleError):
     pass
 
 
@@ -25,9 +28,7 @@ def _hash(path: Path) -> str:
 
 
 def _source_files(source: Path) -> dict[str, Path]:
-    return {path.relative_to(source).as_posix(): path for path in sorted(source.rglob("*"))
-            if path.is_file() and "__pycache__" not in path.parts
-            and path.suffix not in {".pyc", ".pyo"} and path.name != MANIFEST}
+    return source_files(source)
 
 
 def _owned(target: Path) -> dict | None:
@@ -42,6 +43,9 @@ def _owned(target: Path) -> dict | None:
         raise InstallError(f"Invalid installation manifest: {target}") from exc
     if value.get("owner") != "specviz" or value.get("schema_version") != 1 or not isinstance(value.get("files"), dict):
         raise InstallError(f"Unrecognized installation ownership: {target}")
+    value.setdefault("channel", "stable")
+    if value["channel"] not in CHANNELS:
+        raise InstallError(f"Unrecognized installed release channel: {target}")
     for relative, fingerprint in value["files"].items():
         path = target / relative
         if Path(relative).is_absolute() or not path.resolve().is_relative_to(target.resolve()):
@@ -65,7 +69,8 @@ def _targets(project: Path, hosts: list[str]) -> list[Path]:
 
 
 def install(project: Path, hosts: list[str], *, source: Path = SOURCE,
-            generation_handoff: bool | None = None, remove: bool = False) -> list[dict]:
+            generation_handoff: bool | None = None, remove: bool = False,
+            channel: str = "stable") -> list[dict]:
     if sys.version_info < (3, 11):
         raise InstallError("SpecViz requires Python 3.11 or later")
     project = Path(project).resolve()
@@ -74,8 +79,11 @@ def install(project: Path, hosts: list[str], *, source: Path = SOURCE,
     if not hosts or any(host not in HOSTS for host in hosts):
         raise InstallError("Choose codex, claude-code, antigravity, or all")
     source = Path(source).resolve()
-    files = _source_files(source)
-    if not (source / "SKILL.md").is_file() or not files:
+    try:
+        release, files = validate(source, channel) if not remove else ({}, {})
+    except BundleError as exc:
+        raise InstallError(str(exc)) from exc
+    if not remove and (not (source / "SKILL.md").is_file() or not files):
         raise InstallError("The maintained skill bundle is incomplete")
     targets = _targets(project, hosts)
     prior = {target: _owned(target) for target in targets}
@@ -122,8 +130,11 @@ def install(project: Path, hosts: list[str], *, source: Path = SOURCE,
                 output.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(path, output)
             enabled = generation_handoff if generation_handoff is not None else bool(old and old.get("generation_handoff"))
-            manifest = {"owner": "specviz", "schema_version": 1, "version": "0.1.0",
-                        "scope": "project", "hosts": [host for host in hosts if project / HOSTS[host] == target],
+            registrations = set(old.get("hosts", [])) if old else set()
+            registrations.update(host for host in hosts if project / HOSTS[host] == target)
+            manifest = {"owner": "specviz", "schema_version": 1, "version": release["version"],
+                        "channel": channel, "source_identity": release["source_identity"],
+                        "scope": "project", "hosts": sorted(registrations),
                         "generation_handoff": enabled,
                         "files": {relative: _hash(path) for relative, path in files.items()}}
             (temporary / MANIFEST).write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -137,7 +148,9 @@ def install(project: Path, hosts: list[str], *, source: Path = SOURCE,
                 raise
             if backup.exists():
                 shutil.rmtree(backup)
-            results.append({"path": str(target), "status": "updated" if old else "installed", "version": "0.1.0", "generation_handoff": enabled})
+            results.append({"path": str(target), "status": "updated" if old else "installed",
+                            "version": release["version"], "channel": channel,
+                            "source_identity": release["source_identity"], "generation_handoff": enabled})
         finally:
             if temporary.exists():
                 shutil.rmtree(temporary)
@@ -149,6 +162,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--host", choices=tuple(HOSTS) + ("all",), default="codex")
     parser.add_argument("--uninstall", action="store_true")
+    parser.add_argument("--channel", choices=CHANNELS, default="stable", help="Stable by default; beta requires explicit opt-in")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--generation-handoff", dest="generation", action="store_true")
     group.add_argument("--no-generation-handoff", dest="generation", action="store_false")
@@ -156,7 +170,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         hosts = list(HOSTS) if args.host == "all" else [args.host]
-        results = install(args.project, hosts, generation_handoff=args.generation, remove=args.uninstall)
+        results = install(args.project, hosts, generation_handoff=args.generation, remove=args.uninstall, channel=args.channel)
     except (InstallError, OSError) as exc:
         print(f"SpecViz installation: {exc}", file=sys.stderr)
         return 2

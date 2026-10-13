@@ -22,6 +22,8 @@ class InstallTests(unittest.TestCase):
         (self.source / "SKILL.md").write_text("Skill v1")
         (self.source / "scripts").mkdir()
         (self.source / "scripts/helper.py").write_text("print('helper')")
+        from bundle import seal
+        seal(self.source, "stable", "0.1.0")
         self.project = self.root / "project"
         self.project.mkdir()
 
@@ -34,6 +36,8 @@ class InstallTests(unittest.TestCase):
         target = self.project / ".agents/skills/specviz"
         (target / "reader-notes.txt").write_text("Keep me")
         (self.source / "SKILL.md").write_text("Skill v2")
+        from bundle import seal
+        seal(self.source, "stable", "0.1.0")
         installer.install(self.project, list(installer.HOSTS), source=self.source, generation_handoff=True)
         self.assertEqual((target / "SKILL.md").read_text(), "Skill v2")
         self.assertTrue(json.loads((target / installer.MANIFEST).read_text())["generation_handoff"])
