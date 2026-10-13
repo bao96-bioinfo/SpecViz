@@ -117,3 +117,32 @@ See [Antigravity's marketplace guide](https://antigravity.google/docs/marketplac
 
 This keeps everyday development in one repository while giving each host the
 package it expects. Marketplace approval remains a separate publishing step.
+
+
+## Stable and beta release sources
+
+`main` contains stable presentation. `beta` contains adaptive development and
+retains the stable path for deferred hosts. Each source carries sealed channel,
+version, and content identity metadata. The installer checks that metadata
+before mutation; a branch name alone is not a release identity.
+
+Prepare assets from their matching checkouts:
+
+```sh
+# Stable checkout
+python3 tools/package.py --channel stable
+# Beta checkout
+python3 tools/package.py --channel beta
+```
+
+Each ZIP has a checksum receipt covering every packaged file and includes a
+usable installer. Stable is `0.1.0`; adaptive is `0.2.0-beta.1`. Local `dist/` assets
+are not public downloads. Before publishing, verify existing tags/releases and
+choose a new version if the identifier is already used; never replace an asset
+or tag. Publish beta as a prerelease and keep default installation on `main`.
+
+Only after the beta branch has been published can readers fetch it with
+`git clone --branch beta https://github.com/bao96-bioinfo/SpecViz.git SpecViz-beta`.
+Until then, use the provided local beta checkout or extracted prerelease bundle.
+Public release creation, marketplace publication, and promotion of adaptive
+layout to stable are separate follow-up work.

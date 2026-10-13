@@ -23,17 +23,21 @@ def main():
     if args.output.resolve().is_relative_to(source):
         parser.error("Distribution output must be outside maintained skill source")
     args.output.parent.mkdir(parents=True, exist_ok=True)
+    packaged = {"specviz/" + name: path for name, path in files.items()}
+    root = source.parents[1]
+    packaged["LICENSE"] = root / "LICENSE"
+    packaged["docs/installation.md"] = root / "docs/installation.md"
+    for name in ("install.py", "bundle.py", "adapters.py", "transaction.py"):
+        packaged["tools/" + name] = root / "tools" / name
     with zipfile.ZipFile(args.output, "w", zipfile.ZIP_DEFLATED) as archive:
-        for name, path in sorted(files.items()):
-            info = zipfile.ZipInfo("specviz/" + name, date_time=(2020, 1, 1, 0, 0, 0))
+        for name, path in sorted(packaged.items()):
+            info = zipfile.ZipInfo(name, date_time=(2020, 1, 1, 0, 0, 0))
             info.external_attr = 0o100644 << 16
             info.compress_type = zipfile.ZIP_DEFLATED
             archive.writestr(info, path.read_bytes())
-        info = zipfile.ZipInfo("LICENSE", date_time=(2020, 1, 1, 0, 0, 0))
-        info.external_attr = 0o100644 << 16
-        archive.writestr(info, (source.parents[1] / "LICENSE").read_bytes())
     receipt = {key: release[key] for key in ("channel", "version", "source_identity")}
     receipt["sha256"] = hashlib.sha256(args.output.read_bytes()).hexdigest()
+    receipt["files"] = {name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in sorted(packaged.items())}
     args.output.with_suffix(".json").write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(args.output)
 

@@ -53,3 +53,23 @@ The installed agent follows the skill to interpret sources, validate coverage,
 and print the final explanation. `--model`, `--inspection`, `--event`, and other
 exchange flags are documented in the skill references and helper `--help`.
 They do not add more user-facing SpecViz actions.
+
+
+## Adaptive beta
+
+Reader commands are identical in both channels. A beta installation on a
+supported interactive terminal selects width and arrangement automatically,
+reserving two columns after the host's message inset. No reader width option is
+needed. Missing or unverified measurements use 78 content columns; stable and
+Codex retain their 80-column default.
+
+A fitting continuation keeps its pages. If a beta view becomes too wide, it
+restarts at part one in a narrower arrangement using the same saved content.
+Legacy stable pages cannot be rearranged; request a fresh overview if they no
+longer fit. A very narrow destination shows a brief notice without advancing
+selection or delivery.
+
+Beta integrations use `--presentation-json` to obtain text and exact continuation
+arguments. `--display-diagnostics` writes optional provenance to standard error;
+it is not part of the diagram or implementation evidence. Internal `--width`
+remains an exact test override, not an additional reader command.

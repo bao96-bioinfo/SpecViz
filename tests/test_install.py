@@ -17,6 +17,11 @@ class InstallTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        self.home = self.root / "home"
+        self.home.mkdir()
+        home_patch = patch.object(installer.Path, "home", return_value=self.home)
+        home_patch.start()
+        self.addCleanup(home_patch.stop)
         self.source = self.root / "bundle"
         self.source.mkdir()
         (self.source / "SKILL.md").write_text("Skill v1")

@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 import zipfile
+from unittest.mock import patch
 from pathlib import Path
 
 from test_install import installer
@@ -21,6 +22,11 @@ class ChannelTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        self.home = self.root / "home"
+        self.home.mkdir()
+        home_patch = patch.object(installer.Path, "home", return_value=self.home)
+        home_patch.start()
+        self.addCleanup(home_patch.stop)
         self.project = self.root / "project"
         self.project.mkdir()
         self.stable = self.make_source("stable", "0.1.0")
@@ -32,6 +38,9 @@ class ChannelTests(unittest.TestCase):
         (source / "SKILL.md").write_text(f"{channel} instructions", encoding="utf-8")
         (source / "scripts/specviz").mkdir(parents=True)
         (source / "scripts/specviz/__init__.py").write_text(f'__version__ = "{version}"\n', encoding="utf-8")
+        if channel == "beta":
+            (source / "scripts/specviz_bridge.py").write_text("# beta callback fixture\n")
+            (source / "scripts/specviz/display.py").write_text("# beta display fixture\n")
         seal(source, channel, version)
         return source
 

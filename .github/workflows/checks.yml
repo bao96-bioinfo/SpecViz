@@ -27,4 +27,8 @@ jobs:
       - name: Bundled helper
         run: python skills/specviz/scripts/specviz_cli.py --help
       - name: Distribution
-        run: python tools/package.py --output "${{ runner.temp }}/specviz.zip"
+        run: >-
+          python -c "import json, subprocess, sys;
+          channel=json.load(open('skills/specviz/release.json'))['channel'];
+          subprocess.check_call([sys.executable, 'tools/package.py', '--channel', channel,
+          '--output', '${{ runner.temp }}/specviz.zip'])"

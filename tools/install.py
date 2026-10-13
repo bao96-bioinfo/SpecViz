@@ -13,8 +13,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from bundle import BundleError, CHANNELS, source_files, validate
+from adapters import configure
+from transaction import Transaction
 
-SOURCE = Path(__file__).resolve().parents[1] / "skills/specviz"
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE = ROOT / "skills/specviz" if (ROOT / "skills/specviz").is_dir() else ROOT / "specviz"
 MANIFEST = ".specviz-install.json"
 HOSTS = {"codex": ".agents/skills/specviz", "claude-code": ".claude/skills/specviz", "antigravity": ".agents/skills/specviz"}
 
@@ -70,7 +73,7 @@ def _targets(project: Path, hosts: list[str]) -> list[Path]:
 
 def install(project: Path, hosts: list[str], *, source: Path = SOURCE,
             generation_handoff: bool | None = None, remove: bool = False,
-            channel: str = "stable") -> list[dict]:
+            channel: str = "stable", user_dir: Path | None = None) -> list[dict]:
     if sys.version_info < (3, 11):
         raise InstallError("SpecViz requires Python 3.11 or later")
     project = Path(project).resolve()
@@ -98,63 +101,78 @@ def install(project: Path, hosts: list[str], *, source: Path = SOURCE,
                     raise InstallError(f"Bundle destination traverses a linked directory: {existing}")
                 if existing.exists() and (prior[target] is None or relative not in prior[target]["files"]):
                     raise InstallError(f"Unowned file conflicts with the bundle: {existing}")
+    home = Path(user_dir).resolve() if user_dir is not None else Path.home().resolve()
+    storage = home / ".specviz/adapters"
+    if storage.is_relative_to(project):
+        raise InstallError("Host display storage must be outside the selected project")
     results = []
-    for target in targets:
-        old = prior[target]
-        if remove:
-            if old is None:
-                results.append({"path": str(target), "status": "not installed"})
-                continue
-            for relative in old["files"]:
-                (target / relative).unlink()
-            (target / MANIFEST).unlink()
-            for directory in sorted((p for p in target.rglob("*") if p.is_dir() and not p.is_symlink()), key=lambda p: len(p.parts), reverse=True):
-                if not any(directory.iterdir()):
-                    directory.rmdir()
-            if not any(target.iterdir()):
+    manifests = {}
+    staged = {}
+    affected = set(hosts)
+    desired = set()
+    try:
+        with Transaction(storage) as transaction:
+            if any(_owned(target) != prior[target] for target in targets):
+                raise InstallError("Installation changed during setup; retry from the current state")
+            for target in targets:
+                old = prior[target]
+                selected = {host for host in hosts if project / HOSTS[host] == target}
+                registrations = set(old.get("hosts", [])) if old else set()
+                affected.update(registrations)
+                registrations = registrations - selected if remove else registrations | selected
+                if remove and old is None:
+                    results.append({"path": str(target), "status": "not installed"})
+                    continue
+                temporary = transaction.stage_tree(target)
+                staged[target] = temporary
+                if remove:
+                    if registrations:
+                        manifest = dict(old, hosts=sorted(registrations))
+                        if manifest["channel"] == "beta":
+                            desired.update(registrations)
+                        manifests[target] = manifest
+                    else:
+                        for relative in old["files"]:
+                            (temporary / relative).unlink()
+                        (temporary / MANIFEST).unlink()
+                    results.append({"path": str(target), "status": "unregistered host" if registrations else "removed owned files; unrelated files retained"})
+                    continue
+                if old:
+                    for relative in old["files"]:
+                        if relative not in files:
+                            (temporary / relative).unlink(missing_ok=True)
+                for relative, path in files.items():
+                    output = temporary / relative
+                    output.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(path, output)
+                enabled = generation_handoff if generation_handoff is not None else bool(old and old.get("generation_handoff"))
+                if channel == "beta":
+                    desired.update(registrations)
+                manifests[target] = {"owner": "specviz", "schema_version": 1, "version": release["version"],
+                                     "channel": channel, "source_identity": release["source_identity"],
+                                     "scope": "project", "hosts": sorted(registrations),
+                                     "generation_handoff": enabled,
+                                     "files": {relative: _hash(path) for relative, path in files.items()}}
+                results.append({"path": str(target), "status": "updated" if old else "installed",
+                                "version": release["version"], "channel": channel,
+                                "source_identity": release["source_identity"], "generation_handoff": enabled})
+            owned_settings = configure(transaction, project, home, None if remove else source, desired, affected)
+            for target, temporary in staged.items():
+                if target in manifests:
+                    manifest = manifests[target]
+                    manifest["display_adapters"] = {host: value for host, value in owned_settings.items() if host in manifest["hosts"]}
+                    (temporary / MANIFEST).write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+                for directory in sorted((p for p in temporary.rglob("*") if p.is_dir() and not p.is_symlink()), key=lambda p: len(p.parts), reverse=True):
+                    if not any(directory.iterdir()):
+                        directory.rmdir()
+            transaction.commit()
+        for target in staged:
+            if target.exists() and not any(target.iterdir()):
                 target.rmdir()
-            results.append({"path": str(target), "status": "removed owned files; unrelated files retained"})
-            continue
-        target.parent.mkdir(parents=True, exist_ok=True)
-        temporary = Path(tempfile.mkdtemp(prefix=".specviz-stage-", dir=target.parent))
-        backup = target.parent / (temporary.name + "-backup")
-        try:
-            if target.exists():
-                shutil.copytree(target, temporary, dirs_exist_ok=True, symlinks=True)
-            if old:
-                for relative in old["files"]:
-                    if relative not in files:
-                        (temporary / relative).unlink(missing_ok=True)
-            for relative, path in files.items():
-                output = temporary / relative
-                output.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(path, output)
-            enabled = generation_handoff if generation_handoff is not None else bool(old and old.get("generation_handoff"))
-            registrations = set(old.get("hosts", [])) if old else set()
-            registrations.update(host for host in hosts if project / HOSTS[host] == target)
-            manifest = {"owner": "specviz", "schema_version": 1, "version": release["version"],
-                        "channel": channel, "source_identity": release["source_identity"],
-                        "scope": "project", "hosts": sorted(registrations),
-                        "generation_handoff": enabled,
-                        "files": {relative: _hash(path) for relative, path in files.items()}}
-            (temporary / MANIFEST).write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-            if target.exists():
-                os.replace(target, backup)
-            try:
-                os.replace(temporary, target)
-            except OSError:
-                if backup.exists():
-                    os.replace(backup, target)
-                raise
-            if backup.exists():
-                shutil.rmtree(backup)
-            results.append({"path": str(target), "status": "updated" if old else "installed",
-                            "version": release["version"], "channel": channel,
-                            "source_identity": release["source_identity"], "generation_handoff": enabled})
-        finally:
-            if temporary.exists():
-                shutil.rmtree(temporary)
+    except BundleError as exc:
+        raise InstallError(str(exc)) from exc
     return results
+
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -102,7 +102,7 @@ tasks.md
 Requires **Python 3.11+** and your existing coding agent. In a terminal:
 
 ```sh
-git clone https://github.com/bao96-bioinfo/SpecViz.git
+git clone --branch main https://github.com/bao96-bioinfo/SpecViz.git
 cd SpecViz
 python3 tools/install.py --host all --project /path/to/your-project
 ```
@@ -125,6 +125,29 @@ your choice before opening a file view.
 The skill uses your existing agent and Python's standard library. Diagrams
 appear as ordinary chat text, including when your agent runs on a server.
 [Installation, updates, and removal →](docs/installation.md)
+
+## Try adaptive layouts in beta
+
+**Stable installs by default.** The separate beta explores automatic terminal
+width and horizontal, vertical, or mixed text diagrams. The same commands work;
+there is no width setting to learn.
+
+From a beta checkout or extracted beta bundle:
+
+```sh
+python3 tools/install.py --channel beta --host claude-code --project /path/to/your-project
+```
+
+Use `--host antigravity` for Antigravity. Beta is under active development and
+targets their interactive terminals; unverified versions fall back automatically.
+**Codex adaptive layout is under development**, while its current views remain
+available. Desktop and editor pane measurement is deferred.
+
+Beta adds display hooks and composed status-line settings, including a user-level
+Antigravity dispatcher. Return to stable by running the installer from a stable
+source with `--channel stable`; your evidence and unrelated settings are retained.
+Beta packages are prepared locally, not advertised as published downloads yet.
+[Beta setup, settings scope, and return to stable →](docs/installation.md#try-the-adaptive-beta)
 
 ## Three commands, one workflow
 
