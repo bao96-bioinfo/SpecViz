@@ -2,40 +2,89 @@
 
 **Your agent wrote the specs. Start with the map.**
 
-```text
-You: /specviz overview
-
-Reporting service - Download reports safely
-|
-+-- Data export
-    |
-    requirements.md --> design.md --> tasks.md
-    Access and limits   Download flow What to build
-
-SpecViz: Choose a file to explore.
-
-You: /specviz show design.md
-
-Download flow
-+-- Not the report owner --> Reject
-+-- Report owner --------> Collect up to 100 rows
-                          +-- Password given --> Encrypt --> Download
-                          +-- No password -----------------> Download
-```
+![A pile of specification text crossed out in red, beside SpecViz organizing the same files into a clear text diagram inside a chat.](docs/assets/specviz-overview.png)
 
 SpecViz turns specification files into **text diagrams inside your coding
 chat**. See what the project does, how its documents connect, and what each
 file means. Start with the big picture; choose when to go deeper.
 
-The conversation above is a shortened illustration of the
-[reporting-service example](examples/kiro/README.md). File arrows mean
-“guides the next document”; the download flow uses the design and its linked
-requirements. Full views include source paths and references.
-
 **Codex · Claude Code · Antigravity**
 
 [Get started](#quick-start) · [Commands](#three-commands-one-workflow) ·
 [More examples](examples/README.md) · [Compatibility](docs/compatibility.md)
+
+## From three files to one clear picture
+
+Your agent has planned a **report-download feature** across three files.
+Who can download a report? How many rows can it contain? When is it encrypted?
+SpecViz connects those details in two steps.
+
+<details>
+<summary>See the specification text behind this example</summary>
+
+Shortened excerpts from the [Kiro Specs example](examples/kiro/README.md).
+All three files live in `.kiro/specs/data-export/`:
+
+```text
+requirements.md
+  When an owner requests a report, export at most 100 rows.
+  If a password is supplied, encrypt the file. Never log the password.
+
+design.md
+  Check ownership, collect report rows, optionally encrypt the download.
+  Reject requests from anyone except the owner. Keep the 100-row limit.
+
+tasks.md
+  [ ] Validate report ownership.
+  [ ] Add bounded export generation.
+  [ ] Verify optional encryption and password handling.
+```
+
+</details>
+
+**1. Get the project map.** See each file's purpose before choosing what to read.
+
+```text
+You: /specviz overview
+
+Reporting service
+Purpose: Let report owners download reports with optional password protection.
+|
++-- Data export - 3 specification files
+    |
+    +-- requirements.md  Rules for access, row limits, and passwords
+    +-- design.md        How ownership checks and encryption work
+    +-- tasks.md         Steps to build and verify the feature
+
+Suggested reading order:
+requirements.md --> design.md --> tasks.md
+
+SpecViz: Which file would you like to explore?
+```
+
+**2. Pick a file. Follow the behavior.** Open `design.md` to understand the
+download flow and the rules it draws from `requirements.md`.
+
+```text
+You: /specviz show design.md
+
+Someone requests a report
+|
+Is this person the report owner?
++-- No  --> Reject the request
++-- Yes --> Collect at most 100 rows
+            |
+            Was a password supplied?
+            +-- Yes --> Encrypt the file --> Download
+            +-- No  -----------------------> Download
+
+Password rule: Never write the password to logs.
+```
+
+Now you can follow who gets a download, where the limit applies, and when
+encryption happens. These shortened views illustrate the specified behavior;
+full views include source paths and references. Commands below use `/specviz`;
+in Codex, use `$specviz` with the same arguments.
 
 ## Quick start
 

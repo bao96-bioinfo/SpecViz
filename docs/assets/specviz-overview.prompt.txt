@@ -1,0 +1,25 @@
+Use case: ads-marketing
+Asset type: a wide cartoon illustration for the top of the SpecViz GitHub README, approximately 2:1 landscape.
+Primary request: a very intuitive left-versus-right comparison. The left half shows a massive amount of specification text with a BIG RED CROSS over it. The right half shows SpecViz turning the same files into an understandable TEXT diagram in a coding chat.
+
+Style: polished hand-drawn editorial cartoon, crisp dark ink outlines, subtly irregular paper edges, flat restrained colors, warm off-white background, generous spacing. Friendly and clear, not photorealistic, no 3D. Readable when displayed 900 pixels wide on GitHub.
+
+Left: heading "Specification files". A towering, chaotic, overlapping pile of long document sheets with dense gray paragraphs and visible file headings "requirements.md", "design.md", "tasks.md". Include snippets such as "Only report owners may download reports.", "Export at most 100 rows.", "Encrypt when a password is supplied.", "Never log passwords." Make the sheer volume of text immediately apparent. Place an unmistakable oversized red X diagonally across the dense document pile. Leave the heading legible.
+
+Right: heading "SpecViz" (exact capitalization: S p e c V i z). Beneath it, one neat large chat-message panel containing a highly legible, aligned MONOSPACED PLAIN-TEXT diagram, not floating flowchart boxes or a graphical dashboard. Show the exact content below with clean tree connectors:
+Report downloads
+|
++-- requirements.md
+|   Owner only; up to 100 rows
+|
++-- design.md
+|   Check owner
+|     -> Optional encryption
+|     -> Download
+|
++-- tasks.md
+    Validate -> Build -> Verify
+
+Place a small green check near the upper edge of the right panel without covering its text. Below the right panel use the exact caption "Text diagrams in your chat". A simple arrow in the central gap points from the stack of documents toward the chat panel.
+
+Composition constraints: allocate ample width to the right text so it is readable, keep all content within generous outer margins, strong hierarchy, no people or mascots, no extra logos or text, no photographic textures, no watermark. The diagram's ASCII tree and its labels must remain the visual focus of the right side.
