@@ -15,8 +15,8 @@ Adaptive rendering, providers, state, and examples exist only in beta.
 
 | Source | Python 3.11.17 | Python 3.14.5 | Local platform |
 | --- | --- | --- | --- |
-| Stable | 180 passed | 180 passed | macOS 26.5.2, Apple Silicon |
-| Beta | 213 passed | 213 passed | macOS 26.5.2, Apple Silicon |
+| Stable | 181 passed | 181 passed | macOS 26.5.2, Apple Silicon |
+| Beta | 214 passed | 214 passed | macOS 26.5.2, Apple Silicon |
 
 Linux and Windows are configured in CI but were not executed locally for this
 change. The unit suite includes mocked callback payloads, concurrent session
@@ -28,9 +28,13 @@ Subsequent CI results passed on Ubuntu and macOS but failed on both Windows
 Python versions: Git converted the bundled `LICENSE` to CRLF, invalidating its
 sealed byte hash. License files now explicitly use LF. A regression stages the
 real bundle in Git and checks it out with `core.autocrlf=true`, verifying every
-sealed file and an identical ZIP. The local counts above include that regression;
-a Windows runner result after this fix remains pending. Release integrity checks
-and the prepared archive bytes are unchanged.
+sealed file and an identical ZIP. A second Windows failure came from embedding
+the runner's temporary path in Python source: `\a` became a control character.
+The workflow now reads `RUNNER_TEMP` from the environment. Its regression runs
+the actual distribution command with spaces and backslashes in that path.
+The local counts above include both regressions. Hosted results are tracked in
+[Checks](https://github.com/bao96-bioinfo/SpecViz/actions/workflows/checks.yml).
+Release integrity checks and the prepared archive bytes are unchanged.
 
 The beta source's `tools/channel_acceptance.py` exercised actual extracted ZIP
 installers: default stable install, rejection of a beta source without opt-in,

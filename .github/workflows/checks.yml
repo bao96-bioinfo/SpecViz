@@ -28,7 +28,7 @@ jobs:
         run: python skills/specviz/scripts/specviz_cli.py --help
       - name: Distribution
         run: >-
-          python -c "import json, subprocess, sys;
+          python -c "import json, os, subprocess, sys;
           channel=json.load(open('skills/specviz/release.json'))['channel'];
           subprocess.check_call([sys.executable, 'tools/package.py', '--channel', channel,
-          '--output', '${{ runner.temp }}/specviz.zip'])"
+          '--output', os.path.join(os.environ['RUNNER_TEMP'], 'specviz.zip')])"

@@ -2,6 +2,9 @@
 
 import hashlib
 import json
+import os
+import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -156,6 +159,28 @@ class ChannelTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             packages.append(output.read_bytes())
         self.assertEqual(packages[0], packages[1])
+
+    def test_distribution_workflow_preserves_runner_temp_path(self):
+        workflow = (ROOT / ".github/workflows/checks.yml").read_text()
+        step = re.search(r"(?m)^      - name: Distribution\n        run: >-\n"
+                         r"((?:          .*(?:\n|$))+)", workflow)
+        self.assertIsNotNone(step, "Locate the actual folded Distribution command")
+        command = " ".join(line.strip() for line in step[1].splitlines())
+        for name in ("runner artifacts", r"runner\a\_temp"):
+            with self.subTest(directory=name):
+                runner_temp = self.root / name
+                # Reproduce Actions expression substitution before the shell runs.
+                arguments = shlex.split(command.replace("${{ runner.temp }}", str(runner_temp)))
+                self.assertEqual(arguments[:2], ["python", "-c"])
+                arguments[0] = sys.executable
+                result = subprocess.run(arguments, cwd=ROOT,
+                                        env=dict(os.environ, RUNNER_TEMP=str(runner_temp)),
+                                        capture_output=True, text=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                output = runner_temp / "specviz.zip"
+                self.assertTrue(output.is_file(), "Packaging changed the runner's output path")
+                receipt = json.loads(output.with_suffix(".json").read_text())
+                self.assertEqual(receipt["sha256"], hashlib.sha256(output.read_bytes()).hexdigest())
 
 
 if __name__ == "__main__":
