@@ -20,7 +20,7 @@ class ComparisonTests(unittest.TestCase):
         self.project.mkdir()
         (self.project / "export.py").write_text("def export(): return 'file'\n", encoding="utf-8")
         self.path = self.project / "requirements.md"
-        self.path.write_text("# Export rules\n\nCreate export files.\n", encoding="utf-8")
+        self.path.write_text("# Export rules\n\nCreate export files.\n", encoding="utf-8", newline="\n")
         self.store = EvidenceStore(self.project, self.base / "state")
 
     def inventory(self, paths=None):
@@ -72,6 +72,18 @@ class ComparisonTests(unittest.TestCase):
         self.assertEqual(row["implemented"], "# Export rules\n\nCreate export files.")
         self.assertIn("password protected", row["requested"])
         self.assertIsNone(row["verification"])
+
+    def test_comparison_preserves_crlf_in_implemented_and_requested_text(self):
+        implemented = b"# Export rules\r\n\r\nCreate export files.\r\n"
+        requested = b"# Export rules\r\n\r\nCreate password protected export files.\r\n"
+        self.path.write_bytes(implemented)
+        self.store.ingest(self.event())
+        self.path.write_bytes(requested)
+        inventory = self.inventory()
+        row = compare(inventory, self.store, self.model(inventory, "behavioral"))["rows"][0]
+        self.assertEqual(row["difference"], "behavioral")
+        self.assertEqual(row["implemented"], implemented.decode("utf-8").rstrip("\r\n"))
+        self.assertEqual(row["requested"], requested.decode("utf-8").rstrip("\r\n"))
 
     def test_new_completion_clears_only_covered_feature(self):
         other = self.project / "payments.md"

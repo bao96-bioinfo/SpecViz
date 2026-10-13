@@ -1,6 +1,7 @@
 """Evidence is scoped history, never a checkbox-based compliance assertion."""
 import copy
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import closing
 import hashlib
 import json
 import os
@@ -31,7 +32,7 @@ class EvidenceTests(unittest.TestCase):
         self.store = EvidenceStore(self.project, self.state)
 
     def event(self, event_id="event-1", event="complete", framework="openspec", round_id="round-1"):
-        text = (self.project / "requirements.md").read_text(encoding="utf-8")
+        text = (self.project / "requirements.md").read_bytes().decode("utf-8")
         return {"schema_version": 1, "event_id": event_id, "event": event,
                 "framework": framework, "round_id": round_id, "scope": ["Data export"],
                 "origin": {"kind": "handoff", "source": "chat:completion-1", "host": "codex"},
@@ -42,9 +43,10 @@ class EvidenceTests(unittest.TestCase):
                 "declared_complete": event == "complete"}
 
     def inspection(self):
+        spec_hash = hashlib.sha256((self.project / "requirements.md").read_bytes()).hexdigest()
         return {"schema_version": 1, "inspection_id": "inspection-1", "observational": True,
                 "tests_executed": False, "complete": True, "scope": ["Data export"],
-                "specifications": [{"path": "requirements.md", "hash": digest((self.project / "requirements.md").read_text())}],
+                "specifications": [{"path": "requirements.md", "hash": spec_hash}],
                 "implementation": implementation_identity(self.project, ["export.py"]),
                 "findings": [{"requirement_id": "export", "document": "requirements.md", "status": "supported",
                               "reason": "Export produces the documented file", "locations": [{"path": "export.py", "line": 1}],
@@ -91,7 +93,7 @@ class EvidenceTests(unittest.TestCase):
         malformed["specifications"][0]["hash"] = "0" * 64
         with self.assertRaises(EvidenceError):
             self.store.ingest(malformed)
-        with sqlite3.connect(self.store.path) as db:
+        with closing(sqlite3.connect(self.store.path)) as db, db:
             db.execute("CREATE TRIGGER reject_events BEFORE INSERT ON events BEGIN SELECT RAISE(ABORT, 'interrupted'); END")
         with self.assertRaises(PersistenceError):
             self.store.ingest(self.event("third", round_id="round-3"))
@@ -99,11 +101,11 @@ class EvidenceTests(unittest.TestCase):
 
     def test_schema_failure_does_not_overwrite_existing_history(self):
         self.store.ingest(self.event())
-        with sqlite3.connect(self.store.path) as db:
+        with closing(sqlite3.connect(self.store.path)) as db, db:
             db.execute("PRAGMA user_version=999")
         with self.assertRaises(PersistenceError):
             EvidenceStore(self.project, self.state)
-        with sqlite3.connect(self.store.path) as db:
+        with closing(sqlite3.connect(self.store.path)) as db, db:
             self.assertEqual(db.execute("SELECT COUNT(*) FROM events").fetchone()[0], 1)
 
     def test_unavailable_storage_is_actionable(self):
@@ -289,13 +291,27 @@ class EvidenceTests(unittest.TestCase):
         with self.assertRaises(EvidenceError):
             self.store.save_inspection(self.inspection() | {"implementation": {"files": {}}})
 
-    def test_inspection_fingerprints_preserve_crlf_and_bom_bytes(self):
-        raw = b"\xef\xbb\xbf# Export\r\nCreate export files.\r\n"
-        (self.project / "requirements.md").write_bytes(raw)
-        finding = self.inspection()
-        finding["specifications"][0]["hash"] = hashlib.sha256(raw).hexdigest()
-        self.store.save_inspection(finding)
-        self.assertTrue(self.store.inspections()[0]["applicable"])
+    def test_report_and_inspection_fingerprints_preserve_source_bytes(self):
+        sources = {
+            "lf": b"# Export\nCreate export files.\n",
+            "crlf": b"# Export\r\nCreate export files.\r\n",
+            "bom-crlf": b"\xef\xbb\xbf# Export\r\nCreate export files.\r\n",
+        }
+        for label, raw in sources.items():
+            with self.subTest(source=label):
+                (self.project / "requirements.md").write_bytes(raw)
+                expected_hash = hashlib.sha256(raw).hexdigest()
+                event = self.event(event_id=label, round_id=label)
+                self.store.ingest(event)
+                saved = next(event for event in self.store.events() if event["event_id"] == label)
+                self.assertEqual(saved["specifications"][0]["text"].encode("utf-8"), raw)
+                self.assertEqual(saved["specifications"][0]["hash"], expected_hash)
+                finding = self.inspection()
+                finding["inspection_id"] = label
+                self.assertEqual(finding["specifications"][0]["hash"], expected_hash)
+                self.store.save_inspection(finding)
+                saved = next(finding for finding in self.store.inspections() if finding["inspection_id"] == label)
+                self.assertTrue(saved["applicable"])
 
     def test_incomplete_inspection_and_test_presence_are_not_passing_verification(self):
         finding = self.inspection()
