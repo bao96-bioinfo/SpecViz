@@ -1,6 +1,6 @@
-# SpecViz
-
 ![A pile of specification text crossed out in red, beside SpecViz organizing the same files into a clear text diagram inside a chat.](docs/assets/specviz-overview.png)
+
+# SpecViz
 
 **Your agent wrote the specs. Start with the map.**
 
