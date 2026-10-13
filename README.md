@@ -1,184 +1,179 @@
 # SpecViz
 
-**Understand the specification before reading every file.**
-
-SpecViz turns specification documents into text diagrams inside your coding
-chat. See the whole project first, choose the files that matter, and expand
-the detail when you need it. Diagrams stay readable in a terminal or remote
-session, with everything shown directly in the conversation.
-
-[Quick start](#quick-start) · [Commands](#three-commands-to-remember) ·
-[Examples](examples/README.md) · [Marketplace publishing](docs/publishing.md)
+**Your agent wrote the specs. Start with the map.**
 
 ```text
+You: /specviz overview
+
 Reporting service - Download reports safely
 |
 +-- Data export
-    +-- [1] requirements.md  Who can download, and what is allowed
-    +-- [2] design.md        How files are created and protected
-    +-- [3] tasks.md         Steps to build and verify the feature
+    |
+    requirements.md --> design.md --> tasks.md
+    Access and limits   Download flow What to build
 
-Choose a file by number, name, or path to explore it.
+SpecViz: Choose a file to explore.
+
+You: /specviz show design.md
+
+Download flow
++-- Not the report owner --> Reject
++-- Report owner --------> Collect up to 100 rows
+                          +-- Password given --> Encrypt --> Download
+                          +-- No password -----------------> Download
 ```
 
-Shortened example. Full views include source paths and references. SpecViz
-offers the next level and waits for your selection.
+SpecViz turns specification files into **text diagrams inside your coding
+chat**. See what the project does, how its documents connect, and what each
+file means. Start with the big picture; choose when to go deeper.
 
-## What you can do
+The conversation above is a shortened illustration of the
+[reporting-service example](examples/kiro/README.md). File arrows mean
+“guides the next document”; the download flow uses the design and its linked
+requirements. Full views include source paths and references.
 
-| When you need to… | SpecViz helps you… |
-| --- | --- |
-| Understand an unfamiliar project | See features, specification files, their purposes, and relationships. |
-| Focus on one feature | Scope the overview to a folder while keeping related context visible. |
-| Read a specification | Explore selected files as trees, flows, interaction diagrams, or rule tables. |
-| Check the finer points | Add `--detailed` for expanded requirements, conditions, exceptions, and open questions. |
-| Review specification changes | Highlight affected features and files against reported implementation. |
-| Investigate implementation gaps | Add `--check-code` to inspect relevant code and existing test evidence. |
+**Codex · Claude Code · Antigravity**
+
+[Get started](#quick-start) · [Commands](#three-commands-one-workflow) ·
+[More examples](examples/README.md) · [Compatibility](docs/compatibility.md)
 
 ## Quick start
 
-You need **Python 3.11+** and an existing Codex, Claude Code, or Antigravity
-setup. SpecViz uses your coding agent; its Python helpers need no extra packages
-or separate service.
-
-### 1. Get SpecViz
+Requires **Python 3.11+** and your existing coding agent. In a terminal:
 
 ```sh
 git clone https://github.com/bao96-bioinfo/SpecViz.git
 cd SpecViz
-```
-
-### 2. Install into your project
-
-Replace `/path/to/your-project` with the existing project containing your
-specifications:
-
-```sh
 python3 tools/install.py --host all --project /path/to/your-project
 ```
 
-To install for one agent, replace `all` with `codex`, `claude-code`, or
-`antigravity`. On Windows, use `python` if that is your Python 3.11+ command.
+Replace `/path/to/your-project` with the existing project containing your
+specifications. For just one agent, replace `all` with `codex`, `claude-code`,
+or `antigravity`. On Windows, use `python` if that is your Python 3.11+ command.
 
-Installation applies to the selected project. Open that project in your coding
-agent and start a new conversation so it can discover the skill.
+Open that project in a new coding conversation and enter:
 
-### 3. Ask for the overview
-
-Type this **in your coding chat**:
-
-| Agent | First command |
+| Coding agent | First command |
 | --- | --- |
 | Codex | `$specviz overview` |
 | Claude Code | `/specviz overview` |
 | Antigravity | `/specviz overview` |
 
-Then choose a file from the displayed map. You can also start with just
-`$specviz` or `/specviz`.
+Then pick a file by its displayed number, name, or path. SpecViz waits for
+your choice before opening a file view.
 
+The skill uses your existing agent and Python's standard library. Diagrams
+appear as ordinary chat text, including when your agent runs on a server.
 [Installation, updates, and removal →](docs/installation.md)
 
-## Three commands to remember
+## Three commands, one workflow
 
-These examples use Claude Code and Antigravity's `/specviz` prefix. In Codex,
-use `$specviz` with the same arguments.
+Examples use `/specviz`; in Codex, use `$specviz` with the same arguments.
 
-| Command | What you see |
+| Command | Use it to… |
 | --- | --- |
-| `/specviz overview` | The entire project's specification map. |
-| `/specviz overview openspec/changes/data-export` | A local overview of that change. |
-| `/specviz show design.md tasks.md` | Diagrams for the selected files. |
-| `/specviz changes` | Specification differences against implementation evidence, grouped by feature and file. |
+| `/specviz overview` | Get the entire project's specification map. |
+| `/specviz show design.md tasks.md` | Explain the files you choose. |
+| `/specviz changes` | Compare the current specs with reported implementation. |
 
-**Start small, expand when needed:**
+Focus on a feature with `/specviz overview openspec/changes/data-export`.
+Use full paths when filenames repeat, and quote paths containing spaces.
+[All commands and options →](docs/commands.md)
+
+## Choose how much to read
+
+The default view gives you the essentials. Add **`--detailed`** to expand the
+same structure with conditions, exceptions, and open questions:
 
 ```text
-/specviz overview
-/specviz show design.md
-/specviz show design.md --detailed
-/specviz changes --check-code
+You: /specviz show requirements.md
+
+Export rules
++-- Owner downloads: at most 100 rows
++-- Optional encryption; passwords never logged
+
+You: /specviz show requirements.md --detailed
+
+Export rules
++-- Owner downloads: at most 100 rows
+|   When an owner requests a report, export at most 100 rows.
++-- Optional encryption; passwords never logged
+    When an owner supplies a password, encrypt the file.
+    Never log that password.
 ```
 
-`--detailed` works with all three actions. `--check-code` works with `changes`
-and can be combined with `--detailed`. Use full paths when filenames repeat;
-quote paths containing spaces. After a map, you can select its displayed
-numbers instead of typing paths.
+These excerpts show the two reading depths. `--detailed` works with
+`overview`, `show`, and `changes`. Depending on the content, SpecViz uses a
+tree, a flow, an interaction diagram, or a rule table.
 
-[Full command reference →](docs/commands.md)
+## See what changed since implementation
 
-## How implementation comparison works
-
-`changes` compares today's specifications with the applicable requirement
-versions reported as implemented by your workflow. Verification results appear
-separately. Viewing a diagram preserves that reference across conversations.
+A new password requirement touches more than one file. `changes` highlights
+it in the feature map and shows the implementation evidence underneath:
 
 ```text
-Data export [contains changes]
-+-- requirements.md  Export rules        [unchanged]
-+-- design.md        Password protection [changed]
-+-- tasks.md         Add protection      [changed]
+You: /specviz changes
+
+Reporting service - Download reports safely
+|
++-- Data export [contains changes]
+    +-- requirements.md  Export rules        [unchanged]
+    +-- design.md        Password protection [changed]
+    +-- tasks.md         Add protection      [changed]
 
 Earlier report: File creation implemented.
 Password protection: No matching completion evidence.
 Verification: Unavailable.
 ```
 
-This shortened example shows why a change needs attention. Missing evidence
-means **unknown implementation**, rather than proof that work is unfinished.
+This shortened [comparison example](examples/comparison/README.md) uses
+workflow completion and verification reports. The comparison stays tied to
+reported implementation when you display another diagram. Missing evidence
+means **unknown implementation**.
 
-Reports currently enter through an explicit SpecViz workflow handoff. Native
-reports from every framework are not imported automatically. If you have no
-handoff history, use `changes --check-code` for an independent inspection of
-code and existing test evidence. It reads files without running tests or
-changing your implementation.
+Add `/specviz changes --check-code` to ask your agent to inspect relevant
+code and existing test evidence. Inspection reads files without running tests
+or changing your implementation.
 
-[Comparison details](docs/comparison.md) ·
-[Connect a workflow](docs/installation.md#workflow-handoffs)
+Reports currently need an explicit SpecViz workflow handoff; native framework
+reports are not imported automatically.
+[Connect a workflow](docs/installation.md#workflow-handoffs) ·
+[Understand the evidence](docs/comparison.md)
 
-## Supported specification frameworks
+## Bring your existing specs
 
-| Framework | Typical documents |
-| --- | --- |
-| OpenSpec | Main specifications, change proposals, designs, and tasks. |
-| GitHub Spec Kit | Feature specifications, plans, tasks, and project principles. |
-| BMAD Method | Initiative briefs, feature specifications, tickets, and story plans. |
-| Superpowers | Design documents and implementation plans. |
-| Kiro Specs | Feature requirements, bugfix specifications, designs, and tasks. |
+Keep your specification workflow and use SpecViz to explore what it produces:
 
-Explicitly selected Markdown files can also receive generic views. Readers
-and host integrations are separate, so new frameworks and coding agents can
-be added without duplicating the visualization logic.
+| Framework | What SpecViz reads | Example |
+| --- | --- | --- |
+| OpenSpec | Main specs, proposals, designs, and tasks | [Explore](examples/openspec/README.md) |
+| GitHub Spec Kit | Feature specs, plans, tasks, and project principles | [Explore](examples/spec-kit/README.md) |
+| BMAD Method | Briefs, specifications, tickets, and story plans | [Explore](examples/bmad/README.md) |
+| Superpowers | Designs and implementation plans | [Explore](examples/superpowers/README.md) |
+| Kiro Specs | Requirements, bugfix specs, designs, and tasks | [Explore](examples/kiro/README.md) |
 
-All five frameworks have reproducible [text examples](examples/README.md).
-Live checks cover the terminal interfaces of all three coding agents; desktop
-and editor interfaces have not been validated.
-See [compatibility and limits](docs/compatibility.md) for supported layouts.
+You can also select other Markdown files for generic views. Framework readers
+and agent integrations are separate, making room for more of both.
 
-## Find your way around
+Live checks cover the terminal interfaces of Codex, Claude Code, and
+Antigravity. Desktop and editor interfaces have not been validated.
+[Supported layouts and limits →](docs/compatibility.md)
 
-| Resource | Start here for… |
-| --- | --- |
-| [Installation](docs/installation.md) | Setup, updates, removal, and workflow connections. |
-| [Commands](docs/commands.md) | Scope, file selection, and detail options. |
-| [Text examples](examples/README.md) | Overview and file diagrams for each framework. |
-| [Marketplace publishing](docs/publishing.md) | Distribution plans for Claude Code, Codex, and Antigravity. |
-| [Contributing](CONTRIBUTING.md) | Repository structure, development, and tests. |
+## Explore further
 
-**Distribution status:** install from this repository using the steps above.
-Marketplace plugin packages and public listings are not yet available.
+- [Text examples](examples/README.md): full overview and file views at both depths.
+- [View guide](docs/views.md): layouts, source references, and large specifications.
+- [Contributing](CONTRIBUTING.md): project structure, development, and tests.
+- [Marketplace publishing](docs/publishing.md): the path to plugin distribution.
 
-## Contributing
+**Available now:** install the skill from this repository. Marketplace
+packages and listings are still to come.
 
-The maintained skill is in `skills/specviz/`, development tools are in
-`tools/`, and tests and fixtures are in `tests/`.
+To run the test suite from the repository root:
 
 ```sh
 python3 -m unittest discover -s tests -v
 ```
 
-Contributions to framework readers, host support, and clearer text examples
-are welcome. Read the [contributor guide](CONTRIBUTING.md) before making changes.
-
-## License
-
-[Apache 2.0](LICENSE).
+Contributions to framework support and clearer diagrams are welcome.
+Licensed under [Apache 2.0](LICENSE).
