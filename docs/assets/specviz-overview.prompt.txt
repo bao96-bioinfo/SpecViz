@@ -1,25 +1,19 @@
 Use case: ads-marketing
-Asset type: a wide cartoon illustration for the top of the SpecViz GitHub README, approximately 2:1 landscape.
-Primary request: a very intuitive left-versus-right comparison. The left half shows a massive amount of specification text with a BIG RED CROSS over it. The right half shows SpecViz turning the same files into an understandable TEXT diagram in a coding chat.
+Asset type: a wide cartoon hero illustration for the SpecViz GitHub README, approximately 2:1 landscape, high resolution.
+Primary request: an immediately understandable left-versus-right comparison. On the left, a massive pile of specification text with a BIG RED CROSS. On the right, SpecViz explains the same feature using connected plain-text boxes in the coding chat.
 
-Style: polished hand-drawn editorial cartoon, crisp dark ink outlines, subtly irregular paper edges, flat restrained colors, warm off-white background, generous spacing. Friendly and clear, not photorealistic, no 3D. Readable when displayed 900 pixels wide on GitHub.
+Style: polished hand-drawn editorial cartoon, crisp dark ink outlines, gently irregular paper edges, restrained flat colors, warm off-white background, generous spacing. Friendly and clear, no photorealism or 3D. Strong readability when displayed 900 pixels wide on GitHub.
+Composition: left 42%, small central arrow, right 53%. Keep all content within outer margins.
 
-Left: heading "Specification files". A towering, chaotic, overlapping pile of long document sheets with dense gray paragraphs and visible file headings "requirements.md", "design.md", "tasks.md". Include snippets such as "Only report owners may download reports.", "Export at most 100 rows.", "Encrypt when a password is supplied.", "Never log passwords." Make the sheer volume of text immediately apparent. Place an unmistakable oversized red X diagonally across the dense document pile. Leave the heading legible.
+Left: large heading "Specification files". A towering, chaotic overlapping pile of document sheets with dense gray text lines and visible file headings "requirements.md", "design.md", "tasks.md". A few legible source sentences: "Only the owner can download.", "Export at most 100 rows.", "Encrypt if a password is supplied." An unmistakable oversized red X crosses the pile without covering its heading.
 
-Right: heading "SpecViz" (exact capitalization: S p e c V i z). Beneath it, one neat large chat-message panel containing a highly legible, aligned MONOSPACED PLAIN-TEXT diagram, not floating flowchart boxes or a graphical dashboard. Show the exact content below with clean tree connectors:
-Report downloads
-|
-+-- requirements.md
-|   Owner only; up to 100 rows
-|
-+-- design.md
-|   Check owner
-|     -> Optional encryption
-|     -> Download
-|
-+-- tasks.md
-    Validate -> Build -> Verify
+Right: large heading "SpecViz", exact capitalization. One neat large coding-chat message panel with a small green check near its upper corner. The panel contains highly legible aligned MONOSPACED PLAIN TEXT: a short title "Report downloads", followed by three connected ASCII boxes arranged vertically. This is a text diagram inside a chat, not a graphical flowchart editor, dashboard, floating cards, or a file viewer.
+First box: title "Check ownership", explanation "Only the owner can download."
+Second box: title "Prepare the report", explanation "Export at most 100 rows."
+Third box: title "Protect and download", explanation "Encrypt if a password is supplied."
+Each box has closed borders made from monospaced +, -, and | characters, comfortable padding, and a downward text arrow connecting to the next box. The complete sentences must be exact and large enough to read. No abstract shorthand, acronyms, or extra paragraphs.
 
-Place a small green check near the upper edge of the right panel without covering its text. Below the right panel use the exact caption "Text diagrams in your chat". A simple arrow in the central gap points from the stack of documents toward the chat panel.
+A simple arrow in the center points from the pile toward the chat panel.
+Below the right panel, the exact caption "Text diagrams in your chat".
 
-Composition constraints: allocate ample width to the right text so it is readable, keep all content within generous outer margins, strong hierarchy, no people or mascots, no extra logos or text, no photographic textures, no watermark. The diagram's ASCII tree and its labels must remain the visual focus of the right side.
+Constraints: no people, mascots, watermarks, extra logos, invented text, or charts. Keep the large red cross, green check, all headings, and the three plain-text boxes clear and uncropped. Prioritize legibility and a clean composition over decorative detail.

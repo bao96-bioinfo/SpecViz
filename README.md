@@ -2,7 +2,9 @@
 
 **See the plan before reading every specification.**
 
-SpecViz turns your specs into connected **text boxes inside your coding chat**.
+![A pile of specification files crossed out in red beside SpecViz showing connected text boxes directly in a coding chat.](docs/assets/specviz-overview.png)
+
+SpecViz turns your specs into **flowchat inside your coding chat**.
 Follow the behavior, understand the conditions, then choose a file to explore.
 Works with **Codex · Claude Code · Antigravity**.
 
@@ -92,8 +94,6 @@ tasks.md
   [ ] Add bounded export generation.
   [ ] Verify optional encryption and password handling.
 ```
-
-![Specification text beside SpecViz's in-chat diagrams.](docs/assets/specviz-overview.png)
 
 </details>
 
