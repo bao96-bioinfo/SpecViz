@@ -15,14 +15,22 @@ Adaptive rendering, providers, state, and examples exist only in beta.
 
 | Source | Python 3.11.17 | Python 3.14.5 | Local platform |
 | --- | --- | --- | --- |
-| Stable | 179 passed | 179 passed | macOS 26.5.2, Apple Silicon |
-| Beta | 212 passed | 212 passed | macOS 26.5.2, Apple Silicon |
+| Stable | 180 passed | 180 passed | macOS 26.5.2, Apple Silicon |
+| Beta | 213 passed | 213 passed | macOS 26.5.2, Apple Silicon |
 
 Linux and Windows are configured in CI but were not executed locally for this
 change. The unit suite includes mocked callback payloads, concurrent session
 isolation, expired/future records, unknown profiles, failed storage, installer
 rollback, later settings edits, and shared host registrations. These are
 automated checks, not live acceptance of other host versions or platforms.
+
+Subsequent CI results passed on Ubuntu and macOS but failed on both Windows
+Python versions: Git converted the bundled `LICENSE` to CRLF, invalidating its
+sealed byte hash. License files now explicitly use LF. A regression stages the
+real bundle in Git and checks it out with `core.autocrlf=true`, verifying every
+sealed file and an identical ZIP. The local counts above include that regression;
+a Windows runner result after this fix remains pending. Release integrity checks
+and the prepared archive bytes are unchanged.
 
 The beta source's `tools/channel_acceptance.py` exercised actual extracted ZIP
 installers: default stable install, rejection of a beta source without opt-in,

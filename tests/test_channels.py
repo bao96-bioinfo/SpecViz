@@ -123,6 +123,40 @@ class ChannelTests(unittest.TestCase):
             self.assertIn("LICENSE", archive.namelist())
             self.assertEqual(json.loads(archive.read("specviz/release.json")), release)
 
+    @unittest.skipUnless(shutil.which("git"), "Git is needed to exercise checkout conversion")
+    def test_windows_checkout_preserves_release_bytes_and_package(self):
+        source, checkout = self.root / "source", self.root / "windows-checkout"
+        source.mkdir()
+        checkout.mkdir()
+        for name in (".gitattributes", "LICENSE", "docs/installation.md"):
+            target = source / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / name, target)
+        for name in ("skills/specviz", "tools"):
+            shutil.copytree(ROOT / name, source / name,
+                            ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo"))
+        for command in (
+            ["git", "init", "--quiet"],
+            ["git", "-c", "core.autocrlf=false", "add", "."],
+            ["git", "-c", "core.autocrlf=true", "checkout-index", "--all",
+             "--prefix=" + checkout.as_posix() + "/"],
+        ):
+            result = subprocess.run(command, cwd=source, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+        release = json.loads((ROOT / "skills/specviz/release.json").read_text())
+        for name, expected in release["files"].items():
+            actual = hashlib.sha256((checkout / "skills/specviz" / name).read_bytes()).hexdigest()
+            self.assertEqual(actual, expected, f"Git checkout changed sealed bytes: {name}")
+        packages = []
+        for name, root in (("original", ROOT), ("windows", checkout)):
+            output = self.root / (name + ".zip")
+            result = subprocess.run([sys.executable, str(root / "tools/package.py"),
+                                     "--channel", release["channel"], "--output", str(output)],
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            packages.append(output.read_bytes())
+        self.assertEqual(packages[0], packages[1])
+
 
 if __name__ == "__main__":
     unittest.main()
