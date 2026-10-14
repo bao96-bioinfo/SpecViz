@@ -12,9 +12,8 @@ Wide characters count as two columns and combining marks stay with their text.
 Arrows name the relationship they express: a request, a result, a planning
 dependency, or membership. Branches and joins share boxes. Independent rules
 remain independent; document planning never establishes runtime order. A `*`
-marks an inferred connector and refers to one short legend. When a cycle or
-dense layout cannot route clearly, numbered node ports identify both ends of
-each connection inside the affected boxes. These node keys are distinct from
+marks an inferred connector and refers to one short legend. When explanation boxes cannot fit, a compact structural map precedes their
+expanded panels. A crossing marked `x` does not join the wires. These node keys are distinct from
 the square-bracketed file numbers used by `show`.
 
 SpecViz returns fixed-width text in the conversation. The project purpose leads
@@ -30,8 +29,8 @@ the diagram explains how the project's parts fit together. A compact file key
 connects those boxes to selectable documents. Without that interpretation, a
 boxed document map shows the known organization and identifies missing meaning.
 
-Every discovered file is represented directly or in a counted group. Archived
-specifications appear as history. Discovery warnings identify unavailable or
+Every eligible file is represented directly or in a counted group. Archived
+specifications appear only when explicitly selected as history. Discovery warnings identify unavailable or
 unsupported content. The [eight-file example](../examples/diagram-first/README.md)
 includes a training branch, separately held evaluation answers, and their join.
 
@@ -84,9 +83,11 @@ See [maintained examples](../examples/README.md) for the five supported specific
 
 ## Long diagrams and continuation
 
-A page keeps each box closed. Large graphs become numbered diagram panels with
-named incoming and outgoing connectors; long notes continue in closed boxes
-with the same panel key. The part count and next-section notice show what
+A page keeps each box closed. Large graphs retain an overall structural map
+before numbered detail panels; long notes continue in closed boxes with the
+same node key. Root maps and connected expansions are whole semantic units.
+When a map cannot fit even compactly, counted layout groups expand before any
+verbose panels. Repeated boundary keys refer to the same component. The part count and next-section notice show what
 remains. Follow the printed `--continue-view` command with the same conversation
 `--session`; this uses the original source snapshot. Changes to those sources
 require a refreshed view. The full snapshot hash appears only in detailed
@@ -101,3 +102,29 @@ Earlier saved text pages remain readable. If state cannot be saved, the helper
 shows the complete view and asks for path-based selection. If a saved view can
 be read but delivery cannot be recorded, continuation still works; newly shown
 numbers are not activated. Neither path creates implementation evidence.
+
+## Compact structure and bounded routing
+
+The [large-project example](../examples/large-project/README.md) has ten current
+files, seven components, and eight connections. Its complete structure and node
+key fit on the first 80-column, 100-line page. Explanation length does not affect
+that structure. Small complete diagrams need no duplicate summary map.
+
+The router tries at most 12 nodes and 16 edges in one drawing. It first tries a main process with side inputs or outputs, then a compact
+row when it fits, otherwise separate connector lanes. Every edge gets distinct
+ports; crossing wires never create an unstated junction. Feedback, more than
+two branches, joins, and isolated nodes retain their actual connections. Larger
+graphs split into counted layout groups recursively, then show connected
+expansions and boundary maps. Group membership is explicit; layout grouping
+does not assert a new application component. Work is bounded by
+`O((nodes + edges) log nodes)` plus emitted text, without routing search.
+
+Node keys and full labels connect maps to panels. Connector keys retain type,
+condition, direction, and inference markers; source notes and change markers
+remain attached to the same identities. Even at 24 columns and 12 lines per
+page, structural maps remain closed and expansions precede explanations.
+The public helper retains its minimum width of 30 columns. Width defaults to
+80; no terminal or chat width is detected.
+
+The [feedback example](../examples/large-project/feedback.txt) is rendered by
+the same compact path, including its return arrow and condition.

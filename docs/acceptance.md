@@ -4,7 +4,58 @@ Earlier host checks recorded on October 12, 2026. Diagram-first checks below
 were recorded on October 13, 2026. Automated fixtures, live coding hosts,
 language interpretation, and reader feedback are separate evidence.
 
-## Adaptive beta acceptance — October 13, 2026
+## Connected overviews and beta retirement — October 14, 2026
+
+The synthetic large-project fixture has 18 source files: five current rules,
+five active-change files, and eight historical files. Before the change it
+produced 18 displayed files and separate panels without an overall map. The
+maintained [new example](../examples/large-project/README.md) displays ten files
+and draws all seven components and eight directed relationships first.
+
+Automated checks trace actual connector characters, including branches, joins,
+long edges, feedback, and nonjoining crossings. Dense 40-node graphs, isolated
+nodes, and minimum 24-column/12-line internal budgets retain bounded structural
+expansions before details. Node keys remain distinct from selectable file keys;
+continued file graphs retain their diagram namespace. These are structural and
+source-accounting checks, not evidence of reader comprehension.
+
+Legacy installation fixtures are independent of the beta checkout. They cover
+shared Codex/Antigravity files, multiple projects, custom status fields, edited
+hooks/collectors, retained external references, transaction interruption,
+repeated removal, old stable pages, beta refresh notices, and unchanged evidence.
+An extracted stable ZIP also passed migration, update, ten-file discovery,
+uninstall, and repeat removal without its original beta source.
+
+Local Python 3.11 and 3.14 validation, remote CI results, live-host observations,
+and the final branch-retirement result are recorded in
+[the change acceptance record](connected-overview-acceptance.json).
+
+Live reproduction uses an isolated copy of the source fixture and an ordinary
+installed skill, without supplying the reviewed example model or expected text:
+
+```sh
+python3 tools/overview_acceptance.py --host codex
+python3 tools/overview_acceptance.py --host claude-code
+python3 tools/overview_acceptance.py --host antigravity
+```
+
+Review each recorded chat response; a zero process status alone is insufficient.
+Antigravity 1.3.4 returned an empty response when headless command permission was
+denied, so that invocation is recorded as unavailable, not passed. No global
+permission bypass was enabled. Initial Codex and Claude Code runs showed ten
+eligible files and a map before panels; Claude's redundant footer prompted a
+focused delivery-instruction revision and another live check.
+
+The new compact seven-node map was presented to the reader for review. Feedback
+was still pending when this record was prepared; comprehension remains
+unverified until a reader answers. Earlier approval of a different diagram is
+not approval of this one. Adaptive-beta measurements below are historical only.
+
+## Historical adaptive beta acceptance — October 13, 2026
+
+**Retired on October 14, 2026.** The following records describe the earlier
+experiment, not current features or installation instructions. Use the stable
+[migration guide](installation.md#return-from-retired-beta).
 
 `main` retains stable `0.1.0`; the separate `beta` source prepares
 `0.2.0-beta.1`. These are local release candidates, not published releases.
@@ -122,13 +173,13 @@ beta examples cover both detail levels, five frameworks, and both comparison
 evidence modes. Their golden tests preserve logical content across widths;
 they do not establish the quality of an arbitrary agent interpretation.
 
-Codex adaptive support remains **under development**. Its stable renderer was
+At that time, Codex adaptive support was **under development**; that effort is now retired. Its stable renderer was
 checked through a shared beta installation; no Codex width provider is claimed.
 Desktop/editor measurement and marketplace installation remain untested.
 
 ## Automated checks
 
-Run from the selected stable or beta repository root:
+For the maintained stable source, run from the repository root:
 
 ```sh
 python3 -m unittest discover -s tests -v

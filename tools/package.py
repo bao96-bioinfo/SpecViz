@@ -12,7 +12,7 @@ from bundle import BundleError, CHANNELS, validate
 def main():
     parser = argparse.ArgumentParser(description="Package the maintained SpecViz skill")
     parser.add_argument("--output", type=Path)
-    parser.add_argument("--channel", choices=CHANNELS, default="stable")
+    parser.add_argument("--channel", default="stable")
     args = parser.parse_args()
     source = Path(__file__).resolve().parents[1] / "skills/specviz"
     try:

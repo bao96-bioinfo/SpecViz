@@ -119,36 +119,20 @@ This keeps everyday development in one repository while giving each host the
 package it expects. Marketplace approval remains a separate publishing step.
 
 
-## Stable and beta release sources
+## Stable release source
 
-`main` contains stable presentation. `beta` contains adaptive development and
-retains the stable path for deferred hosts. Each source carries sealed channel,
-version, and content identity metadata. The installer checks that metadata
-before mutation; a branch name alone is not a release identity.
-
-Prepare assets from their matching checkouts:
+`main` is the maintained stable source. Adaptive beta is retired and new beta
+install/package/release requests are rejected. A legacy beta ownership manifest
+is still accepted for migration and removal; it is not a distributable source.
 
 ```sh
-# Stable checkout
 python3 tools/package.py --channel stable
-# Beta checkout
-python3 tools/package.py --channel beta
 ```
 
-Each ZIP has a checksum receipt covering every packaged file and includes a
-usable installer. Stable is `0.1.0`; adaptive is `0.2.0-beta.1`. Local `dist/` assets
-are not public downloads. Before publishing, verify existing tags/releases and
-choose a new version if the identifier is already used; never replace an asset
-or tag. Publish beta as a prerelease and keep default installation on `main`.
-
-Only after the beta branch has been published can readers fetch it with
-`git clone --branch beta https://github.com/bao96-bioinfo/SpecViz.git SpecViz-beta`.
-Until then, use the provided local beta checkout or extracted prerelease bundle.
-Public release creation, marketplace publication, and promotion of adaptive
-layout to stable are separate follow-up work.
-
-The [prepared candidate record](release-candidates.json) records each local
-archive's checksum and sealed skill identity. The accompanying `dist/*.json`
-receipts cover every packaged file, including installer and setup guidance.
-Both candidates were rebuilt byte-for-byte identically. Recheck these records
-after any packaged-file edit; never reuse a published version for changed bytes.
+Each ZIP includes the complete skill and installer, and has a checksum receipt
+covering every packaged file. The current candidate is `0.1.1`; local `dist/`
+assets are not public downloads. Before publishing, recheck existing tags and
+releases and never replace an existing identifier with different bytes.
+The [active candidate record](release-candidates.json) identifies the maintained
+stable candidate. Earlier candidate identities remain in historical acceptance.
+Marketplace packaging and publication remain separate follow-up work.

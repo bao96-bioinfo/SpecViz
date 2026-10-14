@@ -1,0 +1,22 @@
+{
+  "README.md": "555a1706ac0ffbd3851ce1849550ecfeb42986276972c5b377af00100d056f26",
+  "openspec/changes/add-notebook/design.md": "d2b7d94e1a4fe0a04343ae2b11888bb3d2a607d66a4ac5a22cb7d9b13d5df2f5",
+  "openspec/changes/add-notebook/proposal.md": "1af1749a59135a859e1ce2fb361b5306d1f90b30fc53515b83cc302fc12fb715",
+  "openspec/changes/add-notebook/specs/notebook/spec.md": "1898403bc8599f07abdf08247dd7362ae83878cd7ee4bef03c2babea06e5b39f",
+  "openspec/changes/add-notebook/specs/reference-values/spec.md": "9459c4529a1ddb2f4d3af494f519a72dd9d742aa7395635fc5c62291047e3524",
+  "openspec/changes/add-notebook/tasks.md": "81091a236bcf06421a95a4490fb6b409dc5417526370e92c7456844a7baabdc4",
+  "openspec/changes/archive/2026-01-01-initial-model/design.md": "fd054723d059b87b91897d4527043aa77e10a25faa9de46798a004ad07aaf3a5",
+  "openspec/changes/archive/2026-01-01-initial-model/proposal.md": "53ed49461903103d652cd2a9a13a1ed24815b9d1a348e51e0952612c6338e3e8",
+  "openspec/changes/archive/2026-01-01-initial-model/specs/old-1/spec.md": "974a21e35a723fdd323f8f37e7ad721cf8d77c3a89fd81064028ff2a32d2c07d",
+  "openspec/changes/archive/2026-01-01-initial-model/specs/old-2/spec.md": "a0f643c8821151c39f621f48ca71c6d6c142f71362a07ef13e2d28fd584338ae",
+  "openspec/changes/archive/2026-01-01-initial-model/specs/old-3/spec.md": "585d9db07cb8294ff2588d87e1c54a96d9d1950ac11185d3970ed5861efbd4f0",
+  "openspec/changes/archive/2026-01-01-initial-model/specs/old-4/spec.md": "7138f1343f795c8257632d1da74f00be5ff2f9f4b68aa95499d19b1720208e13",
+  "openspec/changes/archive/2026-01-01-initial-model/specs/old-5/spec.md": "ff5bd24fb8060f929935206d2cb9c5ead0e65742964a1c899fc5080e5a78238f",
+  "openspec/changes/archive/2026-01-01-initial-model/tasks.md": "5a5c35014b76b28dc06d62bbfd7f3640dd8008aac98c2fe97b837c05902917a9",
+  "openspec/config.yaml": "85b53dd24fbe7d19c8b0f0ddccf5e82600c5c372c76b57a2a89dc34dfb0fc5b9",
+  "openspec/specs/data-preparation/spec.md": "5530ac7c1a08bdacf7f5bb0bf69c4c12272cb89934d9ef342d664fc99dffd870",
+  "openspec/specs/evaluation/spec.md": "48d7fc69ec566468c85dd85c3022b4d759441c99ecbc129a629c26c1b2238cf8",
+  "openspec/specs/model-training/spec.md": "7175b5d54b6e9776384d70f7759f96b7c1e2e6e19ce2a6342daa89d97538a9c0",
+  "openspec/specs/prediction/spec.md": "496e9cabb00d26a393f6eb4ae327c21aad8be6e52b07145706eaf2c6bbf2afc0",
+  "openspec/specs/training-speed/spec.md": "62f05153017027275e42cdcbbcc8833a255b8f81978c6b1f0c4db2d2a74c2f97"
+}

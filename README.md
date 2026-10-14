@@ -4,7 +4,7 @@
 
 ![A pile of specification files crossed out in red beside SpecViz showing connected text boxes directly in a coding chat.](docs/assets/specviz-overview.png)
 
-SpecViz turns your specs into **flowchat inside your coding chat**.
+SpecViz turns your specs into **flowcharts inside your coding chat**.
 Follow the behavior, understand the conditions, then choose a file to explore.
 Works with **Codex · Claude Code · Antigravity**.
 
@@ -126,28 +126,18 @@ The skill uses your existing agent and Python's standard library. Diagrams
 appear as ordinary chat text, including when your agent runs on a server.
 [Installation, updates, and removal →](docs/installation.md)
 
-## Try adaptive layouts in beta
+## Returning from the retired beta
 
-**Stable installs by default.** The separate beta explores automatic terminal
-width and horizontal, vertical, or mixed text diagrams. The same commands work;
-there is no width setting to learn.
-
-From a beta checkout or extracted beta bundle:
+Adaptive beta has been retired. Stable uses an 80-column default and draws
+compact maps before long explanations. From the current `main` checkout:
 
 ```sh
-python3 tools/install.py --channel beta --host claude-code --project /path/to/your-project
+python3 tools/install.py --channel stable --host all --project /path/to/your-project
 ```
 
-Use `--host antigravity` for Antigravity. Beta is under active development and
-targets their interactive terminals; unverified versions fall back automatically.
-**Codex adaptive layout is under development**, while its current views remain
-available. Desktop and editor pane measurement is deferred.
-
-Beta adds display hooks and composed status-line settings, including a user-level
-Antigravity dispatcher. Return to stable by running the installer from a stable
-source with `--channel stable`; your evidence and unrelated settings are retained.
-Beta packages are prepared locally, not advertised as published downloads yet.
-[Beta setup, settings scope, and return to stable →](docs/installation.md#try-the-adaptive-beta)
+This replaces owned beta files and removes that project's display callbacks.
+Custom edits, other projects' registrations, and implementation evidence are
+preserved. [Migration details →](docs/installation.md#return-from-retired-beta)
 
 ## Three commands, one workflow
 
@@ -163,17 +153,38 @@ Focus on a feature with `/specviz overview openspec/changes/password-export`.
 Use full paths when filenames repeat, and quote paths containing spaces.
 [All commands and options →](docs/commands.md)
 
-## Choose how much to read
+## Large project? See the connections first.
 
-Start with the project map. In the example above, `/specviz show 2` opens the
-requirements; `/specviz show 2 --detailed` expands the same nodes with complete
-source notes, conditions, and open questions. The file number comes from your
-conversation's displayed key. You can always use a full path instead.
+A complex overview starts with a compact map, then expands its nodes. This
+synthetic example has **ten current files, seven components, and eight arrows**.
+Eight archived files are excluded from the ordinary view.
 
-`--detailed` works with all three actions. Long diagrams continue in closed
-panels; follow the continuation hint to reveal the remaining content and file
-keys. For a larger branch-and-join example, explore the
-[eight-file training workflow](examples/diagram-first/README.md).
+<!-- example: examples/large-project/structure.txt -->
+```text
+ +-------------------------------+
+ |                               |
+ |              +--------+       |                              +--------+
+ |              | Node 3 |       |                              | Node 6 |
+ |              +--------+       |                              +--------+
+ |                   |           |                                   |
+ |                   v           v                                   v
++--------+      +--------+      +--------+      +--------+      +--------+
+| Node 1 |----->| Node 2 |----->| Node 4 |----->| Node 5 |----->| Node 7 |
++--------+      +--------+      +--------+      +--------+      +--------+
+                 |                                               ^
+                 +-----------------------------------------------+
+```
+
+Node 1 prepares data; Node 2 trains the model; Node 3 speeds up training;
+Node 4 produces predictions; Node 5 evaluates them; Node 6 prepares independent
+reference values; Node 7 assembles the proposed notebook. The expanded boxes explain the
+conditions and source files.
+[Read the actual first page →](examples/large-project/overview-page-1.txt)
+
+Use `/specviz show 2` after its file key appears, or select a full path.
+`--detailed` expands the same structure with complete notes and open questions.
+Continue a long view to reveal remaining maps, explanations, and file keys.
+[Large-project example →](examples/large-project/README.md)
 
 ## See what still needs implementation evidence
 

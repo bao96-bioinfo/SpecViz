@@ -1,0 +1,467 @@
+{
+  "schema_version": 1,
+  "snapshot": "8d47f7c20923e35011fe8478d30a2b334d6ca69461082d36f55a90b4a5368d78",
+  "project_purpose": "Prepare data, train and evaluate a model, then explain the results in a proposed notebook.",
+  "documents": [
+    {
+      "id": "openspec/changes/add-notebook/design.md",
+      "purpose": "Build a notebook from saved training measurements, evaluation results, and independent reference values. Its numbers must agree with those source tables. Explain missing inputs and undecided acceptance thresholds. This is a proposed addition; the task list has unchecked work and no completion report is available.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/changes/add-notebook/design.md#design:1",
+          "label": "Design",
+          "kind": "unknown",
+          "sources": [
+            "openspec/changes/add-notebook/design.md:L1-1",
+            "openspec/changes/add-notebook/design.md:L3-3"
+          ],
+          "notes": [
+            "Build a notebook from saved training measurements, evaluation results, and independent reference values. Its numbers must agree with those source tables. Explain missing inputs and undecided acceptance thresholds. This is a proposed addition; the task list has unchecked work and no completion report is available."
+          ],
+          "summary": "Build a notebook from saved training measurements, evaluation results, and independent reference values. Its numbers must agree with those source tables. Explain missing inputs and undecided acceptance thresholds. This is a proposed addition; the task list has unchecked work and no completion report is available."
+        }
+      ]
+    },
+    {
+      "id": "openspec/changes/add-notebook/proposal.md",
+      "purpose": "Add a notebook that explains saved training and evaluation results together with independent reference values.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/changes/add-notebook/proposal.md#proposal:1",
+          "label": "Proposal",
+          "kind": "unknown",
+          "sources": [
+            "openspec/changes/add-notebook/proposal.md:L1-1",
+            "openspec/changes/add-notebook/proposal.md:L3-3"
+          ],
+          "notes": [
+            "Add a notebook that explains saved training and evaluation results together with independent reference values."
+          ],
+          "summary": "Add a notebook that explains saved training and evaluation results together with independent reference values."
+        }
+      ]
+    },
+    {
+      "id": "openspec/changes/add-notebook/specs/notebook/spec.md",
+      "purpose": "Build a notebook from saved training measurements, evaluation results, and independent reference values. Its numbers must agree with those source tables. Explain missing inputs and undecided acceptance thresholds. This is a proposed addition; the task list has unchecked work and no completion report is available.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/changes/add-notebook/specs/notebook/spec.md#assemble-the-notebook:1",
+          "label": "Assemble the notebook",
+          "kind": "unknown",
+          "sources": [
+            "openspec/changes/add-notebook/specs/notebook/spec.md:L1-1",
+            "openspec/changes/add-notebook/specs/notebook/spec.md:L3-3"
+          ],
+          "notes": [
+            "Build a notebook from saved training measurements, evaluation results, and independent reference values. Its numbers must agree with those source tables. Explain missing inputs and undecided acceptance thresholds. This is a proposed addition; the task list has unchecked work and no completion report is available."
+          ],
+          "summary": "Build a notebook from saved training measurements, evaluation results, and independent reference values. Its numbers must agree with those source tables. Explain missing inputs and undecided acceptance thresholds. This is a proposed addition; the task list has unchecked work and no completion report is available."
+        }
+      ]
+    },
+    {
+      "id": "openspec/changes/add-notebook/specs/reference-values/spec.md",
+      "purpose": "Prepare independent reference values for the notebook comparison. Record their source, units, and the people they describe. Only training data may determine any normalization settings. These reference values feed the notebook; their availability does not prove the notebook has been implemented.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/changes/add-notebook/specs/reference-values/spec.md#prepare-reference-values:1",
+          "label": "Prepare reference values",
+          "kind": "unknown",
+          "sources": [
+            "openspec/changes/add-notebook/specs/reference-values/spec.md:L1-1",
+            "openspec/changes/add-notebook/specs/reference-values/spec.md:L3-3"
+          ],
+          "notes": [
+            "Prepare independent reference values for the notebook comparison. Record their source, units, and the people they describe. Only training data may determine any normalization settings. These reference values feed the notebook; their availability does not prove the notebook has been implemented."
+          ],
+          "summary": "Prepare independent reference values for the notebook comparison. Record their source, units, and the people they describe. Only training data may determine any normalization settings. These reference values feed the notebook; their availability does not prove the notebook has been implemented."
+        }
+      ]
+    },
+    {
+      "id": "openspec/changes/add-notebook/tasks.md",
+      "purpose": "Purpose unspecified",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/changes/add-notebook/tasks.md#tasks:1",
+          "label": "Tasks",
+          "kind": "unknown",
+          "sources": [
+            "openspec/changes/add-notebook/tasks.md:L1-1",
+            "openspec/changes/add-notebook/tasks.md:L3-3",
+            "openspec/changes/add-notebook/tasks.md:L4-4",
+            "openspec/changes/add-notebook/tasks.md:L5-5"
+          ],
+          "notes": [
+            "- [ ] Prepare independent reference values.",
+            "- [ ] Build the notebook from saved training and evaluation outputs.",
+            "- [ ] Verify that all reported numbers match their source tables."
+          ],
+          "summary": "- [ ] Prepare independent reference values. - [ ] Build the notebook from saved training and evaluation outputs. - [ ] Verify that all reported numbers match their source tables."
+        }
+      ]
+    },
+    {
+      "id": "openspec/specs/data-preparation/spec.md",
+      "purpose": "Combine the input tables into one training file. Keep one saved assignment of people to training and evaluation sets so the same person never appears in both. Training consumes this file; prediction also uses its saved scaling values. Missing input values must be reported before training starts.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/specs/data-preparation/spec.md#prepare-the-data:1",
+          "label": "Prepare the data",
+          "kind": "unknown",
+          "sources": [
+            "openspec/specs/data-preparation/spec.md:L1-1",
+            "openspec/specs/data-preparation/spec.md:L3-3"
+          ],
+          "notes": [
+            "Combine the input tables into one training file. Keep one saved assignment of people to training and evaluation sets so the same person never appears in both. Training consumes this file; prediction also uses its saved scaling values. Missing input values must be reported before training starts."
+          ],
+          "summary": "Combine the input tables into one training file. Keep one saved assignment of people to training and evaluation sets so the same person never appears in both. Training consumes this file; prediction also uses its saved scaling values. Missing input values must be reported before training starts."
+        }
+      ]
+    },
+    {
+      "id": "openspec/specs/evaluation/spec.md",
+      "purpose": "Compare the saved predictions with answers kept out of training. Report error and uncertainty, including the number of people evaluated. Keep the evaluation table so the notebook can reproduce every reported number. The acceptable error threshold is undecided; do not describe the model as accepted.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/specs/evaluation/spec.md#evaluate-the-results:1",
+          "label": "Evaluate the results",
+          "kind": "unknown",
+          "sources": [
+            "openspec/specs/evaluation/spec.md:L1-1",
+            "openspec/specs/evaluation/spec.md:L3-3"
+          ],
+          "notes": [
+            "Compare the saved predictions with answers kept out of training. Report error and uncertainty, including the number of people evaluated. Keep the evaluation table so the notebook can reproduce every reported number. The acceptable error threshold is undecided; do not describe the model as accepted."
+          ],
+          "summary": "Compare the saved predictions with answers kept out of training. Report error and uncertainty, including the number of people evaluated. Keep the evaluation table so the notebook can reproduce every reported number. The acceptable error threshold is undecided; do not describe the model as accepted."
+        }
+      ]
+    },
+    {
+      "id": "openspec/specs/model-training/spec.md",
+      "purpose": "Train the model using the prepared file and its saved assignments. Apply the speed improvements inside training without changing results. Save the chosen model and training measurements for prediction and the notebook. Resume interrupted runs from a recorded checkpoint; do not silently choose different settings.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/specs/model-training/spec.md#train-the-model:1",
+          "label": "Train the model",
+          "kind": "unknown",
+          "sources": [
+            "openspec/specs/model-training/spec.md:L1-1",
+            "openspec/specs/model-training/spec.md:L3-3"
+          ],
+          "notes": [
+            "Train the model using the prepared file and its saved assignments. Apply the speed improvements inside training without changing results. Save the chosen model and training measurements for prediction and the notebook. Resume interrupted runs from a recorded checkpoint; do not silently choose different settings."
+          ],
+          "summary": "Train the model using the prepared file and its saved assignments. Apply the speed improvements inside training without changing results. Save the chosen model and training measurements for prediction and the notebook. Resume interrupted runs from a recorded checkpoint; do not silently choose different settings."
+        }
+      ]
+    },
+    {
+      "id": "openspec/specs/prediction/spec.md",
+      "purpose": "Turn model output into predictions using the scaling values saved during data preparation. Save one prediction per person, with identifiers that can be joined to the evaluation answers. Evaluation consumes this saved table. Repeating prediction with identical inputs must reproduce the same output.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/specs/prediction/spec.md#produce-predictions:1",
+          "label": "Produce predictions",
+          "kind": "unknown",
+          "sources": [
+            "openspec/specs/prediction/spec.md:L1-1",
+            "openspec/specs/prediction/spec.md:L3-3"
+          ],
+          "notes": [
+            "Turn model output into predictions using the scaling values saved during data preparation. Save one prediction per person, with identifiers that can be joined to the evaluation answers. Evaluation consumes this saved table. Repeating prediction with identical inputs must reproduce the same output."
+          ],
+          "summary": "Turn model output into predictions using the scaling values saved during data preparation. Save one prediction per person, with identifiers that can be joined to the evaluation answers. Evaluation consumes this saved table. Repeating prediction with identical inputs must reproduce the same output."
+        }
+      ]
+    },
+    {
+      "id": "openspec/specs/training-speed/spec.md",
+      "purpose": "Avoid copying the complete training data when preparing each batch. The faster path must produce the same numerical results as the original path. Record the measured peak memory and running time. Use these improvements inside model training only after the equivalence check succeeds.",
+      "layout": "rules",
+      "items": [
+        {
+          "id": "openspec/specs/training-speed/spec.md#speed-up-training:1",
+          "label": "Speed up training",
+          "kind": "unknown",
+          "sources": [
+            "openspec/specs/training-speed/spec.md:L1-1",
+            "openspec/specs/training-speed/spec.md:L3-3"
+          ],
+          "notes": [
+            "Avoid copying the complete training data when preparing each batch. The faster path must produce the same numerical results as the original path. Record the measured peak memory and running time. Use these improvements inside model training only after the equivalence check succeeds."
+          ],
+          "summary": "Avoid copying the complete training data when preparing each batch. The faster path must produce the same numerical results as the original path. Record the measured peak memory and running time. Use these improvements inside model training only after the equivalence check succeeds."
+        }
+      ]
+    }
+  ],
+  "project_view": {
+    "nodes": [
+      {
+        "id": "component-1",
+        "label": "Prepare the data",
+        "summary": "Combine the input tables into one training file. Keep one saved assignment of people to training and evaluation sets so the same person never appears in both. Training consumes this file; prediction also uses its saved scaling values. Missing input values must be reported before training starts.",
+        "sources": [
+          {
+            "document": "openspec/specs/data-preparation/spec.md",
+            "blocks": [
+              "openspec/specs/data-preparation/spec.md:L1-1",
+              "openspec/specs/data-preparation/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "component-2",
+        "label": "Train the model",
+        "summary": "Train the model using the prepared file and its saved assignments. Apply the speed improvements inside training without changing results. Save the chosen model and training measurements for prediction and the notebook. Resume interrupted runs from a recorded checkpoint; do not silently choose different settings.",
+        "sources": [
+          {
+            "document": "openspec/specs/model-training/spec.md",
+            "blocks": [
+              "openspec/specs/model-training/spec.md:L1-1",
+              "openspec/specs/model-training/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "component-3",
+        "label": "Speed up training",
+        "summary": "Avoid copying the complete training data when preparing each batch. The faster path must produce the same numerical results as the original path. Record the measured peak memory and running time. Use these improvements inside model training only after the equivalence check succeeds.",
+        "sources": [
+          {
+            "document": "openspec/specs/training-speed/spec.md",
+            "blocks": [
+              "openspec/specs/training-speed/spec.md:L1-1",
+              "openspec/specs/training-speed/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "component-4",
+        "label": "Produce predictions",
+        "summary": "Turn model output into predictions using the scaling values saved during data preparation. Save one prediction per person, with identifiers that can be joined to the evaluation answers. Evaluation consumes this saved table. Repeating prediction with identical inputs must reproduce the same output.",
+        "sources": [
+          {
+            "document": "openspec/specs/prediction/spec.md",
+            "blocks": [
+              "openspec/specs/prediction/spec.md:L1-1",
+              "openspec/specs/prediction/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "component-5",
+        "label": "Evaluate the results",
+        "summary": "Compare the saved predictions with answers kept out of training. Report error and uncertainty, including the number of people evaluated. Keep the evaluation table so the notebook can reproduce every reported number. The acceptable error threshold is undecided; do not describe the model as accepted.",
+        "sources": [
+          {
+            "document": "openspec/specs/evaluation/spec.md",
+            "blocks": [
+              "openspec/specs/evaluation/spec.md:L1-1",
+              "openspec/specs/evaluation/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "component-6",
+        "label": "Prepare reference values",
+        "summary": "Prepare independent reference values for the notebook comparison. Record their source, units, and the people they describe. Only training data may determine any normalization settings. These reference values feed the notebook; their availability does not prove the notebook has been implemented.",
+        "sources": [
+          {
+            "document": "openspec/changes/add-notebook/specs/reference-values/spec.md",
+            "blocks": [
+              "openspec/changes/add-notebook/specs/reference-values/spec.md:L1-1",
+              "openspec/changes/add-notebook/specs/reference-values/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "component-7",
+        "label": "Assemble the notebook",
+        "summary": "Build a notebook from saved training measurements, evaluation results, and independent reference values. Its numbers must agree with those source tables. Explain missing inputs and undecided acceptance thresholds. This is a proposed addition; the task list has unchecked work and no completion report is available.",
+        "sources": [
+          {
+            "document": "openspec/changes/add-notebook/specs/notebook/spec.md",
+            "blocks": [
+              "openspec/changes/add-notebook/specs/notebook/spec.md:L1-1",
+              "openspec/changes/add-notebook/specs/notebook/spec.md:L3-3"
+            ]
+          },
+          {
+            "document": "openspec/changes/add-notebook/proposal.md",
+            "blocks": [
+              "openspec/changes/add-notebook/proposal.md:L1-1",
+              "openspec/changes/add-notebook/proposal.md:L3-3"
+            ]
+          },
+          {
+            "document": "openspec/changes/add-notebook/design.md",
+            "blocks": [
+              "openspec/changes/add-notebook/design.md:L1-1",
+              "openspec/changes/add-notebook/design.md:L3-3"
+            ]
+          },
+          {
+            "document": "openspec/changes/add-notebook/tasks.md",
+            "blocks": [
+              "openspec/changes/add-notebook/tasks.md:L1-1",
+              "openspec/changes/add-notebook/tasks.md:L3-3",
+              "openspec/changes/add-notebook/tasks.md:L4-4",
+              "openspec/changes/add-notebook/tasks.md:L5-5"
+            ]
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "from": "component-1",
+        "to": "component-2",
+        "label": "prepared training file",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/specs/data-preparation/spec.md",
+            "blocks": [
+              "openspec/specs/data-preparation/spec.md:L1-1",
+              "openspec/specs/data-preparation/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "component-1",
+        "to": "component-4",
+        "label": "saved scaling values",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/specs/data-preparation/spec.md",
+            "blocks": [
+              "openspec/specs/data-preparation/spec.md:L1-1",
+              "openspec/specs/data-preparation/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "component-3",
+        "to": "component-2",
+        "label": "equivalent faster execution",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/specs/training-speed/spec.md",
+            "blocks": [
+              "openspec/specs/training-speed/spec.md:L1-1",
+              "openspec/specs/training-speed/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "component-2",
+        "to": "component-4",
+        "label": "trained model output",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/specs/model-training/spec.md",
+            "blocks": [
+              "openspec/specs/model-training/spec.md:L1-1",
+              "openspec/specs/model-training/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "component-4",
+        "to": "component-5",
+        "label": "saved predictions",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/specs/prediction/spec.md",
+            "blocks": [
+              "openspec/specs/prediction/spec.md:L1-1",
+              "openspec/specs/prediction/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "component-5",
+        "to": "component-7",
+        "label": "evaluation results",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/specs/evaluation/spec.md",
+            "blocks": [
+              "openspec/specs/evaluation/spec.md:L1-1",
+              "openspec/specs/evaluation/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "component-6",
+        "to": "component-7",
+        "label": "independent reference values",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/changes/add-notebook/specs/reference-values/spec.md",
+            "blocks": [
+              "openspec/changes/add-notebook/specs/reference-values/spec.md:L1-1",
+              "openspec/changes/add-notebook/specs/reference-values/spec.md:L3-3"
+            ]
+          }
+        ]
+      },
+      {
+        "from": "component-2",
+        "to": "component-7",
+        "label": "training measurements",
+        "type": "workflow",
+        "inferred": false,
+        "sources": [
+          {
+            "document": "openspec/specs/model-training/spec.md",
+            "blocks": [
+              "openspec/specs/model-training/spec.md:L1-1",
+              "openspec/specs/model-training/spec.md:L3-3"
+            ]
+          }
+        ]
+      }
+    ],
+    "unresolved_documents": []
+  }
+}

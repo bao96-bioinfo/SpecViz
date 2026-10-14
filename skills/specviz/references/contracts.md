@@ -130,8 +130,17 @@ renderer functions continue returning strings; command rendering can retain the
 structured view for pagination. Text is wrapped inside boxes before routing;
 completed diagram lines must never be wrapped again.
 
-Graph panels keep stable identities and carry incoming and outgoing named ports
-when they cannot share a drawing. File keys are text blocks with document
+Graphs use `structure.MapBlock` units when full explanations cannot share a
+drawing or page. `Graph.presentation` is shared by `View.render` and pagination:
+root map, connected expansions, node/connector keys, then detail panels. Node
+keys are assigned by source graph order and are independent of file numbers.
+Expanded panels retain a `Diagram N` namespace across file continuations.
+Group membership and repeated boundary identities preserve every endpoint;
+node-only adjacency prose is never the structural fallback. Compact maps use
+distinct ports and explicitly nonjoining `x` crossings. Routing attempts are
+bounded to 12 nodes/16 edges, followed by deterministic binary partitioning.
+Map geometry is indivisible. Semantic metadata on each map records covered
+node and edge identities for verification; it does not certify interpretation. File keys are text blocks with document
 identities and a common directory context, printed once per contiguous key.
 Only blocks that actually expose a number and its file identity mark that file
 as displayed. A behavior box merely referring to a numbered source does not
@@ -139,3 +148,19 @@ establish that the file key has already been delivered.
 
 Read [evidence.md](evidence.md) only for implementation reports or comparison;
 read [inspection.md](inspection.md) only for explicit code inspection.
+
+## Current work and historical selection
+
+Ordinary `overview`, `overview openspec/`, `show`, and `changes` automatically
+include current specifications and active changes. Known archives are excluded
+before numbering, source coverage, and snapshots, including linked archives and
+declared external OpenSpec roots. An archived link is not a missing-source warning.
+An archive-only project has no current specifications. Names such as
+`improve-archive-search` remain active outside the actual archive location.
+
+To inspect history, explicitly select `overview openspec/changes/archive/` or
+`show openspec/changes/archive/<dated-change>/design.md`. These sources are labeled
+as history; the next ordinary overview again shows current work. Editing history
+does not invalidate current file selections. Moving a displayed active source
+requires a fresh overview. Historical provenance remains available for report
+comparison, but archival alone never establishes implementation.

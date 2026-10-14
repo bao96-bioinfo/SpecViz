@@ -1,22 +1,13 @@
 {
   "status": "Prepared locally; not published",
-  "checked": "2026-10-13",
-  "diagram_first_baseline": "f87f14128af81f55bd6596ad26a06d976c02463f",
+  "checked": "2026-10-14",
   "channels": {
     "stable": {
-      "version": "0.1.0",
-      "skill_source_identity": "sha256:7a24866a08e1ef114113abca75412d78cff23008cad4dcccbebf7a8bd1dfe6bd",
-      "archive": "specviz-0.1.0.zip",
-      "archive_sha256": "02f81f2d43baf32f65aada2fac4aea76c7173df0eef334b5c636d8ac36b9cdd2",
-      "files": 29,
-      "reproducible": true
-    },
-    "beta": {
-      "version": "0.2.0-beta.1",
-      "skill_source_identity": "sha256:1e30abd1234a55e071c1efc343afeb58bd212e08955563cdca2ee62583aa77b2",
-      "archive": "specviz-0.2.0-beta.1.zip",
-      "archive_sha256": "a6cb99976927263e70bff673954945fb0be12d04b88f9db87bc547568bfb5df3",
-      "files": 37,
+      "version": "0.1.1",
+      "skill_source_identity": "sha256:a79ee4b2d99d06ad0a900c3148dcaa5ad842fff247f7852db25b28d3c087e281",
+      "archive": "specviz-0.1.1.zip",
+      "archive_sha256": "d684cdeb8bc7b912dc962ea2e9b8418c8a28c2bc0384324070f570145eedb05d",
+      "files": 30,
       "reproducible": true
     }
   }

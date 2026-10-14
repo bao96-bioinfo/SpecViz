@@ -1,0 +1,22 @@
+{
+  "status": "Historical locally prepared candidates; never published",
+  "recorded": "2026-10-14",
+  "candidates": {
+    "stable": {
+      "version": "0.1.0",
+      "skill_source_identity": "sha256:7a24866a08e1ef114113abca75412d78cff23008cad4dcccbebf7a8bd1dfe6bd",
+      "archive": "specviz-0.1.0.zip",
+      "archive_sha256": "02f81f2d43baf32f65aada2fac4aea76c7173df0eef334b5c636d8ac36b9cdd2",
+      "files": 29,
+      "reproducible": true
+    },
+    "beta": {
+      "version": "0.2.0-beta.1",
+      "skill_source_identity": "sha256:1e30abd1234a55e071c1efc343afeb58bd212e08955563cdca2ee62583aa77b2",
+      "archive": "specviz-0.2.0-beta.1.zip",
+      "archive_sha256": "a6cb99976927263e70bff673954945fb0be12d04b88f9db87bc547568bfb5df3",
+      "files": 37,
+      "reproducible": true
+    }
+  }
+}

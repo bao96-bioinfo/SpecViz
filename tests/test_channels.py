@@ -16,8 +16,10 @@ from pathlib import Path
 
 from test_install import installer
 from bundle import BundleError, RELEASE, seal, validate
+from legacy_beta import seed, seal_legacy
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "skills/specviz/scripts"))
 
 
 class ChannelTests(unittest.TestCase):
@@ -40,11 +42,17 @@ class ChannelTests(unittest.TestCase):
         source.mkdir()
         (source / "SKILL.md").write_text(f"{channel} instructions", encoding="utf-8")
         (source / "scripts/specviz").mkdir(parents=True)
-        (source / "scripts/specviz/__init__.py").write_text(f'__version__ = "{version}"\n', encoding="utf-8")
+        (source / "scripts/specviz/__init__.py").write_text(
+            f'__version__ = "{version}"\n', encoding="utf-8"
+        )
         if channel == "beta":
-            (source / "scripts/specviz_bridge.py").write_text("# beta callback fixture\n")
-            (source / "scripts/specviz/display.py").write_text("# beta display fixture\n")
-        seal(source, channel, version)
+            (source / "scripts/specviz_bridge.py").write_text(
+                "# beta callback fixture\n"
+            )
+            (source / "scripts/specviz/display.py").write_text(
+                "# beta display fixture\n"
+            )
+        seal_legacy(source) if channel == "beta" else seal(source, channel, version)
         return source
 
     def test_default_install_and_update_remain_stable(self):
@@ -52,26 +60,29 @@ class ChannelTests(unittest.TestCase):
         self.assertEqual(result[0]["channel"], "stable")
         target = self.project / ".agents/skills/specviz"
         before = {p.name: p.read_bytes() for p in target.iterdir() if p.is_file()}
-        with self.assertRaisesRegex(installer.InstallError, "Requested stable"):
+        with self.assertRaisesRegex(installer.InstallError, "beta is retired"):
             installer.install(self.project, ["codex", "claude-code"], source=self.beta)
-        self.assertEqual(before, {p.name: p.read_bytes() for p in target.iterdir() if p.is_file()})
+        self.assertEqual(
+            before, {p.name: p.read_bytes() for p in target.iterdir() if p.is_file()}
+        )
         self.assertFalse((self.project / ".claude").exists())
 
-    def test_explicit_beta_and_return_to_stable_keep_unrelated_data(self):
+    def test_legacy_beta_return_to_stable_keeps_unrelated_data(self):
         installer.install(self.project, ["codex"], source=self.stable)
         target = self.project / ".agents/skills/specviz"
         (target / "reader-notes.md").write_text("keep", encoding="utf-8")
         evidence = self.root / "evidence.json"
         evidence.write_text('{"completion": "retained"}', encoding="utf-8")
-        result = installer.install(self.project, ["antigravity"], source=self.beta, channel="beta")
-        self.assertEqual(result[0]["channel"], "beta")
+        seed(self.project, self.home, ["codex", "antigravity"], self.beta)
         installed = json.loads((target / installer.MANIFEST).read_text())
         self.assertEqual(installed["hosts"], ["antigravity", "codex"])
-        self.assertEqual(installed["source_identity"], validate(self.beta, "beta")[0]["source_identity"])
+        shutil.rmtree(self.beta)  # Migration never loads the retired source.
         installer.install(self.project, ["codex"], source=self.stable)
         self.assertEqual((target / "reader-notes.md").read_text(), "keep")
         self.assertEqual(evidence.read_text(), '{"completion": "retained"}')
-        self.assertEqual(json.loads((target / installer.MANIFEST).read_text())["channel"], "stable")
+        self.assertEqual(
+            json.loads((target / installer.MANIFEST).read_text())["channel"], "stable"
+        )
 
     def test_legacy_installation_is_stable(self):
         installer.install(self.project, ["codex"], source=self.stable)
@@ -95,12 +106,14 @@ class ChannelTests(unittest.TestCase):
             installer.install(self.project, ["codex"], source=self.beta)
         metadata.write_bytes(original)
         (self.beta / "SKILL.md").write_text("unrecorded change")
-        with self.assertRaisesRegex(installer.InstallError, "Release content"):
+        with self.assertRaisesRegex(installer.InstallError, "beta is retired"):
             installer.install(self.project, ["codex"], source=self.beta, channel="beta")
         self.assertEqual(list(self.project.iterdir()), [])
 
     def test_helper_version_and_metadata_must_agree(self):
-        (self.stable / "scripts/specviz/__init__.py").write_text('__version__ = "0.2.0-beta.1"\n')
+        (self.stable / "scripts/specviz/__init__.py").write_text(
+            '__version__ = "0.2.0-beta.1"\n'
+        )
         seal(self.stable, "stable", "0.1.0")
         with self.assertRaisesRegex(BundleError, "helper version"):
             validate(self.stable)
@@ -111,22 +124,136 @@ class ChannelTests(unittest.TestCase):
         installer.install(self.project, ["codex"], source=self.stable, remove=True)
         self.assertFalse((self.project / ".agents/skills/specviz").exists())
 
+    def test_beta_commands_and_source_bundles_reject_before_mutation(self):
+        before = (ROOT / "skills/specviz/release.json").read_bytes()
+        commands = [
+            ["tools/install.py", "--project", str(self.project), "--host", "all"],
+            ["tools/package.py", "--output", str(self.root / "new-dir/beta.zip")],
+            ["tools/release.py", "--version", "0.2.0-beta.2"],
+        ]
+        for command in commands:
+            result = subprocess.run(
+                [sys.executable, *command, "--channel", "beta"],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("beta is retired", result.stderr)
+            self.assertIn("--channel stable", result.stderr)
+        self.assertEqual(list(self.project.iterdir()), [])
+        self.assertFalse((self.root / "new-dir").exists())
+        self.assertEqual((ROOT / "skills/specviz/release.json").read_bytes(), before)
+        with self.assertRaisesRegex(installer.InstallError, "beta is retired"):
+            installer.install(self.project, ["codex"], source=self.beta)
+
+    def test_migration_preserves_stable_and_beta_state_and_evidence_bytes(self):
+        from specviz.session import ViewStore
+        from specviz.core import ValidationError
+        from specviz.discovery import discover
+
+        seed(self.project, self.home, ["codex", "antigravity"], self.beta)
+        source = self.project / "openspec/specs/example/spec.md"
+        source.parent.mkdir(parents=True)
+        source.write_text("# Rule\n\nKeep the source.\n")
+        state = self.root / "state"
+        store = ViewStore(self.project, state)
+        token = store.save(discover(self.project), ["Original stable view."])
+        beta_token = "b-" + "a" * 32
+        beta = state / "beta-views" / store.directory.name / (beta_token + ".json")
+        beta.parent.mkdir(parents=True)
+        beta.write_text('{"schema_version":2,"original":"beta view"}')
+        evidence = state / "evidence.sqlite3"
+        evidence.write_bytes(b"opaque evidence and inspection records")
+        before = {
+            str(p.relative_to(state)): p.read_bytes()
+            for p in state.rglob("*")
+            if p.is_file()
+        }
+        installer.install(
+            self.project,
+            ["codex", "antigravity"],
+            source=self.stable,
+            user_dir=self.home,
+        )
+        self.assertEqual(store.load(token)["pages"], ["Original stable view."])
+        with self.assertRaisesRegex(
+            ValidationError, "retired beta view.*fresh stable overview"
+        ):
+            store.load(beta_token)
+        self.assertEqual(
+            before,
+            {
+                str(p.relative_to(state)): p.read_bytes()
+                for p in state.rglob("*")
+                if p.is_file()
+            },
+        )
+        self.assertEqual(source.read_text(), "# Rule\n\nKeep the source.\n")
+
+    def test_documented_migration_and_uninstall_commands_work_without_beta_source(self):
+        import contextlib, io
+
+        seed(self.project, self.home, list(installer.HOSTS), self.beta)
+        shutil.rmtree(self.beta)
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(
+                installer.main(
+                    [
+                        "--channel",
+                        "stable",
+                        "--host",
+                        "all",
+                        "--project",
+                        str(self.project),
+                    ]
+                ),
+                0,
+            )
+            self.assertEqual(
+                installer.main(
+                    ["--host", "all", "--project", str(self.project), "--uninstall"]
+                ),
+                0,
+            )
+            self.assertEqual(
+                installer.main(
+                    ["--host", "all", "--project", str(self.project), "--uninstall"]
+                ),
+                0,
+            )
+        self.assertFalse((self.project / ".agents/skills/specviz").exists())
+        self.assertFalse((self.project / ".claude/skills/specviz").exists())
+
     def test_current_package_is_reproducible_and_identified(self):
         release = json.loads((ROOT / "skills/specviz/release.json").read_text())
         paths = [self.root / "one.zip", self.root / "two.zip"]
         for output in paths:
-            result = subprocess.run([sys.executable, str(ROOT / "tools/package.py"),
-                                     "--channel", release["channel"], "--output", str(output)],
-                                    capture_output=True, text=True)
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "tools/package.py"),
+                    "--channel",
+                    release["channel"],
+                    "--output",
+                    str(output),
+                ],
+                capture_output=True,
+                text=True,
+            )
             self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(paths[0].read_bytes(), paths[1].read_bytes())
         record = json.loads(paths[0].with_suffix(".json").read_text())
-        self.assertEqual(record["sha256"], hashlib.sha256(paths[0].read_bytes()).hexdigest())
+        self.assertEqual(
+            record["sha256"], hashlib.sha256(paths[0].read_bytes()).hexdigest()
+        )
         with zipfile.ZipFile(paths[0]) as archive:
             self.assertIn("LICENSE", archive.namelist())
             self.assertEqual(json.loads(archive.read("specviz/release.json")), release)
 
-    @unittest.skipUnless(shutil.which("git"), "Git is needed to exercise checkout conversion")
+    @unittest.skipUnless(
+        shutil.which("git"), "Git is needed to exercise checkout conversion"
+    )
     def test_windows_checkout_preserves_release_bytes_and_package(self):
         source, checkout = self.root / "source", self.root / "windows-checkout"
         source.mkdir()
@@ -136,51 +263,86 @@ class ChannelTests(unittest.TestCase):
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, target)
         for name in ("skills/specviz", "tools"):
-            shutil.copytree(ROOT / name, source / name,
-                            ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo"))
+            shutil.copytree(
+                ROOT / name,
+                source / name,
+                ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo"),
+            )
         for command in (
             ["git", "init", "--quiet"],
             ["git", "-c", "core.autocrlf=false", "add", "."],
-            ["git", "-c", "core.autocrlf=true", "checkout-index", "--all",
-             "--prefix=" + checkout.as_posix() + "/"],
+            [
+                "git",
+                "-c",
+                "core.autocrlf=true",
+                "checkout-index",
+                "--all",
+                "--prefix=" + checkout.as_posix() + "/",
+            ],
         ):
             result = subprocess.run(command, cwd=source, capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stderr)
         release = json.loads((ROOT / "skills/specviz/release.json").read_text())
         for name, expected in release["files"].items():
-            actual = hashlib.sha256((checkout / "skills/specviz" / name).read_bytes()).hexdigest()
-            self.assertEqual(actual, expected, f"Git checkout changed sealed bytes: {name}")
+            actual = hashlib.sha256(
+                (checkout / "skills/specviz" / name).read_bytes()
+            ).hexdigest()
+            self.assertEqual(
+                actual, expected, f"Git checkout changed sealed bytes: {name}"
+            )
         packages = []
         for name, root in (("original", ROOT), ("windows", checkout)):
             output = self.root / (name + ".zip")
-            result = subprocess.run([sys.executable, str(root / "tools/package.py"),
-                                     "--channel", release["channel"], "--output", str(output)],
-                                    capture_output=True, text=True)
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(root / "tools/package.py"),
+                    "--channel",
+                    release["channel"],
+                    "--output",
+                    str(output),
+                ],
+                capture_output=True,
+                text=True,
+            )
             self.assertEqual(result.returncode, 0, result.stderr)
             packages.append(output.read_bytes())
         self.assertEqual(packages[0], packages[1])
 
     def test_distribution_workflow_preserves_runner_temp_path(self):
         workflow = (ROOT / ".github/workflows/checks.yml").read_text()
-        step = re.search(r"(?m)^      - name: Distribution\n        run: >-\n"
-                         r"((?:          .*(?:\n|$))+)", workflow)
+        step = re.search(
+            r"(?m)^      - name: Distribution\n        run: >-\n"
+            r"((?:          .*(?:\n|$))+)",
+            workflow,
+        )
         self.assertIsNotNone(step, "Locate the actual folded Distribution command")
         command = " ".join(line.strip() for line in step[1].splitlines())
         for name in ("runner artifacts", r"runner\a\_temp"):
             with self.subTest(directory=name):
                 runner_temp = self.root / name
                 # Reproduce Actions expression substitution before the shell runs.
-                arguments = shlex.split(command.replace("${{ runner.temp }}", str(runner_temp)))
+                arguments = shlex.split(
+                    command.replace("${{ runner.temp }}", str(runner_temp))
+                )
                 self.assertEqual(arguments[:2], ["python", "-c"])
                 arguments[0] = sys.executable
-                result = subprocess.run(arguments, cwd=ROOT,
-                                        env=dict(os.environ, RUNNER_TEMP=str(runner_temp)),
-                                        capture_output=True, text=True)
+                result = subprocess.run(
+                    arguments,
+                    cwd=ROOT,
+                    env=dict(os.environ, RUNNER_TEMP=str(runner_temp)),
+                    capture_output=True,
+                    text=True,
+                )
                 self.assertEqual(result.returncode, 0, result.stderr)
                 output = runner_temp / "specviz.zip"
-                self.assertTrue(output.is_file(), "Packaging changed the runner's output path")
+                self.assertTrue(
+                    output.is_file(), "Packaging changed the runner's output path"
+                )
                 receipt = json.loads(output.with_suffix(".json").read_text())
-                self.assertEqual(receipt["sha256"], hashlib.sha256(output.read_bytes()).hexdigest())
+                self.assertEqual(
+                    receipt["sha256"], hashlib.sha256(output.read_bytes()).hexdigest()
+                )
 
 
 if __name__ == "__main__":

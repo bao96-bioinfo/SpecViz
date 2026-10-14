@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from .layout import Box, Graph, TextBlock, View, pad, prose
+from .structure import MapBlock
 
 
 @dataclass
@@ -69,25 +70,17 @@ def paginate(view: View, max_lines: int = 100) -> list[Page]:
             chunk = header + content[offset:offset + capacity]
             put([border] + ["| " + pad(line, width - 4) + " |" for line in chunk] + [border], block.documents)
 
-    graph_index, box_index = 0, 0
-    for block in view.blocks:
-        if isinstance(block, Graph):
-            graph_index += 1
-            section = f"Diagram {graph_index}"
+    box_index = 0
+    for block in view.presentation(budget):
+        if isinstance(block, MapBlock):
+            section = block.title
             drawn = block.draw(width)
-            if len(drawn) <= budget:
-                put(drawn, block.documents)
-            else:
-                put(prose(f"Diagram {graph_index}: " + (block.title or "Connected compartments"), width))
-                for node_index, panel in enumerate(block.panels(), 1):
-                    key = f"Diagram {graph_index}, node {node_index}"
-                    panel.title = key + ": " + panel.title
-                    if any(edge.inferred and panel.identity in {edge.origin, edge.target} for edge in block.edges):
-                        panel.body.append(block.inference_note)
-                    box(panel, key)
+            if len(drawn) > budget:
+                raise ValueError("Structural map exceeds page budget")
+            put(drawn, block.documents)
         elif isinstance(block, Box):
             box_index += 1
-            box(block, f"Panel {box_index}")
+            box(block, block.title.split(":", 1)[0] if block.title.startswith(("Node ", "Diagram ")) else f"Panel {box_index}")
         else:
             section = "file keys" if block.documents else "view notes"
             put(block.draw(width), block.documents, block.context)
@@ -99,6 +92,8 @@ def paginate(view: View, max_lines: int = 100) -> list[Page]:
         return pages
     for index, page in enumerate(pages, 1):
         remaining = len(pages) - index
-        page.text = (f"View part {index}/{len(pages)}\n\n" + page.text + "\n\n" +
-                     ("Next: " + pages[index].section if remaining else "End of this view.") + "\n")
+        # Keep continuation notices bounded too (including narrow destinations).
+        notice = "Next: " + pages[index].section if remaining else "End of this view."
+        notice = prose(notice, width)[0]
+        page.text = (f"View part {index}/{len(pages)}\n\n" + page.text + "\n\n" + notice + "\n")
     return pages

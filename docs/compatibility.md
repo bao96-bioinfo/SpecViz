@@ -14,7 +14,7 @@ under `tests/fixtures/frameworks/` contain original illustrative text. Their
 
 | Framework | Tested file mapping | Pinned source |
 | --- | --- | --- |
-| OpenSpec | `openspec/specs/**`, active `changes/<name>/**`, and dated `changes/archive/**`; main specifications, deltas, proposals, design, and tasks retain separate roles. The default `spec-driven` workflow branches from proposal to specifications and design, then tasks. | [Schema at 9111a765](https://github.com/Fission-AI/OpenSpec/blob/9111a7654d7800391459431fff4eaf66e33a3d2e/schemas/spec-driven/schema.yaml) |
+| OpenSpec | `openspec/specs/**`, active `changes/<name>/**`, with `changes/archive/**` available only by explicit historical selection; main specifications, deltas, proposals, design, and tasks retain separate roles. The default `spec-driven` workflow branches from proposal to specifications and design, then tasks. | [Schema at 9111a765](https://github.com/Fission-AI/OpenSpec/blob/9111a7654d7800391459431fff4eaf66e33a3d2e/schemas/spec-driven/schema.yaml) |
 | GitHub Spec Kit | `specs/<feature>/{spec,plan,tasks}.md`, research, data model, quickstart, contracts, and `.specify/memory/constitution.md`. `.specify/feature.json` and `SPECIFY_FEATURE_DIRECTORY` add configured feature roots; neither hides other features from a global overview. | [Core reference at 6c62e10d](https://github.com/github/spec-kit/blob/6c62e10d5ab1d676c557eb2d0cee86be52c893d2/docs/reference/core.md) |
 | BMAD Method | Default `_bmad-output` or layered `_bmad/{config.toml,custom/config.toml,custom/config.user.toml}` using `[core].output_folder`. Initiative and epic trees contain briefs, specifications, `tickets.toml`, and story plans. All initiatives remain visible. `status: built` is displayed as a reported status, with implementation evidence still unknown. | [Ticket tree at 9f198716](https://github.com/bmad-code-org/BMAD-METHOD/blob/9f1987169a2e5626e5ccb31bb9cee051fdb3df20/docs/plan/set-up-the-ticket-tree.md) |
 | Superpowers | `docs/superpowers/specs/*.md` and `plans/*.md`; a plain or bold `Spec:` field can identify an agreed alternative design location inside the project, including quoted paths. Explicit references determine relationships. | [Writing plans at bb92a777](https://github.com/obra/superpowers/blob/bb92a77741419a4ab5f06e711a283343f1ada0c3/skills/writing-plans/SKILL.md) |
@@ -106,36 +106,27 @@ ready-artifact callbacks worked; no native automatic lifecycle observer is
 advertised. Those checks used headless host commands. They do not establish
 interactive display measurements.
 
-## Adaptive beta surfaces
+## Retired adaptive beta
 
-Stable remains the default installation and uses an 80-column content budget.
-The explicit `0.2.0-beta.1` installation enables automatic arrangements only on
-eligible surfaces. The following profiles passed interactive checks on macOS
-on October 13, 2026; they are exact version/mode matches, not version ranges.
+Adaptive beta `0.2.0-beta.1` is retired. All three hosts use the stable renderer
+with an 80-column default; automatic width detection is no longer offered.
+Earlier interactive measurements are [historical acceptance](acceptance.md),
+not a claim of current adaptive support. Stable can migrate existing beta
+installations without the beta checkout. See
+[return from beta](installation.md#return-from-retired-beta).
 
-| Destination | Beta behavior | Accepted measurement |
-| --- | --- | --- |
-| Claude Code CLI 2.1.296, default mode | Adaptive | Session-bound status-line `COLUMNS`; two-column message inset, then two-column margin |
-| Antigravity CLI 1.3.3, default mode in a local terminal | Adaptive | Session-bound `terminal_width`; eight-column code-block inset, then two-column margin |
-| Direct helper output to an attached terminal | Adaptive | Output descriptor's terminal columns, then two-column margin |
-| Eligible terminal with an unknown version/mode, expired record, or no usable measurement | Automatic fallback | Assumes 80 available columns; 78 content columns; actual narrow-pane fit is unknown |
-| Codex, including a shared Antigravity beta installation | Stable renderer | **Adaptive support under development**; no width provider |
-| Desktop/editor chat or unidentified chat destination | Stable renderer | Measurement deferred; a tool shell's width is never used as the chat width |
+## Current work and historical selection
 
-Measurements expire after five seconds. The helper waits at most one second
-for a fresh matching callback, then falls back. Each request selects its own
-layout; already printed messages are not redrawn. Unknown host versions and
-rendering modes need separate acceptance before their profiles can be enabled.
-A recent callback cannot rule out a subsequent, unreported resize.
+Ordinary `overview`, `overview openspec/`, `show`, and `changes` automatically
+include current specifications and active changes. Known archives are excluded
+before numbering, source coverage, and snapshots, including linked archives and
+declared external OpenSpec roots. An archived link is not a missing-source warning.
+An archive-only project has no current specifications. Names such as
+`improve-archive-search` remain active outside the actual archive location.
 
-Claude Code was checked at 48 and 160 terminal columns; Antigravity at 48, 120,
-and 160. Both were widened and narrowed while idle before another ordinary
-`/specviz overview` command. No reader-supplied width was used. Direct helper
-output was checked at 48, 80, 120, and 160. See the separate interactive,
-automated, and platform limits in [acceptance](acceptance.md#adaptive-beta-acceptance--october-13-2026).
-
-Beta setup composes host status-line settings and registers session hooks.
-Antigravity requires an owned user-level dispatcher for project registrations;
-Claude Code uses project-local settings. See [settings scope and return to
-stable](installation.md#try-the-adaptive-beta). These are standalone skill
-checks; marketplace/plugin installation remains untested.
+To inspect history, explicitly select `overview openspec/changes/archive/` or
+`show openspec/changes/archive/<dated-change>/design.md`. These sources are labeled
+as history; the next ordinary overview again shows current work. Editing history
+does not invalidate current file selections. Moving a displayed active source
+requires a fresh overview. Historical provenance remains available for report
+comparison, but archival alone never establishes implementation.

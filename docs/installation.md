@@ -59,7 +59,7 @@ it on a server; select a directory outside the checkout.
 python3 tools/package.py
 ```
 
-From a stable checkout, this prepares `dist/specviz-0.1.0.zip` and a JSON
+From a stable checkout, this prepares `dist/specviz-0.1.1.zip` and a JSON
 checksum receipt. The ZIP includes the complete skill, license, and installer.
 After extracting it, run `python3 tools/install.py` with the same arguments as
 above. No marketplace plugin manifests are included. Preparing an asset does
@@ -67,63 +67,38 @@ not publish it or replace a Git tag.
 See [marketplace publishing](publishing.md) for the remaining distribution work.
 
 
-## Try the adaptive beta
+## Return from retired beta
 
-Stable is the default. Adaptive layout is under active development in a separate
-`beta` source, version `0.2.0-beta.1`. Beta assets are prepared locally; this guide
-does not advertise an unpublished GitHub download or marketplace listing.
-
-From the beta checkout, or an extracted beta bundle supplied by the maintainer:
-
-```sh
-python3 tools/install.py --channel beta --host claude-code --project /path/to/project
-python3 tools/install.py --channel beta --host antigravity --project /path/to/project
-```
-
-Use `--host all` if desired. A default stable command rejects a beta source before
-changing the project. The installer never fetches another source or switches
-branches. Repeat the beta command from an updated beta source to update beta.
-Ordinary `/specviz overview`, `show`, and `changes` commands stay the same.
-No width question or terminal setup is required.
-
-Beta targets the interactive Claude Code and Antigravity terminals. An exact
-host version/rendering mode needs a verified message-area profile; otherwise it
-uses a conservative fallback. **Codex adaptive support is under development**;
-Codex retains the stable renderer even when sharing Antigravity's beta skill
-folder. Desktop/editor measurement is deferred. See [compatibility](compatibility.md).
-
-### Settings affected by beta
-
-| Host | Configuration scope |
-| --- | --- |
-| Claude Code | Project `.claude/settings.local.json`: composed status line and SessionStart hook |
-| Antigravity | Project `.agents/hooks.json`; user `~/.gemini/antigravity-cli/settings.json`: shared status-line dispatcher |
-| Codex | Skill files only; no width provider |
-
-The dispatcher and minimal per-session measurements live outside the checkout
-under `~/.specviz/adapters/`. Existing status commands receive their original
-input and retain their output. Antigravity's built-in status line is stacked when
-no custom line existed. Claude Code's custom-status mode can change its default
-footer hints, and periodic callbacks run once per second. Neither adapter stores
-raw status payloads, email, or transcript content.
-
-Only registered beta projects collect measurements. Antigravity's dispatcher
-stays available while another project needs it. Setup preflights ownership and
-uses a recovery journal for interrupted replacement. Later custom status-field
-edits survive removal; conflicting edited owned files/hooks require preserving
-or reconciling the edit before an update. An inert dispatcher is retained after
-unregistration so custom commands referring to it do not break.
-
-### Return to stable
-
-From the **stable checkout or stable bundle**, run:
+Adaptive beta `0.2.0-beta.1` has been retired. New installation, packaging, and
+release commands accept only stable; `--channel stable` remains optional.
+Run this from a **current stable checkout or extracted stable bundle**:
 
 ```sh
 python3 tools/install.py --channel stable --host all --project /path/to/project
 ```
 
-This replaces owned beta skill files and unregisters beta adapters. It restores
-only unchanged fields that SpecViz owns, preserving other settings and files.
-Open a new coding conversation after switching. Stable saved views and all
-implementation evidence remain available. Beta-only continuations require a
-fresh stable overview; their records are retained separately.
+No beta checkout or runtime is required. Alternatively, remove the old install:
+
+```sh
+python3 tools/install.py --host all --project /path/to/project --uninstall
+```
+
+Migration replaces only owned skill files and unregisters the selected project's
+old callbacks. Codex and Antigravity share one skill directory: updating either
+updates that shared copy; uninstalling one leaves the other's registration.
+Other projects' Antigravity registrations keep their dispatcher until removed.
+
+Cleanup restores unchanged owned fields in project `.claude/settings.local.json`,
+project `.agents/hooks.json`, and user `~/.gemini/antigravity-cli/settings.json`.
+The last registration removes unmodified owned collectors and recognized
+session measurement caches under `~/.specviz/adapters/`. Edited collectors or
+collectors still referenced by custom host settings are retained with a notice.
+Unknown cache files are also retained. Conflicting edits to owned skill files
+or hooks stop the transaction with the affected path or setting identified;
+preserve or reconcile those edits before retrying. Interrupted writes roll back.
+
+Open a new coding conversation after migration. Saved stable pages keep their
+original text and file numbers. Beta-only continuation tokens ask for a fresh
+stable overview; their records, source snapshots, completion reports, and code
+inspection evidence remain unchanged. Removing the maintained beta distribution
+cannot remotely remove copies that readers already downloaded.

@@ -74,8 +74,8 @@ class GraphTests(unittest.TestCase):
             lines = graph.draw(width)
             text = " ".join(line.replace("|", " ") for line in lines)
             self.assertTrue(all(display_width(line) <= width for line in lines))
-            self.assertIn("--> node", text)
-            self.assertIn("<-- node", text)
+            self.assertIn("--> Node", text)
+            self.assertIn("<-- Node", text)
             for edge in graph.edges:
                 self.assertIn(edge.caption, " ".join(text.split()))
 
@@ -83,11 +83,11 @@ class GraphTests(unittest.TestCase):
         graph = self.graph()
         graph.edges.append(Edge("evaluate", "prepare", "revise inputs", "reference", True))
         text = "\n".join(graph.draw(80))
-        self.assertIn("--> node 1: revise inputs *", text)
-        self.assertIn("<-- node 5: revise inputs *", text)
+        self.assertIn("--> Node 1: revise inputs *", text)
+        self.assertIn("<-- Node 5: revise inputs *", text)
         self.assertIn("* Inferred relationship", text)
         for box in graph.boxes:
-            self.assertEqual(text.count(box.title), 1)
+            self.assertEqual(text.count(box.title), 2)
 
     def test_unrelated_boxes_have_no_execution_arrows(self):
         graph = Graph([Box("one", "Permission one"), Box("two", "Permission two")])
@@ -130,9 +130,9 @@ class ViewTests(unittest.TestCase):
             self.assertEqual(panel.title, box.title)
             for edge in graph.edges:
                 if edge.origin == box.identity:
-                    self.assertTrue(any(note.startswith("--> node") and edge.caption in note for note in panel.body))
+                    self.assertTrue(any(note.startswith("--> Node") and edge.caption in note for note in panel.body))
                 if edge.target == box.identity:
-                    self.assertTrue(any(note.startswith("<-- node") and edge.caption in note for note in panel.body))
+                    self.assertTrue(any(note.startswith("<-- Node") and edge.caption in note for note in panel.body))
 
 
 if __name__ == "__main__":

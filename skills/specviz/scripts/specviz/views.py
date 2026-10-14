@@ -67,15 +67,22 @@ def document_map(view: View, inventory: dict, documents: list[dict], model: dict
                  markers: dict[str, str] | None = None, group_markers: dict[str, str] | None = None) -> None:
     numbers, interpreted = _numbers(inventory), _model_documents(model)
     markers, group_markers = markers or {}, group_markers or {}
-    for group, members in _groups(inventory, documents):
+    grouped = _groups(inventory, documents)
+    if len(grouped) > 1:
+        owners = {d["id"]: str(g["id"]) for g, members in grouped for d in members}
+        group_boxes = [Box(str(g["id"]), group_markers.get(str(g["id"]), "") +
+                           str(g.get("label") or g["id"]) + f" ({_file_count(len(members))})")
+                       for g, members in grouped]
+        group_edges = [Edge(owners[e.origin], owners[e.target],
+                            f"file [{numbers[e.origin]}] to [{numbers[e.target]}]: {e.label}", e.kind, e.inferred)
+                       for e in edges(inventory.get("relationships", []), set(owners))
+                       if owners[e.origin] != owners[e.target]]
+        view.blocks.append(Graph(group_boxes, group_edges, "Document groups"))
+    for group, members in grouped:
         identity = str(group["id"])
         title = group_markers.get(identity, "") + str(group.get("label") or identity) + f" ({_file_count(len(members))})"
         if group.get("lifecycle") in {"archive", "archived", "history", "historical"}:
             title += " [history]"
-        if len(members) > 8:
-            view.blocks.append(Box(identity, title, [str(group.get("purpose") or "Purpose unspecified"),
-                                                    "The file key follows. Continue the view to reveal every file."]))
-            continue
         prefix = path_prefix(members)
         boxes = [Box(doc["id"], markers.get(doc["id"], "") + f"[{numbers[doc['id']]}] " + doc["path"][len(prefix):],
                      [_purpose(doc, interpreted.get(doc["id"]))]) for doc in members]

@@ -18,7 +18,7 @@ import subprocess
 import tomllib
 from urllib.parse import unquote, urlparse
 
-from .core import project_identity, snapshot_file
+from .core import project_identity, snapshot_file, source_path
 
 
 class DiscoveryError(ValueError):
@@ -176,7 +176,7 @@ def _spec_target(line):
 class InventoryBuilder:
     """Adapter-facing collector. Stable records retain source content and roles."""
 
-    def __init__(self, root):
+    def __init__(self, root, selections=None):
         self.root = root
         self.warnings = []
         self.documents = {}
@@ -184,6 +184,16 @@ class InventoryBuilder:
         self.relationships = []
         self.allowed_roots = {root}
         self.frameworks = set()
+        self.historical_roots = set()
+        self.history = {}
+        self.selections = [path for _, path in _selected_paths(root, selections)]
+
+    def historical(self, path):
+        return path in self.history or any(path == root or _inside(path, root) for root in self.historical_roots)
+
+    def historical_selected(self, path):
+        return any(self.historical(selected) and
+                   (path == selected or _inside(path, selected)) for selected in self.selections)
 
     def root_path(self, value, label):
         try:
@@ -215,6 +225,14 @@ class InventoryBuilder:
         if not any(_inside(resolved, allowed) for allowed in self.allowed_roots):
             self.warnings.append(f"External symlink excluded; select it explicitly: {path} -> {resolved}")
             return None
+        if lifecycle == "archived" or self.historical(resolved):
+            self.history.setdefault(resolved, {
+                "path": source_path(resolved, self.root), "absolute_path": str(resolved),
+                "framework": framework, "lifecycle": "archived", **extra,
+            })
+            if not self.historical_selected(resolved):
+                return None
+            lifecycle = "archived"
         if resolved in self.documents:
             document = self.documents[resolved]
             if framework != document["framework"]:
@@ -282,6 +300,9 @@ class InventoryBuilder:
         target = next((self.documents.get(p.resolve()) for p in candidates if p.resolve() in self.documents), None)
         if target is None:
             existing = next((p.resolve() for p in candidates if p.is_file()), None)
+            if any(self.historical(p.resolve()) for p in candidates):
+                # Known history is neither current context nor a missing link.
+                return
             if existing and _inside(existing, self.root) and not any(part in EXCLUDED for part in existing.relative_to(self.root).parts):
                 group = self.group("generic", "references", "Referenced documents", purpose="Source-linked supporting context; framework behavior unknown")
                 target = self.add(existing, "generic", group, "document", "unknown")
@@ -384,6 +405,7 @@ def _open_spec(builder):
             continue
         changes = [(p, "proposed") for p in sorted(change_base.iterdir()) if p.is_dir() and p.name != "archive"]
         archive = change_base / "archive"
+        builder.historical_roots.add(archive.resolve())
         if archive.is_dir():
             changes.extend((p, "archived") for p in sorted(archive.iterdir()) if p.is_dir())
         for change, lifecycle in changes:
@@ -397,7 +419,8 @@ def _open_spec(builder):
                 role = "delta specification" if is_delta else {"proposal.md": "proposal", "design.md": "design", "tasks.md": "tasks"}.get(path.name, "supporting")
                 capability = relative.parent.relative_to("specs").as_posix() if is_delta else None
                 document = builder.add(path, "openspec", group, role, lifecycle,
-                                       change=logical_name, lineage=f"openspec/{namespace}change/{logical_name}/{relative.as_posix()}", capability=capability)
+                                       change=logical_name, lineage=f"openspec/{namespace}change/{logical_name}/{relative.as_posix()}", capability=capability,
+                                       **({"active_path": source_path(change_base / logical_name / relative, builder.root)} if lifecycle == "archived" else {}))
                 if document:
                     members.append(document)
                     if capability in main_by_capability:
@@ -554,6 +577,11 @@ ADAPTERS = {"openspec": _open_spec, "spec-kit": _spec_kit, "bmad": _bmad,
             "superpowers": _superpowers, "kiro": _kiro}
 
 
+def specification_paths(inventory):
+    """Exclude both presented specifications and indexed history from code drift."""
+    return sorted({d["path"] for d in inventory["documents"] + inventory.get("history", [])})
+
+
 def register_adapter(name, discoverer):
     """Register a local adapter callable(builder); never load remote code."""
     if not isinstance(name, str) or not name or not callable(discoverer):
@@ -587,6 +615,9 @@ def select_inventory(inventory, selections, _discover_missing=True):
     for selection, path in _selected_paths(root, selections):
         matched = [d for d in result["documents"] if Path(d["absolute_path"]) == path or _inside(Path(d["absolute_path"]), path)]
         if not matched:
+            if path.is_dir() and any(Path(p) == path or _inside(Path(p), path)
+                                      for p in result.get("historical_roots", [])):
+                continue  # A broad current-work scope can legitimately be empty.
             matched = [d for d in result["documents"] if d["path"] == selection or Path(d["path"]).name == selection]
             if len(matched) > 1:
                 raise DiscoveryError(f"Ambiguous file name {selection!r}; select a full path: " + ", ".join(d["path"] for d in matched))
@@ -614,7 +645,7 @@ def select_inventory(inventory, selections, _discover_missing=True):
 def discover(project=None, selections=None, cwd=None):
     """Return a source-backed inventory for one project and optional local scope."""
     root = resolve_project(project, cwd)
-    builder = InventoryBuilder(root)
+    builder = InventoryBuilder(root, selections)
     for name, adapter in list(ADAPTERS.items()):
         try:
             adapter(builder)
@@ -630,6 +661,8 @@ def discover(project=None, selections=None, cwd=None):
         paths = builder.walk(path, explicit=True) if path.is_dir() else [path]
         for document_path in paths:
             if document_path.resolve() in builder.documents:
+                continue
+            if builder.historical(document_path.resolve()) and not builder.historical_selected(document_path.resolve()):
                 continue
             group = builder.group("generic", str(path if path.is_dir() else path.parent), "Selected documents", purpose="Unfamiliar document hierarchy; framework behavior unknown")
             document = builder.add(document_path, "generic", group, "document", "unknown")
@@ -654,7 +687,11 @@ def discover(project=None, selections=None, cwd=None):
     inventory = {
         "schema_version": 1, "project": {"root": str(root), "id": project_identity(root), "name": name, "purpose": purpose},
         "snapshot": snapshot, "documents": documents,
-        "groups": sorted(builder.groups.values(), key=lambda g: (g["framework"], g["lifecycle"], g["label"])),
+        "groups": sorted((g for g in builder.groups.values() if any(
+            d["group"] == g["id"] or any(m["group"] == g["id"] for m in d.get("memberships", []))
+            for d in documents)), key=lambda g: (g["framework"], g["lifecycle"], g["label"])),
+        "history": sorted(builder.history.values(), key=lambda d: d["path"]),
+        "historical_roots": sorted(str(p) for p in builder.historical_roots),
         "relationships": builder.relationships, "warnings": list(dict.fromkeys(builder.warnings)),
         "scope": [d["id"] for d in documents], "context": [],
     }

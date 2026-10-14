@@ -4,7 +4,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from .core import default_items, parse_blocks, validate_model
+from .core import default_items, parse_blocks, validate_model, digest, read_stable
+from .discovery import specification_paths
 from .evidence import EvidenceError, EvidenceStore
 
 
@@ -130,6 +131,25 @@ def evidence_summary(record: dict | None) -> dict | None:
             "implementation": event.get("implementation", {}), "fingerprints": record["fingerprints"]}
 
 
+def _archived_evidence(path: str, record: dict, inventory: dict) -> bool:
+    """Classify history, not completion. Verify moved content only when needed."""
+    history = inventory.get("history", [])
+    if any(source["path"] == path for source in history):
+        return True
+    raw = Path(path.removeprefix("external::"))
+    absolute = raw if raw.is_absolute() else Path(inventory["project"]["root"]) / raw
+    if any(absolute.is_relative_to(root) for root in inventory.get("historical_roots", [])):
+        return True
+    candidates = [source for source in history if source.get("active_path") == path]
+    # A dated directory and matching basename alone do not prove a move.
+    if len(candidates) != 1 or not record["coverage"].get("version_bound"):
+        return False
+    try:
+        return digest(read_stable(Path(candidates[0]["absolute_path"]))) == record["coverage"].get("spec_hash")
+    except (OSError, ValueError):
+        return False
+
+
 def compare(inventory: dict, store: EvidenceStore, model: dict | None = None,
             use_inspections: bool = False) -> dict:
     """Return item rows; displays never create events or change the baseline.
@@ -151,10 +171,10 @@ def compare(inventory: dict, store: EvidenceStore, model: dict | None = None,
         for item in comparison_items(document, interpreted.get(identity)):
             items[(identity, item["id"])] = item
     event_records = store.events()
-    specification_paths = [document["path"] for document in inventory["documents"]]
-    evidence_index = store.coverage_index(event_records, specification_paths=specification_paths)
+    excluded_sources = specification_paths(inventory)
+    evidence_index = store.coverage_index(event_records, specification_paths=excluded_sources)
     correspondences = _semantic_comparisons(model, inventory, store, items, event_records)
-    inspections = store.inspections(specification_paths=specification_paths) if use_inspections else []
+    inspections = store.inspections(specification_paths=excluded_sources) if use_inspections else []
     rows, warnings, covered_keys = [], [], set()
     if use_inspections and any(identity.startswith("external::") for identity in selected):
         warnings.append("Persisted code inspection of external specification sources is unsupported; external workflow report comparisons remain available")
@@ -266,6 +286,8 @@ def compare(inventory: dict, store: EvidenceStore, model: dict | None = None,
                 continue
             coverage = historical_evidence["coverage"]
             available = path in paths
+            if not available and _archived_evidence(path, historical_evidence, inventory):
+                continue
             rows.append({"document": path, "requirement_id": requirement_id,
                          "label": "Previously evidenced requirement not located" if available else "Previously evidenced source unavailable",
                          "requested": "Requirement correspondence unresolved" if available else "Source unavailable",

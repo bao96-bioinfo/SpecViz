@@ -61,7 +61,7 @@ class DiagramViewTests(unittest.TestCase):
         view = overview_view(inventory)
         output = view.render()
         self.assertIn("120 files", output)
-        self.assertIn("Continue the view", output)
+        self.assertIn("layout group", output)
         self.assertEqual(set(view.documents), set(inventory["scope"]))
         for index in range(120):
             self.assertIn(f"[{index + 1}] {index}/spec.md", output)

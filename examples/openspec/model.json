@@ -1,29 +1,8 @@
 {
   "schema_version": 1,
-  "snapshot": "3e6aa1a95a96f9b7af1ea226d4a8ac6d2d8c78978c49cfc7a9f8d7dfe64cb4e5",
+  "snapshot": "86be1dd067eddbe9d81df443e22c83d212a26cf1e0cc5adb539f0454bf742538",
   "project_purpose": "Export reports with owner access controls and clear download limits.",
   "documents": [
-    {
-      "id": "openspec/changes/archive/2026-09-01-add-export/proposal.md",
-      "purpose": "Earlier proposal for report downloads.",
-      "layout": "tree",
-      "items": [
-        {
-          "id": "openspec/changes/archive/2026-09-01-add-export/proposal.md#initial-report-exports:1",
-          "label": "Initial report exports",
-          "kind": "goal",
-          "sources": [
-            "openspec/changes/archive/2026-09-01-add-export/proposal.md:L1-1",
-            "openspec/changes/archive/2026-09-01-add-export/proposal.md:L3-3"
-          ],
-          "notes": [
-            "Historical proposal for adding report downloads."
-          ],
-          "summary": "Historical proposal for adding report downloads."
-        }
-      ],
-      "relationships": []
-    },
     {
       "id": "openspec/changes/password-export/design.md",
       "purpose": "How report ownership and protection work.",
@@ -381,20 +360,6 @@
               "openspec/changes/password-export/tasks.md:L3-3",
               "openspec/changes/password-export/tasks.md:L5-5",
               "openspec/changes/password-export/tasks.md:L6-6"
-            ]
-          }
-        ]
-      },
-      {
-        "id": "history",
-        "label": "Earlier proposal [history]",
-        "summary": "An earlier proposal introduced report downloads.",
-        "sources": [
-          {
-            "document": "openspec/changes/archive/2026-09-01-add-export/proposal.md",
-            "blocks": [
-              "openspec/changes/archive/2026-09-01-add-export/proposal.md:L1-1",
-              "openspec/changes/archive/2026-09-01-add-export/proposal.md:L3-3"
             ]
           }
         ]

@@ -12,7 +12,7 @@ from pathlib import Path
 from . import SCHEMA_VERSION, __version__
 from .comparison import compare
 from .core import ValidationError, validate_inventory, validate_model
-from .discovery import discover, resolve_project, select_inventory
+from .discovery import discover, resolve_project, select_inventory, specification_paths
 from .evidence import EvidenceStore, PersistenceError, default_state_directory, implementation_identity
 from .inspection import validate_inspection
 from .views import changes_view, overview_view, show_view
@@ -186,7 +186,7 @@ def run(args: argparse.Namespace) -> dict | str:
                          "event": "begin", "framework": args.framework, "round_id": args.capture_round,
                          "scope": paths or inventory["scope"], "origin": {"kind": "handoff", "source": "Explicit implementation-start handoff", "host": args.host},
                          "specifications": [{"path": d["path"], "hash": d["hash"], "text": d["text"]} for d in inventory["documents"] if d["id"] in inventory["scope"]],
-                         "implementation": implementation_identity(project, specification_paths=[d["path"] for d in inventory["documents"]]), "coverage": []}
+                         "implementation": implementation_identity(project, specification_paths=specification_paths(inventory)), "coverage": []}
                 prior = [event for event in store.events() if event.get("round_id") == args.capture_round and event["event"] == "begin"]
                 if prior and (prior[0]["framework"] != args.framework or prior[0]["scope"] != event["scope"]):
                     raise ValidationError("A resumed round must retain its framework and declared scope")

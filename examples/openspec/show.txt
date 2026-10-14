@@ -2,9 +2,9 @@ Reporting service - Export reports with owner access controls and clear download
 limits.
 
 Files (1 file) under openspec/changes/password-export/specs/data-export/:
-[4] spec.md
+[3] spec.md
 
-File [4]: spec.md - Independent rules
+File [3]: spec.md - Independent rules
 
           +----------------------------------------------------------+
           | (1) Export changes                                       |

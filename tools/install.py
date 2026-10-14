@@ -12,7 +12,7 @@ import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from bundle import BundleError, CHANNELS, source_files, validate
+from bundle import BundleError, LEGACY_CHANNELS, require_stable, source_files, validate
 from adapters import configure
 from transaction import Transaction
 
@@ -47,7 +47,7 @@ def _owned(target: Path) -> dict | None:
     if value.get("owner") != "specviz" or value.get("schema_version") != 1 or not isinstance(value.get("files"), dict):
         raise InstallError(f"Unrecognized installation ownership: {target}")
     value.setdefault("channel", "stable")
-    if value["channel"] not in CHANNELS:
+    if value["channel"] not in LEGACY_CHANNELS:
         raise InstallError(f"Unrecognized installed release channel: {target}")
     for relative, fingerprint in value["files"].items():
         path = target / relative
@@ -83,6 +83,7 @@ def install(project: Path, hosts: list[str], *, source: Path = SOURCE,
         raise InstallError("Choose codex, claude-code, antigravity, or all")
     source = Path(source).resolve()
     try:
+        require_stable(channel)
         release, files = validate(source, channel) if not remove else ({}, {})
     except BundleError as exc:
         raise InstallError(str(exc)) from exc
@@ -150,8 +151,6 @@ def install(project: Path, hosts: list[str], *, source: Path = SOURCE,
                     output.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(path, output)
                 enabled = generation_handoff if generation_handoff is not None else bool(old and old.get("generation_handoff"))
-                if channel == "beta":
-                    desired.update(registrations)
                 manifests[target] = {"owner": "specviz", "schema_version": 1, "version": release["version"],
                                      "channel": channel, "source_identity": release["source_identity"],
                                      "scope": "project", "hosts": sorted(registrations),
@@ -160,7 +159,9 @@ def install(project: Path, hosts: list[str], *, source: Path = SOURCE,
                 results.append({"path": str(target), "status": "updated" if old else "installed",
                                 "version": release["version"], "channel": channel,
                                 "source_identity": release["source_identity"], "generation_handoff": enabled})
-            owned_settings = configure(transaction, project, home, None if remove else source, desired, affected)
+            owned_settings, notices = configure(transaction, project, home, desired, affected)
+            if notices:
+                results.append({"status": "preserved legacy adapter files", "notices": notices})
             for target, temporary in staged.items():
                 if target in manifests:
                     manifest = manifests[target]
@@ -184,7 +185,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--host", choices=tuple(HOSTS) + ("all",), default="codex")
     parser.add_argument("--uninstall", action="store_true")
-    parser.add_argument("--channel", choices=CHANNELS, default="stable", help="Stable by default; beta requires explicit opt-in")
+    parser.add_argument("--channel", default="stable", help="Only stable is available; legacy beta installs can migrate or uninstall")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--generation-handoff", dest="generation", action="store_true")
     group.add_argument("--no-generation-handoff", dest="generation", action="store_false")

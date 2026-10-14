@@ -1,0 +1,330 @@
+Reproducible model study - Prepare data, train and evaluate a model, then
+explain the results in a proposed notebook.
+
+Specification map (10 files)
+
+Diagram 1: Overall structure. Arrowheads show direction.
+
+ +-------------------------------+
+ |                               |
+ |              +--------+       |                              +--------+
+ |              | Node 3 |       |                              | Node 6 |
+ |              +--------+       |                              +--------+
+ |                   |           |                                   |
+ |                   v           v                                   v
++--------+      +--------+      +--------+      +--------+      +--------+
+| Node 1 |----->| Node 2 |----->| Node 4 |----->| Node 5 |----->| Node 7 |
++--------+      +--------+      +--------+      +--------+      +--------+
+                 |                                               ^
+                 +-----------------------------------------------+
+
+Node 1: Prepare the data
+
+Node 2: Train the model
+
+Node 3: Speed up training
+
+Node 4: Produce predictions
+
+Node 5: Evaluate the results
+
+Node 6: Prepare reference values
+
+Node 7: Assemble the notebook
+
+E1: Node 1 -> Node 2 (workflow): prepared training file
+
+E2: Node 1 -> Node 4 (workflow): saved scaling values
+
+E3: Node 3 -> Node 2 (workflow): equivalent faster execution
+
+E4: Node 2 -> Node 4 (workflow): trained model output
+
+E5: Node 4 -> Node 5 (workflow): saved predictions
+
+E6: Node 5 -> Node 7 (workflow): evaluation results
+
+E7: Node 6 -> Node 7 (workflow): independent reference values
+
+E8: Node 2 -> Node 7 (workflow): training measurements
+
+Component details
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 1: Prepare the data                                          |
+|                                                                              |
+| (Node 1)                                                                     |
+| Combine the input tables into one training file. Keep one saved assignment   |
+| of people to training and evaluation sets so the same person never appears   |
+| in both. Training consumes this file; prediction also uses its saved scaling |
+| values. Missing input values must be reported before training starts.        |
+| Files: [6]                                                                   |
+| --> Node 2: prepared training file                                           |
+| --> Node 4: saved scaling values                                             |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 2: Train the model                                           |
+|                                                                              |
+| (Node 2)                                                                     |
+| <-- Node 1: prepared training file                                           |
+| <-- Node 3: equivalent faster execution                                      |
+| Train the model using the prepared file and its saved assignments. Apply the |
+| speed improvements inside training without changing results. Save the chosen |
+| model and training measurements for prediction and the notebook. Resume      |
+| interrupted runs from a recorded checkpoint; do not silently choose          |
+| different settings.                                                          |
+| Files: [8]                                                                   |
+| --> Node 4: trained model output                                             |
+| --> Node 7: training measurements                                            |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 3: Speed up training                                         |
+|                                                                              |
+| (Node 3)                                                                     |
+| Avoid copying the complete training data when preparing each batch. The      |
+| faster path must produce the same numerical results as the original path.    |
+| Record the measured peak memory and running time. Use these improvements     |
+| inside model training only after the equivalence check succeeds.             |
+| Files: [10]                                                                  |
+| --> Node 2: equivalent faster execution                                      |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 4: Produce predictions                                       |
+|                                                                              |
+| (Node 4)                                                                     |
+| <-- Node 1: saved scaling values                                             |
+| <-- Node 2: trained model output                                             |
+| Turn model output into predictions using the scaling values saved during     |
+| data preparation. Save one prediction per person, with identifiers that can  |
+| be joined to the evaluation answers. Evaluation consumes this saved table.   |
+| Repeating prediction with identical inputs must reproduce the same output.   |
+| Files: [9]                                                                   |
+| --> Node 5: saved predictions                                                |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 5: Evaluate the results                                      |
+|                                                                              |
+| (Node 5)                                                                     |
+| <-- Node 4: saved predictions                                                |
+| Compare the saved predictions with answers kept out of training. Report      |
+| error and uncertainty, including the number of people evaluated. Keep the    |
+| evaluation table so the notebook can reproduce every reported number. The    |
+| acceptable error threshold is undecided; do not describe the model as        |
+| accepted.                                                                    |
+| Files: [7]                                                                   |
+| --> Node 7: evaluation results                                               |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 6: Prepare reference values                                  |
+|                                                                              |
+| (Node 6)                                                                     |
+| Prepare independent reference values for the notebook comparison. Record     |
+| their source, units, and the people they describe. Only training data may    |
+| determine any normalization settings. These reference values feed the        |
+| notebook; their availability does not prove the notebook has been            |
+| implemented.                                                                 |
+| Files: [4]                                                                   |
+| --> Node 7: independent reference values                                     |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 7: Assemble the notebook                                     |
+|                                                                              |
+| (Node 7)                                                                     |
+| <-- Node 5: evaluation results                                               |
+| <-- Node 6: independent reference values                                     |
+| <-- Node 2: training measurements                                            |
+| Build a notebook from saved training measurements, evaluation results, and   |
+| independent reference values. Its numbers must agree with those source       |
+| tables. Explain missing inputs and undecided acceptance thresholds. This is  |
+| a proposed addition; the task list has unchecked work and no completion      |
+| report is available.                                                         |
+| Files: [1] [2] [3] [5]                                                       |
++------------------------------------------------------------------------------+
+
+Files (1 file) - Data preparation under openspec/specs/data-preparation/:
+[6] spec.md
+
+Files (1 file) - Evaluation under openspec/specs/evaluation/:
+[7] spec.md
+
+Files (1 file) - Model training under openspec/specs/model-training/:
+[8] spec.md
+
+Files (1 file) - Prediction under openspec/specs/prediction/:
+[9] spec.md
+
+Files (1 file) - Training speed under openspec/specs/training-speed/:
+[10] spec.md
+
+Files (5 files) - Add notebook under openspec/changes/add-notebook/:
+[1] design.md
+[2] proposal.md
+[3] specs/notebook/spec.md
+[4] specs/reference-values/spec.md
+[5] tasks.md
+
++------------------------------------------------------------------------------+
+| File [1]: openspec/changes/add-notebook/design.md                            |
+|                                                                              |
+| Purpose: Build a notebook from saved training measurements, evaluation       |
+| results, and independent reference values. Its numbers must agree with those |
+| source tables. Explain missing inputs and undecided acceptance thresholds.   |
+| This is a proposed addition; the task list has unchecked work and no         |
+| completion report is available.                                              |
+| Design [unresolved]                                                          |
+| Build a notebook from saved training measurements, evaluation results, and   |
+| independent reference values. Its numbers must agree with those source       |
+| tables. Explain missing inputs and undecided acceptance thresholds. This is  |
+| a proposed addition; the task list has unchecked work and no completion      |
+| report is available.                                                         |
+| Source: lines 1-3 - Design                                                   |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [2]: openspec/changes/add-notebook/proposal.md                          |
+|                                                                              |
+| Purpose: Add a notebook that explains saved training and evaluation results  |
+| together with independent reference values.                                  |
+| Proposal [unresolved]                                                        |
+| Add a notebook that explains saved training and evaluation results together  |
+| with independent reference values.                                           |
+| Source: lines 1-3 - Proposal                                                 |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [3]: openspec/changes/add-notebook/specs/notebook/spec.md               |
+|                                                                              |
+| Purpose: Build a notebook from saved training measurements, evaluation       |
+| results, and independent reference values. Its numbers must agree with those |
+| source tables. Explain missing inputs and undecided acceptance thresholds.   |
+| This is a proposed addition; the task list has unchecked work and no         |
+| completion report is available.                                              |
+| Assemble the notebook [unresolved]                                           |
+| Build a notebook from saved training measurements, evaluation results, and   |
+| independent reference values. Its numbers must agree with those source       |
+| tables. Explain missing inputs and undecided acceptance thresholds. This is  |
+| a proposed addition; the task list has unchecked work and no completion      |
+| report is available.                                                         |
+| Source: lines 1-3 - Assemble the notebook                                    |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [4]: openspec/changes/add-notebook/specs/reference-values/spec.md       |
+|                                                                              |
+| Purpose: Prepare independent reference values for the notebook comparison.   |
+| Record their source, units, and the people they describe. Only training data |
+| may determine any normalization settings. These reference values feed the    |
+| notebook; their availability does not prove the notebook has been            |
+| implemented.                                                                 |
+| Prepare reference values [unresolved]                                        |
+| Prepare independent reference values for the notebook comparison. Record     |
+| their source, units, and the people they describe. Only training data may    |
+| determine any normalization settings. These reference values feed the        |
+| notebook; their availability does not prove the notebook has been            |
+| implemented.                                                                 |
+| Source: lines 1-3 - Prepare reference values                                 |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [5]: openspec/changes/add-notebook/tasks.md                             |
+|                                                                              |
+| Purpose: Purpose unspecified                                                 |
+| Tasks [unresolved]                                                           |
+| - [ ] Prepare independent reference values.                                  |
+| - [ ] Build the notebook from saved training and evaluation outputs.         |
+| - [ ] Verify that all reported numbers match their source tables.            |
+| Source: lines 1-5 - Tasks                                                    |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [6]: openspec/specs/data-preparation/spec.md                            |
+|                                                                              |
+| Purpose: Combine the input tables into one training file. Keep one saved     |
+| assignment of people to training and evaluation sets so the same person      |
+| never appears in both. Training consumes this file; prediction also uses its |
+| saved scaling values. Missing input values must be reported before training  |
+| starts.                                                                      |
+| Prepare the data [unresolved]                                                |
+| Combine the input tables into one training file. Keep one saved assignment   |
+| of people to training and evaluation sets so the same person never appears   |
+| in both. Training consumes this file; prediction also uses its saved scaling |
+| values. Missing input values must be reported before training starts.        |
+| Source: lines 1-3 - Prepare the data                                         |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [7]: openspec/specs/evaluation/spec.md                                  |
+|                                                                              |
+| Purpose: Compare the saved predictions with answers kept out of training.    |
+| Report error and uncertainty, including the number of people evaluated. Keep |
+| the evaluation table so the notebook can reproduce every reported number.    |
+| The acceptable error threshold is undecided; do not describe the model as    |
+| accepted.                                                                    |
+| Evaluate the results [unresolved]                                            |
+| Compare the saved predictions with answers kept out of training. Report      |
+| error and uncertainty, including the number of people evaluated. Keep the    |
+| evaluation table so the notebook can reproduce every reported number. The    |
+| acceptable error threshold is undecided; do not describe the model as        |
+| accepted.                                                                    |
+| Source: lines 1-3 - Evaluate the results                                     |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [8]: openspec/specs/model-training/spec.md                              |
+|                                                                              |
+| Purpose: Train the model using the prepared file and its saved assignments.  |
+| Apply the speed improvements inside training without changing results. Save  |
+| the chosen model and training measurements for prediction and the notebook.  |
+| Resume interrupted runs from a recorded checkpoint; do not silently choose   |
+| different settings.                                                          |
+| Train the model [unresolved]                                                 |
+| Train the model using the prepared file and its saved assignments. Apply the |
+| speed improvements inside training without changing results. Save the chosen |
+| model and training measurements for prediction and the notebook. Resume      |
+| interrupted runs from a recorded checkpoint; do not silently choose          |
+| different settings.                                                          |
+| Source: lines 1-3 - Train the model                                          |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [9]: openspec/specs/prediction/spec.md                                  |
+|                                                                              |
+| Purpose: Turn model output into predictions using the scaling values saved   |
+| during data preparation. Save one prediction per person, with identifiers    |
+| that can be joined to the evaluation answers. Evaluation consumes this saved |
+| table. Repeating prediction with identical inputs must reproduce the same    |
+| output.                                                                      |
+| Produce predictions [unresolved]                                             |
+| Turn model output into predictions using the scaling values saved during     |
+| data preparation. Save one prediction per person, with identifiers that can  |
+| be joined to the evaluation answers. Evaluation consumes this saved table.   |
+| Repeating prediction with identical inputs must reproduce the same output.   |
+| Source: lines 1-3 - Produce predictions                                      |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| File [10]: openspec/specs/training-speed/spec.md                             |
+|                                                                              |
+| Purpose: Avoid copying the complete training data when preparing each batch. |
+| The faster path must produce the same numerical results as the original      |
+| path. Record the measured peak memory and running time. Use these            |
+| improvements inside model training only after the equivalence check          |
+| succeeds.                                                                    |
+| Speed up training [unresolved]                                               |
+| Avoid copying the complete training data when preparing each batch. The      |
+| faster path must produce the same numerical results as the original path.    |
+| Record the measured peak memory and running time. Use these improvements     |
+| inside model training only after the equivalence check succeeds.             |
+| Source: lines 1-3 - Speed up training                                        |
++------------------------------------------------------------------------------+
+
+Source snapshot:
+8d47f7c20923e35011fe8478d30a2b334d6ca69461082d36f55a90b4a5368d78
+
+Use show <file number or path> to explore a file; add --detailed to expand it.

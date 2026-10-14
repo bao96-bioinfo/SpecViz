@@ -34,9 +34,9 @@ class PaginationTests(unittest.TestCase):
         combined = '\n'.join(page.text for page in pages)
         for i in range(30):
             self.assertEqual(combined.count(f'Unique sentence {i:02d}.'), 1)
-        self.assertIn('--> node 2:', combined)
-        self.assertIn('<-- node 1:', combined)
-        self.assertEqual(' '.join(combined.replace('|', ' ').split()).count('only when accepted'), 2)
+        self.assertIn('--> Node 2:', combined)
+        self.assertIn('<-- Node 1:', combined)
+        self.assertEqual(' '.join(combined.replace('|', ' ').split()).count('only when accepted'), 3)
         self.assertIn('(continued)', combined)
         self.assertIn('Next: Diagram', combined)
 

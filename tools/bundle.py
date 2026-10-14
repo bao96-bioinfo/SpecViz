@@ -9,7 +9,15 @@ from pathlib import Path
 
 RELEASE = "release.json"
 INSTALL = ".specviz-install.json"
-CHANNELS = ("stable", "beta")
+CHANNELS = ("stable",)
+LEGACY_CHANNELS = ("stable", "beta")
+RETIREMENT = ("Adaptive beta is retired. Use a current stable checkout or bundle and run "
+              "python3 tools/install.py --channel stable --host all --project <project>.")
+
+
+def require_stable(channel: str) -> None:
+    if channel != "stable":
+        raise BundleError(RETIREMENT)
 
 
 class BundleError(ValueError):
@@ -40,9 +48,10 @@ def identity(channel: str, version: str, files: dict[str, str]) -> str:
 
 
 def check_version(channel: str, version: str) -> None:
-    pattern = r"\d+\.\d+\.\d+" + (r"-beta\.\d+" if channel == "beta" else "")
+    require_stable(channel)
+    pattern = r"\d+\.\d+\.\d+"
     if channel not in CHANNELS or not isinstance(version, str) or not re.fullmatch(pattern, version):
-        raise BundleError("Release version must match its stable or beta channel")
+        raise BundleError("Stable release version must use major.minor.patch")
 
 
 def seal(source: Path, channel: str, version: str) -> dict:
@@ -58,19 +67,17 @@ def seal(source: Path, channel: str, version: str) -> dict:
 
 
 def validate(source: Path, channel: str = "stable") -> tuple[dict, dict[str, Path]]:
-    if channel not in CHANNELS:
-        raise BundleError("Choose the stable or beta release channel")
+    require_stable(channel)
     files = source_files(source)
     try:
         value = json.loads((source / RELEASE).read_text(encoding="utf-8"))
     except (OSError, ValueError) as exc:
-        raise BundleError("Release metadata is missing or unreadable; use a complete stable or beta distribution") from exc
+        raise BundleError("Release metadata is missing or unreadable; use a complete stable distribution") from exc
     if not isinstance(value, dict) or value.get("schema_version") != 1:
         raise BundleError("Invalid release metadata")
     check_version(value.get("channel"), value.get("version"))
     if value["channel"] != channel:
-        raise BundleError(f"Requested {channel}, but this source is {value['channel']}. "
-                          f"Use the {channel} checkout or release bundle; beta requires --channel beta.")
+        raise BundleError(RETIREMENT)
     hashes = fingerprint(files)
     if "SKILL.md" not in hashes or hashes != value.get("files"):
         raise BundleError("Release content differs from its recorded source identity; use a complete distribution")

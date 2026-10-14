@@ -120,13 +120,13 @@ class RenderTests(unittest.TestCase):
         relationships = model["documents"][0]["relationships"]
         relationships[:] = [{"from": "step-0", "to": "step-1", "type": "containment", "label": "contains this behavior"}]
         rendered = render_show(inventory, ["design.md"], model)
-        self.assertIn("--> node 2: contains this behavior", rendered)
-        self.assertIn("<-- node 1: contains this behavior", rendered)
+        self.assertIn("--> Node 2: contains this behavior", rendered)
+        self.assertIn("<-- Node 1: contains this behavior", rendered)
         relationships.append({"from": "step-1", "to": "step-0", "type": "containment", "label": "cycle in source"})
         cyclic = render_show(inventory, ["design.md"], model)
         self.assertIn("cycle in source", cyclic)
         for index in range(1, 5):
-            self.assertEqual(cyclic.count(f"({index})"), 1)
+            self.assertEqual(cyclic.count(f"({index})"), 2)
 
     def test_wide_long_and_combining_labels_respect_body_width(self):
         inventory = sample_inventory()

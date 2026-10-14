@@ -1,0 +1,35 @@
+Overall structure. Arrowheads show direction.
+
++--------+    +--------+
+| Node 1 |--->| Node 2 |
++--------+    +--------+
+     ^             |
+     +-------------+
+
+Node 1: Revise the request
+
+Node 2: Review the request
+
+E1: Node 1 -> Node 2 (workflow): request review
+
+E2: Node 2 -> Node 1 (condition): clarification needed
+
+Component details
+
++------------------------------------------------------------------------------+
+| Node 1: Revise the request                                                   |
+|                                                                              |
+| (Node 1)                                                                     |
+| <-- Node 2: clarification needed                                             |
+| Keep the proposed change until review accepts it.                            |
+| --> Node 2: request review                                                   |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Node 2: Review the request                                                   |
+|                                                                              |
+| (Node 2)                                                                     |
+| <-- Node 1: request review                                                   |
+| Ask for another revision when a rule is unclear.                             |
+| --> Node 1: clarification needed                                             |
++------------------------------------------------------------------------------+

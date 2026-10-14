@@ -1,43 +1,36 @@
 Reporting service - Export reports with owner access controls and clear download
 limits.
 
-Specification map (6 files)
+Specification map (5 files)
 
-+------------------------------------+    +------------------------------------+
-| Download your own reports          |    | Earlier proposal [history]         |
-|                                    |    |                                    |
-| The existing rules allow owners to |    | An earlier proposal introduced     |
-| download up to 100 rows as a       |    | report downloads.                  |
-| comma-separated file.              |    | Files: [1]                         |
-| Files: [6]                         |    |                                    |
-+------------------------------------+    +------------------------------------+
-                   |
-                   |
-       adds optional protection
-                   |
-                   v
-+------------------------------------+
-| Request password protection        |
-|                                    |
-| The proposed change encrypts the   |
-| file before delivery when an owner |
-| requests protection. Keep the      |
-| access check and never log         |
-| passwords.                         |
-| Files: [2] [3] [4] [5]             |
-+------------------------------------+
-
-Files (1 file; history) - Add export under
-openspec/changes/archive/2026-09-01-add-export/:
-[1] proposal.md
+          +----------------------------------------------------------+
+          | Download your own reports                                |
+          |                                                          |
+          | The existing rules allow owners to download up to 100    |
+          | rows as a comma-separated file.                          |
+          | Files: [5]                                               |
+          +----------------------------------------------------------+
+                                        |
+                                        |
+                            adds optional protection
+                                        |
+                                        v
+          +----------------------------------------------------------+
+          | Request password protection                              |
+          |                                                          |
+          | The proposed change encrypts the file before delivery    |
+          | when an owner requests protection. Keep the access check |
+          | and never log passwords.                                 |
+          | Files: [1] [2] [3] [4]                                   |
+          +----------------------------------------------------------+
 
 Files (1 file) - Data export under openspec/specs/data-export/:
-[6] spec.md
+[5] spec.md
 
 Files (4 files) - Password export under openspec/changes/password-export/:
-[2] design.md
-[3] proposal.md
-[4] specs/data-export/spec.md
-[5] tasks.md
+[1] design.md
+[2] proposal.md
+[3] specs/data-export/spec.md
+[4] tasks.md
 
 Use show <file number or path> to explore a file; add --detailed to expand it.

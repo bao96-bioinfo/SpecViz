@@ -4,106 +4,132 @@ predictions with answers kept out of training.
 Files (1 file) under openspec/changes/reproducible-model-training/:
 [1] design.md
 
-File [1]: design.md - Behavior flow
+Diagram 1: File [1]: design.md - Behavior flow
 
-                     +------------------------------------+
-                     | (1) Prepare the samples            |
-                     |                                    |
-                     | Use consistent fields and units,   |
-                     | then save which samples belong to  |
-                     | training and evaluation.           |
-                     | Put the datasets into one          |
-                     | consistent format. Divide the      |
-                     | samples into a training group and  |
-                     | an evaluation group, and save      |
-                     | those assignments.                 |
-                     | Source: lines 1 - Model training   |
-                     | design                             |
-                     | Source: lines 3-5 - Model training |
-                     | design / Prepare the samples       |
-                     +------------------------------------+
-                                        |
-                   +--------------------+--------------------+
-           training samples                         evaluation answers
-                   |                                         |
-                   v                                         v
-+------------------------------------+    +------------------------------------+
-| (2) Train the model                |    | (3) Keep evaluation answers        |
-|                                    |    | separate                           |
-| Run a small trial first. Train     |    |                                    |
-| fully only if its checks pass;     |    | Keep the known evaluation answers  |
-| otherwise stop and report the      |    | hidden from training and           |
-| failures.                          |    | prediction.                        |
-| Send only the training group to    |    | Keep the evaluation group's known  |
-| model training. Use the same       |    | answers separate from training and |
-| settings for every run. Run a      |    | prediction. Do not reveal them to  |
-| small trial first; start the full  |    | the model.                         |
-| run only if the trial passes its   |    | Source: lines 11-13 - Model        |
-| checks. Otherwise stop and report  |    | training design / Keep evaluation  |
-| the failed checks.                 |    | answers separate                   |
-| Source: lines 7-9 - Model training |    |                                    |
-| design / Train the model           |    |                                    |
-+------------------------------------+    +------------------------------------+
-                   |                                         |
-                   |                                         |
-            trained model                             known answers
-                   |                                         |
-                   v                                         |
-+------------------------------------+                       |
-| (4) Make predictions               |                       |
-|                                    |                       |
-| Use the trained model to predict   |                       |
-| answers for the evaluation         |                       |
-| samples.                           |                       |
-| After training finishes, use the   |                       |
-| trained model to predict answers   |                       |
-| for the evaluation samples without |                       |
-| revealing their known answers.     |                       |
-| Source: lines 15-17 - Model        |                       |
-| training design / Make predictions |                       |
-+------------------------------------+                       |
-                   |                                         |
-                   |                                         |
-          saved predictions                                  |
-                   +--------------------+--------------------+
-                                        v
-                     +------------------------------------+
-                     | (5) Compare predictions with       |
-                     | answers                            |
-                     |                                    |
-                     | Measure prediction error. The      |
-                     | acceptable error threshold is      |
-                     | still undecided.                   |
-                     | Compare the predictions with the   |
-                     | answers kept aside earlier. The    |
-                     | acceptable error threshold is not  |
-                     | yet decided; report the measured   |
-                     | error without declaring the model  |
-                     | ready for use.                     |
-                     | Source: lines 19-21 - Model        |
-                     | training design / Compare          |
-                     | predictions with answers           |
-                     +------------------------------------+
-                                        |
-                                        |
-                                 measured error
-                                        |
-                                        v
-                     +------------------------------------+
-                     | (6) Save the run records           |
-                     |                                    |
-                     | Save settings, sample assignments, |
-                     | predictions, and measured error so |
-                     | the run can be repeated.           |
-                     | After evaluation, save the         |
-                     | settings, sample assignments,      |
-                     | predictions, and measured error so |
-                     | another person can repeat the run  |
-                     | and check its results.             |
-                     | Source: lines 23-25 - Model        |
-                     | training design / Save the run     |
-                     | records                            |
-                     +------------------------------------+
+Overall structure. Arrowheads show direction. x is a crossing, not a junction.
+
+  +--------------------+
+  |                    |
+  |          +---------x----------+
+  |          |         |          |
+  |          |         |+---------x-----------+
+  |          |         ||         |           |
+ +x---------+|         ||         |           |
+ ||         ||         ||         |           |
+ ||         ||         ||         |+---------+|
+ ||         ||         ||         ||         ||
+ ||         ||         ||         ||         ||+--------+
+ ||         ||         ||         ||         |||        |
+ ||         v|         v|         v|         vv|        v
++------+   +------+   +------+   +------+   +------+   +------+
+|Node 1|   |Node 2|   |Node 3|   |Node 4|   |Node 5|   |Node 6|
++------+   +------+   +------+   +------+   +------+   +------+
+
+Node 1: (1) Prepare the samples
+
+Node 2: (2) Train the model
+
+Node 3: (3) Keep evaluation answers separate
+
+Node 4: (4) Make predictions
+
+Node 5: (5) Compare predictions with answers
+
+Node 6: (6) Save the run records
+
+E1: Node 1 -> Node 2 (workflow): training samples
+
+E2: Node 1 -> Node 3 (workflow): evaluation answers
+
+E3: Node 2 -> Node 4 (workflow): trained model
+
+E4: Node 4 -> Node 5 (workflow): saved predictions
+
+E5: Node 3 -> Node 5 (workflow): known answers
+
+E6: Node 5 -> Node 6 (workflow): measured error
+
+Component details
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 1: (1) Prepare the samples                                   |
+|                                                                              |
+| (Node 1)                                                                     |
+| Use consistent fields and units, then save which samples belong to training  |
+| and evaluation.                                                              |
+| Put the datasets into one consistent format. Divide the samples into a       |
+| training group and an evaluation group, and save those assignments.          |
+| Source: lines 1 - Model training design                                      |
+| Source: lines 3-5 - Model training design / Prepare the samples              |
+| --> Node 2: training samples                                                 |
+| --> Node 3: evaluation answers                                               |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 2: (2) Train the model                                       |
+|                                                                              |
+| (Node 2)                                                                     |
+| <-- Node 1: training samples                                                 |
+| Run a small trial first. Train fully only if its checks pass; otherwise stop |
+| and report the failures.                                                     |
+| Send only the training group to model training. Use the same settings for    |
+| every run. Run a small trial first; start the full run only if the trial     |
+| passes its checks. Otherwise stop and report the failed checks.              |
+| Source: lines 7-9 - Model training design / Train the model                  |
+| --> Node 4: trained model                                                    |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 3: (3) Keep evaluation answers separate                      |
+|                                                                              |
+| (Node 3)                                                                     |
+| <-- Node 1: evaluation answers                                               |
+| Keep the known evaluation answers hidden from training and prediction.       |
+| Keep the evaluation group's known answers separate from training and         |
+| prediction. Do not reveal them to the model.                                 |
+| Source: lines 11-13 - Model training design / Keep evaluation answers        |
+| separate                                                                     |
+| --> Node 5: known answers                                                    |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 4: (4) Make predictions                                      |
+|                                                                              |
+| (Node 4)                                                                     |
+| <-- Node 2: trained model                                                    |
+| Use the trained model to predict answers for the evaluation samples.         |
+| After training finishes, use the trained model to predict answers for the    |
+| evaluation samples without revealing their known answers.                    |
+| Source: lines 15-17 - Model training design / Make predictions               |
+| --> Node 5: saved predictions                                                |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 5: (5) Compare predictions with answers                      |
+|                                                                              |
+| (Node 5)                                                                     |
+| <-- Node 4: saved predictions                                                |
+| <-- Node 3: known answers                                                    |
+| Measure prediction error. The acceptable error threshold is still undecided. |
+| Compare the predictions with the answers kept aside earlier. The acceptable  |
+| error threshold is not yet decided; report the measured error without        |
+| declaring the model ready for use.                                           |
+| Source: lines 19-21 - Model training design / Compare predictions with       |
+| answers                                                                      |
+| --> Node 6: measured error                                                   |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 6: (6) Save the run records                                  |
+|                                                                              |
+| (Node 6)                                                                     |
+| <-- Node 5: measured error                                                   |
+| Save settings, sample assignments, predictions, and measured error so the    |
+| run can be repeated.                                                         |
+| After evaluation, save the settings, sample assignments, predictions, and    |
+| measured error so another person can repeat the run and check its results.   |
+| Source: lines 23-25 - Model training design / Save the run records           |
++------------------------------------------------------------------------------+
 
 Source snapshot:
 1a5c7ea729b016baf40adeac9de0509738159e2afa8056d5eebc93a17b00d2e9

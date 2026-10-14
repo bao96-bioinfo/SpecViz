@@ -51,6 +51,8 @@ class ViewStore:
         return token
 
     def load(self, token: str) -> dict:
+        if token and token.startswith("b-"):
+            raise ValidationError("This is a retired beta view; request a fresh stable overview. Its saved record and implementation evidence are retained.")
         if not token or any(c not in "0123456789abcdef" for c in token) or len(token) != 32:
             raise ValidationError("Invalid view identity; request a new overview")
         try:

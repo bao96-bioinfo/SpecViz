@@ -113,14 +113,14 @@ class DiscoveryTests(unittest.TestCase):
         self.assertTrue({(proposal, design), (proposal, specification), (design, tasks), (specification, tasks)} <= workflows)
         self.assertNotIn((specification, design), workflows)
         self.assertEqual(len([g for g in inventory["groups"] if g["framework"] == "openspec" and g["lifecycle"] == "proposed"]), 2)
-        archive = next(d for d in inventory["documents"] if "archive" in d["path"])
+        archive = next(d for d in inventory["history"] if "archive" in d["path"])
         self.assertEqual(archive["lifecycle"], "archived")
         self.assertEqual(archive["change"], "add-export")
         lineage = next(d["lineage"] for d in inventory["documents"] if d["id"] == design)
         moved = self.root / "openspec/changes/archive/2026-10-12-password-export"
         shutil.move(self.root / "openspec/changes/password-export", moved)
         after = discover(self.root)
-        self.assertEqual(next(d["lineage"] for d in after["documents"] if d["path"].endswith("password-export/design.md")), lineage)
+        self.assertEqual(next(d["lineage"] for d in after["history"] if d["path"].endswith("password-export/design.md")), lineage)
         self.assertTrue(all(d["implementation"] == "unknown" for d in after["documents"]))
 
     def test_openspec_unknown_schema_and_unavailable_declared_store(self):

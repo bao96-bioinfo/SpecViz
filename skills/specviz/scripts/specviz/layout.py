@@ -191,7 +191,7 @@ class Graph:
     def panels(self) -> list[Box]:
         """Closed panels retain both endpoints when a graph must be separated."""
         panels = []
-        keys = {box.identity: f"node {index}" for index, box in enumerate(self.boxes, 1)}
+        keys = {box.identity: f"Node {index}" for index, box in enumerate(self.boxes, 1)}
         for box in self.boxes:
             incoming = [f"<-- {keys[edge.origin]}: {edge.caption}" for edge in self.edges if edge.target == box.identity]
             outgoing = [f"--> {keys[edge.target]}: {edge.caption}" for edge in self.edges if edge.origin == box.identity]
@@ -207,7 +207,7 @@ class Graph:
             lines.extend(panel.draw(width))
         return lines
 
-    def draw(self, width: int) -> list[str]:
+    def presentation(self, width: int, budget: int = 96) -> list:
         if not self.boxes:
             return []
         identities = {box.identity for box in self.boxes}
@@ -218,11 +218,23 @@ class Graph:
         try:
             lines = self._connected(width)
         except _RoutingError:
-            lines = self.ports(width)
+            lines = None
+        if lines is None or len(lines) + (len(prose(self.title, width)) + 1 if self.title else 0) + (len(prose(self.inference_note, width)) + 1 if any(e.inferred for e in self.edges) else 0) > budget:
+            from .structure import presentation
+            return presentation(self, width, budget)
         if self.title:
             lines = prose(self.title, width) + [""] + lines
         if any(edge.inferred for edge in self.edges):
             lines += [""] + prose(self.inference_note, width)
+        from .structure import MapBlock
+        return [MapBlock(lines, self.title or "Connected diagram", tuple(box.identity for box in self.boxes), tuple(range(1, len(self.edges) + 1)), self.documents)]
+
+    def draw(self, width: int) -> list[str]:
+        lines = []
+        for block in self.presentation(width):
+            if lines:
+                lines.append("")
+            lines.extend(block.draw(width))
         return lines
 
 
@@ -255,7 +267,7 @@ class View:
     def render(self) -> str:
         lines = []
         prior_context = ""
-        for block in self.blocks:
+        for block in self.presentation():
             if lines and not (isinstance(block, TextBlock) and block.context and block.context == prior_context):
                 lines.append("")
             context = block.context if isinstance(block, TextBlock) else ""
@@ -264,3 +276,24 @@ class View:
             lines.extend(block.draw(self.width))
             prior_context = context
         return "\n".join(lines).rstrip() + "\n"
+
+    def presentation(self, budget: int = 96) -> list:
+        from .structure import MapBlock
+        result, number = [], 0
+        for block in self.blocks:
+            if not isinstance(block, Graph):
+                result.append(block)
+                continue
+            number += 1
+            units = block.presentation(self.width, budget)
+            if len(units) > 1:
+                # Each graph owns its Node keys. Keep that namespace visible
+                # when multiple file diagrams continue on separate pages.
+                units[0].text = f"Diagram {number}: " + units[0].text
+                for unit in units:
+                    if isinstance(unit, MapBlock):
+                        unit.title = f"Diagram {number}: " + unit.title
+                    elif isinstance(unit, Box):
+                        unit.title = f"Diagram {number}, " + unit.title
+            result.extend(units)
+        return result

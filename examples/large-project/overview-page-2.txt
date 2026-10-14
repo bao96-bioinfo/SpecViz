@@ -1,0 +1,83 @@
+View part 2/2
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 4: Produce predictions                                       |
+|                                                                              |
+| (Node 4)                                                                     |
+| <-- Node 1: saved scaling values                                             |
+| <-- Node 2: trained model output                                             |
+| Turn model output into predictions using the scaling values saved during     |
+| data preparation. Save one prediction per person, with identifiers that can  |
+| be joined to the evaluation answers. Evaluation consumes this saved table.   |
+| Repeating prediction with identical inputs must reproduce the same output.   |
+| Files: [9]                                                                   |
+| --> Node 5: saved predictions                                                |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 5: Evaluate the results                                      |
+|                                                                              |
+| (Node 5)                                                                     |
+| <-- Node 4: saved predictions                                                |
+| Compare the saved predictions with answers kept out of training. Report      |
+| error and uncertainty, including the number of people evaluated. Keep the    |
+| evaluation table so the notebook can reproduce every reported number. The    |
+| acceptable error threshold is undecided; do not describe the model as        |
+| accepted.                                                                    |
+| Files: [7]                                                                   |
+| --> Node 7: evaluation results                                               |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 6: Prepare reference values                                  |
+|                                                                              |
+| (Node 6)                                                                     |
+| Prepare independent reference values for the notebook comparison. Record     |
+| their source, units, and the people they describe. Only training data may    |
+| determine any normalization settings. These reference values feed the        |
+| notebook; their availability does not prove the notebook has been            |
+| implemented.                                                                 |
+| Files: [4]                                                                   |
+| --> Node 7: independent reference values                                     |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+| Diagram 1, Node 7: Assemble the notebook                                     |
+|                                                                              |
+| (Node 7)                                                                     |
+| <-- Node 5: evaluation results                                               |
+| <-- Node 6: independent reference values                                     |
+| <-- Node 2: training measurements                                            |
+| Build a notebook from saved training measurements, evaluation results, and   |
+| independent reference values. Its numbers must agree with those source       |
+| tables. Explain missing inputs and undecided acceptance thresholds. This is  |
+| a proposed addition; the task list has unchecked work and no completion      |
+| report is available.                                                         |
+| Files: [1] [2] [3] [5]                                                       |
++------------------------------------------------------------------------------+
+
+Files (1 file) - Data preparation under openspec/specs/data-preparation/:
+[6] spec.md
+
+Files (1 file) - Evaluation under openspec/specs/evaluation/:
+[7] spec.md
+
+Files (1 file) - Model training under openspec/specs/model-training/:
+[8] spec.md
+
+Files (1 file) - Prediction under openspec/specs/prediction/:
+[9] spec.md
+
+Files (1 file) - Training speed under openspec/specs/training-speed/:
+[10] spec.md
+
+Files (5 files) - Add notebook under openspec/changes/add-notebook/:
+[1] design.md
+[2] proposal.md
+[3] specs/notebook/spec.md
+[4] specs/reference-values/spec.md
+[5] tasks.md
+
+Use show <file number or path> to explore a file; add --detailed to expand it.
+
+End of this view.

@@ -146,3 +146,20 @@ reports that limitation explicitly. Local source inspection remains available.
 See [evidence handoffs](../skills/specviz/references/evidence.md) for persistence,
 source versions, and the tested explicit handoff formats. There is no comparison
 baseline based on the last display.
+
+## Historical sources
+
+Ordinary comparisons exclude archived planning documents from presentation,
+while retaining all completion reports and inspection records. Known archive
+paths do not become missing-source warnings. An active-to-archive move is
+recognized only when its declared change lineage has one candidate whose bytes
+match the retained report version. Ambiguous moves and unexpected active-source
+deletions remain unresolved. Basenames and checked tasks are insufficient.
+
+A current requirement can use an older report through the existing explicit,
+source-backed correspondence contract. Its verification limits remain visible;
+other current requirements remain unknown. Merely viewing either version never
+records completion. Both current and indexed historical specifications are
+excluded from implementation fingerprints; relevant code edits still stale
+evidence. Historical content is loaded only for explicit viewing or provenance
+checks, not added to the current explanation.
