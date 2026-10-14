@@ -13,9 +13,9 @@
     },
     "beta": {
       "version": "0.2.0-beta.1",
-      "skill_source_identity": "sha256:30f116f9703afce700504d9079e04a438800b61ef71aff0d13f00e995ddda798",
+      "skill_source_identity": "sha256:1e30abd1234a55e071c1efc343afeb58bd212e08955563cdca2ee62583aa77b2",
       "archive": "specviz-0.2.0-beta.1.zip",
-      "archive_sha256": "18f845405084a33252d53e1c07775f8cb48e8c6d15599091c0628c631682d326",
+      "archive_sha256": "a6cb99976927263e70bff673954945fb0be12d04b88f9db87bc547568bfb5df3",
       "files": 37,
       "reproducible": true
     }

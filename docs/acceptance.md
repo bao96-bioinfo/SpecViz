@@ -16,7 +16,7 @@ Adaptive rendering, providers, state, and examples exist only in beta.
 | Source | Python 3.11.17 | Python 3.14.5 | Local platform |
 | --- | --- | --- | --- |
 | Stable | 181 passed | 181 passed | macOS 26.5.2, Apple Silicon |
-| Beta | 214 passed | 214 passed | macOS 26.5.2, Apple Silicon |
+| Beta | 217 passed | 217 passed | macOS 26.5.2, Apple Silicon |
 
 Linux and Windows are configured in CI but were not executed locally for this
 change. The unit suite includes mocked callback payloads, concurrent session
@@ -32,9 +32,19 @@ sealed file and an identical ZIP. A second Windows failure came from embedding
 the runner's temporary path in Python source: `\a` became a control character.
 The workflow now reads `RUNNER_TEMP` from the environment. Its regression runs
 the actual distribution command with spaces and backslashes in that path.
-The local counts above include both regressions. Hosted results are tracked in
+All six stable jobs, including both Windows versions, passed after these fixes
+([run](https://github.com/bao96-bioinfo/SpecViz/actions/runs/38485321472)).
+
+The beta run then exposed Windows access errors when concurrent callbacks
+replaced the same display record. Replacement now retries Windows access and
+sharing errors with at most 250 milliseconds of retry delays. Persistent and
+unrelated failures still propagate; the previous record remains intact and
+temporary files are cleaned up. Tests cover these failure paths alongside the
+existing competing-writer check. The local counts above include these fixes;
+subsequent hosted results are tracked in
 [Checks](https://github.com/bao96-bioinfo/SpecViz/actions/workflows/checks.yml).
-Release integrity checks and the prepared archive bytes are unchanged.
+The beta candidate was resealed and rebuilt reproducibly with the runtime fix;
+its updated hashes are in `release-candidates.json`. The stable archive is unchanged.
 
 The beta source's `tools/channel_acceptance.py` exercised actual extracted ZIP
 installers: default stable install, rejection of a beta source without opt-in,
