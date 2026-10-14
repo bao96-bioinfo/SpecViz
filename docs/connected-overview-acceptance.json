@@ -9,29 +9,52 @@
     "python_3_11": "206 passed",
     "python_3_14": "206 passed",
     "openspec_strict": "10 passed",
-    "packaged_migration": "passed; independent legacy fixture"
+    "packaged_migration": "passed; independent legacy fixture",
+    "post_retirement_package": "byte-identical to the sealed stable ZIP",
+    "post_retirement_migration": "passed from extracted stable ZIP: migration, update, ten-file inventory, uninstall, repeated removal, evidence retention"
   },
   "remote_ci": {
-    "status": "pending"
+    "status": "passed",
+    "commit": "e0afdbae3ef392be2ffd9a385626da4a8668b39d",
+    "url": "https://github.com/bao96-bioinfo/SpecViz/actions/runs/38617026141",
+    "jobs": 6,
+    "matrix": "Ubuntu, macOS, Windows; Python 3.11 and 3.14"
   },
   "hosts": {
     "codex": {
       "version": "0.162.1",
-      "status": "map-before-panels observed; 10 eligible files; no source edits"
+      "status": "map-before-panels observed; 10 eligible files; matching keys and qualifications; one selection hint; no source edits",
+      "elapsed_seconds": 140.4,
+      "observed_source_identity": "sha256:26ed4b67825a418c2fdb710073ca5b53c4c7d42ab1ddd0a0271a8e651600bc2f"
     },
     "claude_code": {
       "version": "2.1.296",
-      "status": "final delivery check running"
+      "status": "map-before-panels observed; 10 eligible files; matching keys and qualifications; one selection hint; no source edits",
+      "elapsed_seconds": 277.3,
+      "observed_source_identity": "sha256:bb42a634a4ee8acec49d7194679168c850d29434a7ed486be39a7c484749cfb4"
     },
     "antigravity": {
       "version": "1.3.4",
       "status": "unavailable: headless command permission denied; empty response"
-    }
+    },
+    "verification_scope": "Live responses preceded the final continuation-title namespace refinement; local tests and all six CI jobs cover the sealed candidate."
   },
   "reader_review": {
-    "status": "unverified; preview supplied, feedback pending"
+    "status": "approved",
+    "feedback": "Clear enough",
+    "scope": "New compact seven-node overall map for the synthetic ten-file project; qualitative feedback, not a usability study."
   },
   "beta_retirement": {
-    "status": "pending stable CI validation"
+    "status": "complete",
+    "expected_tip": "9949ae50246fb94ba5ba5d0237af6fa014bd7a8d",
+    "audit": "Clean tracked/untracked worktree; ignored files are the known beta ZIP/receipt and generated Python caches; no unexpected local work.",
+    "remote_beta_branch": "deleted; absence verified",
+    "local_beta_branch_and_worktree": "deleted; absence verified",
+    "known_beta_zip_and_receipt": "deleted after identity verification",
+    "active_candidates": [
+      "stable 0.1.1"
+    ],
+    "preserved": "Main ancestry, original stable candidate identity, historical planning and acceptance evidence",
+    "distributed_copies": "Previously downloaded or installed beta copies were not remotely removed; use the stable migration guide."
   }
 }

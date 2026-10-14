@@ -46,10 +46,25 @@ permission bypass was enabled. Initial Codex and Claude Code runs showed ten
 eligible files and a map before panels; Claude's redundant footer prompted a
 focused delivery-instruction revision and another live check.
 
-The new compact seven-node map was presented to the reader for review. Feedback
-was still pending when this record was prepared; comprehension remains
-unverified until a reader answers. Earlier approval of a different diagram is
-not approval of this one. Adaptive-beta measurements below are historical only.
+The subsequent Codex and Claude Code responses retained connected maps before
+panels, ten eligible files, matching keys, proposed-work qualifications, and one
+selection hint. Claude's final response stopped after the helper output. These
+live checks preceded the final continuation-title namespace refinement; the
+sealed candidate passed 206 tests on each local Python version and all six
+[CI jobs](https://github.com/bao96-bioinfo/SpecViz/actions/runs/38617026141).
+
+The reader reviewed the new compact seven-node map and answered **“Clear
+enough.”** This is qualitative feedback on that example, not a usability study.
+Adaptive-beta measurements below are historical only.
+
+After stable CI passed, the expected beta tip was rechecked. The worktree had no
+unexpected local work. The remote/local beta branch, local worktree, and known
+beta ZIP/receipt were removed. Main ancestry, the original stable candidate,
+historical plans, and acceptance records remain intact. With the beta checkout
+gone, stable packaging produced identical bytes and the extracted ZIP again
+passed legacy migration, update, discovery, and repeated removal checks.
+Previously downloaded or installed beta copies were not remotely removed; use
+the [stable migration instructions](installation.md#return-from-retired-beta).
 
 ## Historical adaptive beta acceptance — October 13, 2026
 
@@ -57,10 +72,11 @@ not approval of this one. Adaptive-beta measurements below are historical only.
 experiment, not current features or installation instructions. Use the stable
 [migration guide](installation.md#return-from-retired-beta).
 
-`main` retains stable `0.1.0`; the separate `beta` source prepares
-`0.2.0-beta.1`. These are local release candidates, not published releases.
-The stable renderer and original example fixtures retain their baseline bytes.
-Adaptive rendering, providers, state, and examples exist only in beta.
+At the time of this experiment, `main` held stable `0.1.0` and the separate
+`beta` source prepared `0.2.0-beta.1`. These were local release candidates, not
+published releases. The stable renderer and original example fixtures retained
+their baseline bytes. Adaptive rendering, providers, state, and examples were
+implemented only in beta.
 
 ### Automated and channel checks
 
