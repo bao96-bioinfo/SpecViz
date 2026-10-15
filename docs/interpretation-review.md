@@ -76,3 +76,40 @@ The following judgments were checked against the synthetic fixture:
 These are documented semantic reviews, not automated comprehension tests.
 Reference validation proves that sources exist, not that a paraphrase is true.
 A human reader's feedback is separate evidence and must be recorded as such.
+
+## Contextual overview reminder
+
+Run the installed skill on each project under `tests/fixtures/frameworks/` and
+the ten-current-file `tests/fixtures/large-project/project/`. Review the **final
+chat**, not only helper output. Expect one or two ordinary sentences after the
+completed diagram: one real `show` example and one mention of `--detailed`.
+Codex uses `$specviz`; Claude Code and Antigravity use `/specviz`.
+
+| Response-review case | Expected selection and delivery |
+| --- | --- |
+| OpenSpec overview | `openspec/specs/data-export/spec.md`, the first primary file key; `spec.md` alone is ambiguous |
+| Spec Kit overview | `.specify/memory/constitution.md` |
+| BMAD overview | `planning/initiative-reporting/epic-data-export/spec-data-export/spec-data-export.md`; a valid displayed number may shorten it |
+| Superpowers overview | `docs/superpowers/plans/2026-10-02-data-export.md` |
+| Kiro overview | `.kiro/specs/data-export/design.md`, or unique `design.md` |
+| Large project overview | `openspec/specs/data-preparation/spec.md`; exclude the eight archived files |
+| Local OpenSpec `overview openspec/changes/password-export/specs` | Suggest its `data-export/spec.md` by distinguishing path; related files are context, not targets |
+| Temporary copied fixture with spaces, punctuation, or a long path | Quote the literal argument; preserve it in inline code without ellipses or hard wrapping |
+| Explicit external source | Preserve the inventory's exact `external::` identity |
+| Explicit archived-folder overview | Its delivered historical file is valid; a later ordinary view again selects current work |
+| Numbered target | The full file key is delivered in this conversation and unchanged; `Node 1` is never a file selector |
+| Missing storage, wrong conversation, or stale number | Use a real path or resolvable unique name; never promise an unavailable number |
+| Repeated, detailed, or enabled post-generation overview | Keep the short reminder; no tutorial, menu, question, or automatic `show` |
+| Partial delivery, empty scope, or legacy continuation | Keep the existing continuation/recovery/footer; do not add a duplicate reminder |
+
+Reject placeholders such as `[directory/files]`, paths from another project,
+excluded archive targets, hidden keys, and `show` with a directory. A valid
+resolver result alone does not prove a good suggestion: the file must also
+belong to the requested scope and have its key delivered. Check the tool trace
+to confirm the suggested exploration was not executed automatically.
+
+`tests/test_overview_guidance.py` exercises these concrete argument examples
+against discovery, rendering, and selection. It does not generate agent
+responses or certify writing quality. Live host results belong in
+[acceptance checks](acceptance.md), including unavailable hosts and actual
+multi-page and repeated-request observations.

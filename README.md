@@ -73,9 +73,16 @@ Files (3 files) under .kiro/specs/data-export/:
 Use show <file number or path> to explore a file; add --detailed to expand it.
 ```
 
-This is actual output from the [Kiro example](examples/kiro/README.md).
+This is actual direct-helper output from the [Kiro example](examples/kiro/README.md).
 The arrows show what happens. File keys show where the rules live.
 No diagram viewer, browser, or downloaded image is needed.
+
+In chat, the generic last line becomes a short next step using your project's
+files, such as:
+
+> Explore the design with `/specviz show .kiro/specs/data-export/design.md`; add `--detailed` for the full explanation.
+
+Codex uses `$specviz` for the same command.
 
 <details>
 <summary>Compare with the specification text</summary>

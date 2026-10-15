@@ -30,6 +30,24 @@ its delivered file keys become current. Continue to reveal keys hidden on later
 pages before selecting their numbers. A folder belongs to
 overview; `show` takes files.
 
+## A next step tailored to your overview
+
+Each completed chat overview ends with a brief file example from the project
+you are viewing. For the [Kiro example](../examples/kiro/README.md), the
+installed-chat reminder reads:
+
+> Explore the design with `/specviz show .kiro/specs/data-export/design.md`; add `--detailed` for the full explanation.
+
+In Codex, the same reminder uses `$specviz show .kiro/specs/data-export/design.md`.
+The example appears as normal chat text after the diagram, so its path stays
+intact. This is an illustration of installed-chat guidance; the direct helper
+examples retain their generic footer.
+
+A local overview suggests a file within that folder. Large views finish their
+continuation parts before offering a file; empty scopes show a recovery step
+instead. You can ignore the reminder and keep working—nothing opens
+automatically. To explore a folder, use `overview <folder>`.
+
 The report-based reference persists across displays and sessions. Missing
 history is shown as unknown. `--check-code` is independent of detail and scope;
 it reads sources without executing tests or changing implementation/task state.

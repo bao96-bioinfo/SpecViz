@@ -68,6 +68,8 @@ Use a unique `--session` value per conversation for stable numbered selection.
    need explicit correspondence to earlier evidence, rather than guessed IDs.
 3. Write interpretation JSON to a temporary location outside the project. Run
    the same request with `--model <temporary-file>` and the conversation session.
+   For a fresh `overview` (including bare invocation), add
+   `--omit-overview-hint`; the skill supplies its contextual next step below.
    The helper validates source versions and coverage, then prints the diagram.
    If references or coverage are invalid, correct the interpretation. Never
    claim complete meaning from a failed validation or an uninterpreted fallback.
@@ -91,14 +93,49 @@ use paths. Keep the latest displayed map and the user's requested scope.
 ## Deliver only the requested view
 
 Use at most one brief purpose introduction, the diagram, necessary warnings or
-legends, and one next-action hint. The helper already supplies these; do not
+legends, and one next-action hint. The helper supplies the diagram and warnings; do not
 repeat its purpose, file descriptions, or complete relationships as paragraphs.
 Put an essential qualification beside the affected box or in a keyed note.
 An unexplained abbreviation must not require a lecture after the diagram.
-After printing the final helper page, stop. Its existing file-selection hint
-is the next action; do not append another selection prompt or a prose explanation
-of its connectors. Put any necessary qualification in the interpretation so it
+After printing the final helper page, add only the overview reminder described
+below. For `show` and `changes`, stop after the helper output. Do not append a
+prose explanation of its connectors. Put any necessary qualification in the interpretation so it
 appears beside the affected component or connector in the helper output.
+
+### A useful next step after overview
+
+After a complete fresh overview, write one or two short sentences in normal
+chat text, outside the diagram. Give one executable file example and mention
+`--detailed` once. For example, in the bundled Kiro project:
+“Explore the design with `/specviz show .kiro/specs/data-export/design.md`;
+add `--detailed` for the full explanation.” Use `$specviz` in Codex and
+`/specviz` in Claude Code or Antigravity. Determine the prefix from the active
+host, not the installation folder; Codex and Antigravity share a skill location.
+
+Use the first file in the **delivered primary-scope file key**. Replace the
+example with that project's actual project-relative path (or its exact
+`external::` identifier). A short filename is safe only if it is unique across
+the full inventory, including related context. Quote paths with spaces or
+argument-sensitive characters as literal paths; keep the command intact in
+inline code, without ellipses or hard wrapping. For a long path, a displayed
+file number can be used if its complete key and current conversation-bound
+selection are valid; name the file beside the command. Never use a structural
+`Node` number. If selection storage is unavailable, use a path or unique name.
+
+Keep the wording calm and useful: “Explore a file” is sufficient; use its
+source-supported purpose only when clear. No heading, command menu, repeated
+full command, question, or automatic drill-down. Keep this compact reminder on
+each completed request, including repeated, local, detailed, and enabled
+post-generation overviews. Related context is not a local target; history is
+eligible only when explicitly selected. `show` takes files; folder navigation
+uses `overview <folder>`.
+
+For partial delivery, the continuation prompt is the next step; wait until the
+final page before adding the reminder. Empty or unavailable inventories keep
+their existing recovery guidance as the sole next step. Continuations of old
+saved views retain their original footer. Add the new reminder only when this
+conversation establishes that the overview was rendered with its generic hint
+suppressed; never strip saved text or add another footer when that is unknown.
 
 For `overview` and `show`, explain specifications only. Previous coding history
 is not a request to inspect code or report drift. Do not append implementation

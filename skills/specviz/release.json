@@ -2,15 +2,15 @@
   "channel": "stable",
   "files": {
     "LICENSE": "9ce6f35dad2baa5ffca3eec8c2b110c607adb680318c1d2d81e690a3cb7e0943",
-    "SKILL.md": "39cd9b5a90806e693a6aedb224097e3efc997307d9d288c443a5e0ab926961b4",
+    "SKILL.md": "5d59e5ad2a0b988ab6b575ef587d31da81103aa4762aeae7a522ded1e175c1dd",
     "references/comparison.md": "6ad44b16a4488c7c9343490c8c7491b43e5af5a952db9cf322721d7d66823109",
-    "references/contracts.md": "d8bf2c1a30b76b20d0d57ccead686ba5880f34e974250871f76ee85a92ce3779",
+    "references/contracts.md": "651cb839eecd4e8538d363bf119ecefb925fc68cb0a4640a460fb9afbaa6d9ce",
     "references/evidence.md": "8a70e9dcd41c777094b92bafd7e58d4c5c6fd7467df15afa5f4c7ac9a2d032d2",
     "references/handoffs.md": "60ee3d458cb1ddbbdf8bd083cb474df1e62db4d831b3f9ed78c5cf197c3d2e12",
     "references/inspection.md": "77a1f496044641dc4a1f9254adcfb072d50889db6f3baca334e4eb459a0c7a9d",
-    "scripts/specviz/__init__.py": "b5f367da361870aea4cd082dac3c7c9547f825e973ac9134841393f9b9b14a7b",
+    "scripts/specviz/__init__.py": "71cfab1ae8a4968e7c1a27150e859b337efb460c3b11380e7aa0066b71bb0973",
     "scripts/specviz/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
-    "scripts/specviz/cli.py": "35c22ca6141bf7b627005129a4e96790b87c1aa33777300d32ed49aa89ac2d6f",
+    "scripts/specviz/cli.py": "8e3958a71fd7cc371c24061c72235c377a6c8aa2bbd4dbfd36fd49831b0e1b52",
     "scripts/specviz/comparison.py": "d72f79e5a7e9020275afebb41331d4139cb470eb4334e3b8654b9258efa333cc",
     "scripts/specviz/core.py": "c6eed479c16f3a87aae2698469f51675ff82a172d6b594e7e0c981a9da9777d5",
     "scripts/specviz/discovery.py": "b8f576939e678e14c31d62fb2a64c8a5b142d9d850a090b6646941d95eb9fc40",
@@ -22,10 +22,10 @@
     "scripts/specviz/session.py": "51b10ffd3a33664ff91c7eb788e2399e51bbaa5285a622ac532bd90b52a89532",
     "scripts/specviz/structure.py": "4edc299792e76e10ce37ae79fb5d448f53ae97b79f8a8a0ef51afca348061e82",
     "scripts/specviz/text.py": "e259fcd9958d6412bbbe34505f3df73916656e4f4c5a7c43ce2445100e5d16b1",
-    "scripts/specviz/views.py": "cb61742c8f70ff6c7489d55725b4639f7ec2517b0a180b5d300d17492bffd7ab",
+    "scripts/specviz/views.py": "9102de898a40244bb1afbb3b64ac46be1673ccdc266a2d788fe0c1358554be3d",
     "scripts/specviz_cli.py": "af90d8bb2e65781f52a3af52db7039b394615c249cd29879cdb860fc8c6f1fc2"
   },
   "schema_version": 1,
-  "source_identity": "sha256:a79ee4b2d99d06ad0a900c3148dcaa5ad842fff247f7852db25b28d3c087e281",
-  "version": "0.1.1"
+  "source_identity": "sha256:40913d06f432108c03d13b4233bf0bb146a6b009ca5c575bfae959ee6dbd3d30",
+  "version": "0.1.2"
 }

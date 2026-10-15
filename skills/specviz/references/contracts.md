@@ -149,6 +149,29 @@ establish that the file key has already been delivered.
 Read [evidence.md](evidence.md) only for implementation reports or comparison;
 read [inspection.md](inspection.md) only for explicit code inspection.
 
+### Overview reminder delivery
+
+For a fresh overview, the skill passes internal `--omit-overview-hint` and adds
+its contextual reminder in normal chat text after the final helper page. This
+option removes only the generic file-selection hint. Direct helper calls keep
+that hint by default; JSON inventory, warnings, empty-scope recovery, file keys,
+source snapshots, and continuation instructions are unchanged. Other actions
+reject the option. `overview_view(..., omit_hint=True)` has the same contract.
+
+Saved pages are immutable, including their original footer. Continuation never
+removes old text, even when the option is supplied. Append the new reminder only
+when the conversation establishes that this is a completed overview originally
+rendered with its hint suppressed. With a legacy view or unknown continuation
+context, preserve the saved next step without adding a second footer. No saved
+view migration or implementation evidence is involved.
+
+Choose a target from the primary-scope file keys actually delivered, in their
+displayed order; inventory order alone does not prove delivery. Related context
+is not a local suggestion. A path works without view persistence. A number works
+only with this conversation's current, fully delivered key and valid stored
+selection; structural `Node` numbers are never file selectors. Empty or
+unavailable inventories keep their recovery guidance as the sole next step.
+
 ## Current work and historical selection
 
 Ordinary `overview`, `overview openspec/`, `show`, and `changes` automatically

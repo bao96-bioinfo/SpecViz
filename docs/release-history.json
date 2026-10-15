@@ -17,6 +17,14 @@
       "archive_sha256": "a6cb99976927263e70bff673954945fb0be12d04b88f9db87bc547568bfb5df3",
       "files": 37,
       "reproducible": true
+    },
+    "stable-0.1.1": {
+      "version": "0.1.1",
+      "skill_source_identity": "sha256:a79ee4b2d99d06ad0a900c3148dcaa5ad842fff247f7852db25b28d3c087e281",
+      "archive": "specviz-0.1.1.zip",
+      "archive_sha256": "d684cdeb8bc7b912dc962ea2e9b8418c8a28c2bc0384324070f570145eedb05d",
+      "files": 30,
+      "reproducible": true
     }
   }
 }

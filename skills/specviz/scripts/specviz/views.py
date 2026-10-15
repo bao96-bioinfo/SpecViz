@@ -131,7 +131,8 @@ def project_map(view: View, inventory: dict, documents: list[dict], model: dict)
                                ["The project-level meaning of this document is unresolved."]))
 
 
-def overview_view(inventory: dict, model: dict | None = None, detailed: bool = False, width: int = 80) -> View:
+def overview_view(inventory: dict, model: dict | None = None, detailed: bool = False, width: int = 80,
+                  *, omit_hint: bool = False) -> View:
     view = start_view(inventory, model, width)
     documents = _documents(inventory)
     view.text(f"Specification map ({_file_count(len(documents))})")
@@ -154,7 +155,7 @@ def overview_view(inventory: dict, model: dict | None = None, detailed: bool = F
                 body.extend(_item_notes(document, item))
                 body.extend("Source: " + ref for ref in _source_refs(document, item))
             view.blocks.append(Box(document["id"], f"File [{_numbers(inventory)[document['id']]}]: {document['path']}", body))
-    hint = "Use show <file number or path> to explore a file; add --detailed to expand it." if documents else ""
+    hint = "Use show <file number or path> to explore a file; add --detailed to expand it." if documents and not omit_hint else ""
     return finish_view(view, inventory, detailed, hint)
 
 

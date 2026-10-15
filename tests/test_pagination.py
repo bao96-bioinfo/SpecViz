@@ -58,6 +58,7 @@ class PaginationTests(unittest.TestCase):
         inventory, model = load_fixture()
         for width in (30, 80):
             for view in (overview_view(inventory, model, width=width),
+                         overview_view(inventory, model, width=width, omit_hint=True),
                          show_view(inventory, model=model, detailed=True, width=width)):
                 pages = paginate(view, 12)
                 self.check_pages(pages, 12, width)
@@ -68,6 +69,16 @@ class PaginationTests(unittest.TestCase):
                     if isinstance(block, Graph):
                         for edge in block.edges:
                             self.assertIn(edge.label, ' '.join(text.replace('|', ' ').split()))
+
+    def test_direct_overview_suppression_preserves_the_diagram_and_source_keys(self):
+        inventory, model = load_fixture()
+        ordinary = overview_view(inventory, model, detailed=True)
+        contextual = overview_view(inventory, model, detailed=True, omit_hint=True)
+        self.assertEqual(ordinary.blocks[:-1], contextual.blocks)
+        self.assertEqual(ordinary.documents, contextual.documents)
+        self.assertIn(inventory['snapshot'], contextual.render())
+        self.assertIn('Use show <file number or path>', ordinary.render())
+        self.assertNotIn('Use show <file number or path>', contextual.render())
 
 
 if __name__ == '__main__':

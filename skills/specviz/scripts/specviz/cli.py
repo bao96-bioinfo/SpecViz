@@ -30,6 +30,7 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--version", action="version", version=f"SpecViz {__version__}")
     internal = result.add_argument_group("Agent exchange and local helper options")
     internal.add_argument("--json", action="store_true", help="Return source inventory and evidence for agent interpretation")
+    internal.add_argument("--omit-overview-hint", action="store_true", help="Fresh overviews only: let the skill supply a contextual next step")
     internal.add_argument("--model", type=Path, help="Validated interpretation JSON, stored outside the project")
     internal.add_argument("--inspection", type=Path, help="Observational inspection JSON; requires changes --check-code")
     internal.add_argument("--event", type=Path, help="Import one workflow handoff JSON without creating display evidence")
@@ -105,6 +106,8 @@ def _continuation(token: str, page: int, session: str | None) -> str:
 
 
 def run(args: argparse.Namespace) -> dict | str:
+    if args.omit_overview_hint and args.action != "overview":
+        raise ValidationError("--omit-overview-hint is available only for overview")
     if args.check_code and args.action != "changes":
         raise ValidationError("--check-code is available through changes; use changes <scope> --check-code")
     if args.inspection and not args.check_code:
@@ -215,7 +218,7 @@ def run(args: argparse.Namespace) -> dict | str:
     elif args.action == "show":
         view = show_view(inventory, model=model, detailed=args.detailed, width=args.width)
     else:
-        view = overview_view(inventory, model, args.detailed, args.width)
+        view = overview_view(inventory, model, args.detailed, args.width, omit_hint=args.omit_overview_hint)
     if receipts:
         view.text("Workflow evidence handled separately from this display.")
     rendered_pages = paginate(view, args.max_lines)

@@ -36,6 +36,7 @@ def main():
     )
     parser.add_argument("--workspace", type=Path)
     parser.add_argument("--timeout", type=int, default=600)
+    parser.add_argument("--repeat", action="store_true", help="Repeat overview in the same native conversation")
     args = parser.parse_args()
     workspace = (
         args.workspace or Path(tempfile.mkdtemp(prefix="specviz-overview-"))
@@ -63,12 +64,15 @@ def main():
             "-a",
             "never",
             "exec",
-            "--ephemeral",
+            *([] if args.repeat else ["--ephemeral"]),
             "--skip-git-repo-check",
             "--sandbox",
             "workspace-write",
             "--add-dir",
             str(workspace),
+            "--json",
+            "--output-last-message",
+            str(results / "response.md"),
             "-",
         ]
     elif args.host == "claude-code":
@@ -104,48 +108,64 @@ def main():
             "--print-timeout",
             f"{args.timeout}s",
         ]
-    before = snapshot(project)
-    started = time.monotonic()
-    code = None
-    error = None
-    with (
-        (results / "stdout.txt").open("w") as stdout,
-        (results / "stderr.txt").open("w") as stderr,
-    ):
-        try:
-            code = subprocess.run(
-                command,
-                input=prompt if args.host == "codex" else "",
-                text=True,
-                cwd=project,
-                env=dict(
-                    os.environ,
-                    SPECVIZ_STATE_DIR=str(workspace / "state"),
-                    PYTHONDONTWRITEBYTECODE="1",
-                ),
-                stdout=stdout,
-                stderr=stderr,
-                timeout=args.timeout,
-            ).returncode
-        except (OSError, subprocess.TimeoutExpired) as exc:
-            error = type(exc).__name__
-    after = snapshot(project)
-    result = {
-        "host": args.host,
-        "returncode": code,
-        "error": error,
-        "elapsed_seconds": round(time.monotonic() - started, 1),
-        "source_changes": sorted(
-            p for p in set(before) | set(after) if before.get(p) != after.get(p)
-        ),
-        "review_required": True,
-        "workspace": str(workspace),
-    }
-    (results / "run.json").write_text(
-        json.dumps(result, indent=2) + "\n", encoding="utf-8"
-    )
-    print(json.dumps(result, indent=2))
-    return 0 if code == 0 and not result["source_changes"] else 1
+    runs = []
+    for turn in range(2 if args.repeat else 1):
+        directory = results if turn == 0 else results / "repeat"
+        directory.mkdir(exist_ok=True)
+        (directory / "request.txt").write_text(prompt, encoding="utf-8")
+        before = snapshot(project)
+        started = time.monotonic()
+        code, error = None, None
+        with ((directory / "stdout.txt").open("w") as stdout,
+              (directory / "stderr.txt").open("w") as stderr):
+            try:
+                code = subprocess.run(
+                    command, input=prompt if args.host == "codex" else "",
+                    text=True, cwd=project,
+                    env=dict(os.environ, SPECVIZ_STATE_DIR=str(workspace / "state"),
+                             PYTHONDONTWRITEBYTECODE="1"),
+                    stdout=stdout, stderr=stderr, timeout=args.timeout,
+                ).returncode
+            except (OSError, subprocess.TimeoutExpired) as exc:
+                error = type(exc).__name__
+        after = snapshot(project)
+        conversation = None
+        for line in (directory / "stdout.txt").read_text(encoding="utf-8").splitlines():
+            try:
+                event = json.loads(line)
+            except ValueError:
+                continue
+            if not isinstance(event, dict):
+                continue
+            conversation = event.get("thread_id") or event.get("session_id") or event.get("conversation_id") or conversation
+            response = event.get("result") if event.get("type") == "result" else event.get("response")
+            if isinstance(response, str):
+                (directory / "response.md").write_text(response, encoding="utf-8")
+        result = {
+            "host": args.host, "turn": turn + 1, "conversation": conversation,
+            "returncode": code, "error": error,
+            "elapsed_seconds": round(time.monotonic() - started, 1),
+            "source_changes": sorted(p for p in set(before) | set(after) if before.get(p) != after.get(p)),
+            "review_required": True, "workspace": str(workspace),
+        }
+        (directory / "run.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+        print(json.dumps(result, indent=2), flush=True)
+        runs.append(result)
+        if code != 0 or result["source_changes"] or not conversation:
+            break
+        if args.repeat and turn == 0:
+            prompt = f"{prefix} overview\n\nShow the whole overview again, including all continuation parts."
+            if args.host == "codex":
+                command = ["codex", "-a", "never", "exec", "--sandbox", "workspace-write",
+                           "--add-dir", str(workspace), "resume", "--skip-git-repo-check",
+                           "--json", "--output-last-message", str(results / "repeat/response.md"), conversation, "-"]
+            elif args.host == "claude-code":
+                command = [*command[:-1], "--resume", conversation, prompt]
+            else:
+                command[2] = prompt
+                command.extend(["--conversation", conversation])
+    return 0 if len(runs) == (2 if args.repeat else 1) and all(
+        run["returncode"] == 0 and not run["source_changes"] for run in runs) else 1
 
 
 if __name__ == "__main__":

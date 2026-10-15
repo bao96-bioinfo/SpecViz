@@ -4,6 +4,74 @@ Earlier host checks recorded on October 12, 2026. Diagram-first checks below
 were recorded on October 13, 2026. Automated fixtures, live coding hosts,
 language interpretation, and reader feedback are separate evidence.
 
+## Contextual overview guidance — October 14, 2026
+
+Stable candidate `0.1.2` adds one brief, project-specific next step after a
+completed installed-chat overview. The helper's default footer and existing
+saved pages remain unchanged. The skill suppresses only the fresh overview's
+generic hint and writes its reminder outside the diagram, using the active
+host's prefix and a delivered file in the requested scope.
+
+All **216 tests** passed locally on Python **3.11.17** and **3.14.5**. Focused
+checks cover default output, JSON inventory, warnings, empty scopes, opted-in
+generation handoffs, unavailable storage, complete file-key delivery,
+conversation-bound selections, immutable continuations, and unchanged evidence.
+Reviewed target examples resolve against all five framework fixtures and the
+large-project fixture, including quoted and external paths, duplicate names,
+related context, and explicitly selected history. These tests validate the
+examples and selection mechanics, not agent wording or reader comprehension.
+
+The current change and all six main specifications pass strict OpenSpec
+validation. Repository-wide `openspec validate --all --strict` reports eight
+passes and two failures: the older `add-adaptive-spec-layouts` and
+`make-spec-views-diagram-first` plans omit scenarios added by the recently
+synchronized connected-overview specifications. Those older planning artifacts
+were not revised by this change; the repository-wide check is **not green**.
+Whitespace checks and the skill validator pass.
+
+Two builds of `specviz-0.1.2.zip` are byte-identical. Its extracted installer
+passes all three host installations, default/contextual helper output, source
+preservation, and legacy-page checks. Earlier candidate archives and identities
+are retained in [release history](release-history.json); the new identity and
+archive hash are in [release candidates](release-candidates.json). This prepares
+a local candidate; it does not publish a release.
+
+Live response checks use the installed skill and raw large-project sources,
+without a supplied interpretation model or expected answer:
+
+```sh
+python3 tools/overview_acceptance.py --host codex --repeat
+python3 tools/overview_acceptance.py --host claude-code --repeat
+python3 tools/overview_acceptance.py --host antigravity --repeat
+```
+
+The runner resumes its own recorded native conversation for the second request;
+it never resumes an unrelated latest session. Each turn records source hashes,
+tool output, and the final response outside the repository. Review the actual
+response: successful process exit alone is not a pass.
+
+Codex 0.162.1 and Claude Code 2.1.296 each completed an initial overview and a
+repeated request in the same conversation. All four responses preserved both
+helper pages exactly, their connected structure, and all ten current file keys. Each
+ended with one reminder containing the proper host prefix, a resolvable
+`openspec/specs/data-preparation/spec.md` target, and `--detailed`. Neither
+automatically executed `show`; source files and implementation evidence were
+unchanged. The generic helper footer was absent from all four final responses.
+The Codex turns took 111.9 and 47.5 seconds; Claude Code took 301.7 and 59.7
+seconds. Claude used two reminder sentences; Codex also kept its reminder to
+two sentences rather than expanding into a command menu.
+
+An earlier Codex repeat lost the runner's extra writable-directory setting on
+resume. It correctly printed the complete view with a storage warning and used
+a path in its reminder. The runner now preserves that setting on resume; the
+two successful final Codex turns above exercised normal saved pagination.
+
+Antigravity's initial and repeated headless requests returned empty responses
+with denied `RunCommand` actions despite zero exit status. Both are recorded as
+**unavailable**, not passed. No global permission bypass was enabled. These
+checks do not establish desktop/editor behavior or reader comprehension; no new
+reader feedback is claimed.
+
 ## Connected overviews and beta retirement — October 14, 2026
 
 The synthetic large-project fixture has 18 source files: five current rules,

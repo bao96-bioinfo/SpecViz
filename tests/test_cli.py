@@ -54,6 +54,85 @@ class CommandTests(unittest.TestCase):
         value = self.invoke("show", "new requirements.md", "--json")
         self.assertEqual(value["scope"], ["new requirements.md"])
 
+    def test_overview_hint_suppression_changes_only_the_generic_footer(self):
+        hint = "Use show <file number or path> to explore a file; add --detailed to expand it."
+        for arguments in ([], ["overview"], ["overview", self.folder, "--detailed"]):
+            with self.subTest(arguments=arguments):
+                ordinary = self.invoke(*arguments, "--max-lines", "2000")
+                contextual = self.invoke(*arguments, "--max-lines", "2000", "--omit-overview-hint")
+                self.assertIn(hint, ordinary)
+                self.assertEqual(contextual, ordinary.removesuffix("\n" + hint + "\n").rstrip() + "\n")
+                self.assertEqual(self.invoke(*arguments, "--json"),
+                                 self.invoke(*arguments, "--json", "--omit-overview-hint"))
+        inventory = discover(self.project)
+        inventory["warnings"].append("A declared source could not be read.")
+        with patch("specviz.cli.discover", return_value=inventory):
+            output = self.invoke("--omit-overview-hint", "--max-lines", "2000")
+        self.assertIn("A declared source could not be read.", output)
+        for action in ("show", "changes"):
+            with self.assertRaisesRegex(ValidationError, "only for overview"):
+                self.invoke(action, self.requirements, "--omit-overview-hint", "--json")
+
+    def test_suppressed_hint_keeps_empty_scope_recovery_and_generation_handoff(self):
+        empty = self.project / "empty"
+        empty.mkdir()
+        arguments = ["--project", str(empty), "--state-dir", str(self.state)]
+        ordinary = run(parser().parse_args(arguments))
+        self.assertEqual(ordinary, run(parser().parse_args([*arguments, "--omit-overview-hint"])))
+        self.assertIn("No specification files found in this scope.", ordinary)
+        self.assertIn("check the project path", ordinary)
+        with patch("specviz.cli._generation_enabled", return_value=True):
+            output = self.invoke("--generation-ready", self.folder, "--omit-overview-hint", "--max-lines", "2000")
+        self.assertIn("Reporting service", output)
+        self.assertIn("requirements.md", output)
+        self.assertNotIn("Use show <file number or path>", output)
+        self.assertFalse(list(self.state.glob("*.sqlite3")))
+
+    def test_suppressed_hint_preserves_complete_delivery_selections_and_evidence(self):
+        store = EvidenceStore(self.project, self.state)
+        store.ingest(self.event())
+        evidence = store.events()
+        sources = {p: p.read_bytes() for p in self.project.rglob("*") if p.is_file()}
+        output = self.invoke("overview", "--detailed", "--max-lines", "12",
+                             "--session", "contextual-reader", "--omit-overview-hint")
+        token = re.search(r"--continue-view ([a-f0-9]+)", output)[1]
+        views = ViewStore(self.project, self.state)
+        saved = views.load(token)
+        with self.assertRaisesRegex(ValidationError, "not been exposed"):
+            views.select(["1"], "contextual-reader")
+        with self.assertRaisesRegex(ValidationError, "another conversation"):
+            self.invoke("--continue-view", token, "--page", "2", "--session", "other-reader")
+        delivered = [output]
+        for page in range(2, len(saved["pages"]) + 1):
+            delivered.append(self.invoke("--continue-view", token, "--page", str(page), "--session", "contextual-reader"))
+        self.assertNotIn("Use show <file number or path>", "".join(delivered))
+        self.assertIn("End of this view.", delivered[-1])
+        self.assertNotIn("--continue-view", delivered[-1])
+        self.assertEqual(views.load(token)["pages"], saved["pages"])
+        self.assertEqual(views.load(token)["snapshot"], discover(self.project)["snapshot"])
+        for number, identity in enumerate(saved["selection"], 1):
+            self.assertEqual(views.select([str(number)], "contextual-reader"), [identity])
+        self.assertEqual(store.events(), evidence)
+        self.assertEqual(sources, {p: p.read_bytes() for p in self.project.rglob("*") if p.is_file()})
+
+    def test_suppressed_hint_preserves_unavailable_storage_and_legacy_pages(self):
+        for failure in (patch("specviz.cli.ViewStore", side_effect=OSError("Read-only state")),
+                        patch.object(ViewStore, "_write", side_effect=OSError("Read-only state"))):
+            with failure:
+                output = self.invoke("--omit-overview-hint", "--max-lines", "12")
+            self.assertIn("Select files by path.", output)
+            self.assertIn("Read-only state", output)
+            self.assertNotIn("Use show <file number or path>", output)
+            self.assertNotIn("--continue-view", output)
+            for doc in discover(self.project)["documents"]:
+                self.assertIn(Path(doc["path"]).name, output)
+        views = ViewStore(self.project, self.state)
+        last_page = "Legacy page\nUse show <file number or path> to explore a file; add --detailed to expand it.\n"
+        token = views.save(discover(self.project), ["First page\n", last_page], "legacy-reader")
+        self.assertEqual(self.invoke("--continue-view", token, "--page", "2", "--omit-overview-hint"), last_page)
+        self.assertEqual(views.load(token)["pages"][-1], last_page)
+        self.assertFalse(list(self.state.glob("*.sqlite3")))
+
     def test_numbered_selection_is_bound_to_display_and_conversation(self):
         self.invoke("overview", "--session", "conversation-one")
         inventory = discover(self.project)

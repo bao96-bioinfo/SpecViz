@@ -3,10 +3,10 @@
   "checked": "2026-10-14",
   "channels": {
     "stable": {
-      "version": "0.1.1",
-      "skill_source_identity": "sha256:a79ee4b2d99d06ad0a900c3148dcaa5ad842fff247f7852db25b28d3c087e281",
-      "archive": "specviz-0.1.1.zip",
-      "archive_sha256": "d684cdeb8bc7b912dc962ea2e9b8418c8a28c2bc0384324070f570145eedb05d",
+      "version": "0.1.2",
+      "skill_source_identity": "sha256:40913d06f432108c03d13b4233bf0bb146a6b009ca5c575bfae959ee6dbd3d30",
+      "archive": "specviz-0.1.2.zip",
+      "archive_sha256": "bbfdfaa2a1db3233d6cf126995d95194489cf0320a06673221ff5a60b0019f63",
       "files": 30,
       "reproducible": true
     }
